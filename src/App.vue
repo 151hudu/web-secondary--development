@@ -4,8 +4,8 @@
     <div class="main">
       <div class="top_Title" style="position: relative">
         <span>光伏自发自用电费结算明细单</span>
-        <el-button style="position: absolute; top: 10px; right: 60px" v-if="mainEdit == 0" type="primary" size="small" @click="saveTable">保存</el-button>
-        <el-button style="position: absolute; top: 10px; right: 0" v-if="mainEdit == 0" type="primary" size="small" @click="exportExcel">导出</el-button>
+        <el-button style="position: absolute; top: 10px; right: 160px" v-if="mainEdit == 0" type="primary" size="small" @click="saveTable">保存</el-button>
+        <el-button style="position: absolute; top: 10px; right: 100px" v-if="mainEdit == 0" type="primary" size="small" @click="exportExcel">导出</el-button>
       </div>
       <div class="top_Info">
         <div style="width: 300px">发电单位：{{ this.excelAllData.generating_unit }}</div>
@@ -52,7 +52,7 @@
         <div class="div_Right"></div>
       </div>
       <div class="topTable">
-        <el-table :data="tableData" border show-summary :summary-method="getTopSummaries" :header-cell-style="{ background: '#DCE6F1', color: 'black' }">
+        <el-table :data="tableDataTop" border show-summary :summary-method="getTopSummaries" :header-cell-style="{ background: '#DCE6F1', color: 'black' }">
           <el-table-column align="center" prop="dnbmc" label="电能表名称" width="150"> </el-table-column>
           <el-table-column align="center" prop="jjlx" label="计量类型" width="150"> </el-table-column>
           <el-table-column align="center" prop="dnbbl" label="电能表倍率" width="100"> </el-table-column>
@@ -62,38 +62,54 @@
           <el-table-column align="center" label="光伏发电量" width="300">
             <el-table-column align="center" prop="poweroutput_last" label="上期正向有功" width="100">
               <template slot-scope="scope">
-                <input v-if="mainEdit == 0 && !scope.row.poweroutput_last" v-model="scope.row.poweroutput_last" style="width: 89%" type="number" @input="InputChange" />
-                <span v-else>{{ scope.row.poweroutput_last }}</span>
+                <input
+                  v-if="mainEdit == 0 && !scope.row.poweroutput_last && scope.row.jjlx == '发电并网表'"
+                  v-model="scope.row.poweroutput_last"
+                  style="width: 89%"
+                  type="number"
+                  @input="InputChange"
+                />
+                <span v-if="mainEdit !== 0 && scope.row.poweroutput_last && scope.row.jjlx !== '发电并网表'">{{ scope.row.poweroutput_last }}</span>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="poweroutput_now" label="本期正向有功" width="100">
               <template slot-scope="scope">
-                <input v-if="mainEdit == 0" v-model="scope.row.poweroutput_now" style="width: 89%" />
-                <span v-else>{{ scope.row.poweroutput_now }}</span>
+                <input v-if="mainEdit == 0 && scope.row.jjlx == '发电并网表'" v-model="scope.row.poweroutput_now" style="width: 89%" />
+                <span v-if="mainEdit !== 0 && scope.row.jjlx !== '发电并网表'">{{ scope.row.poweroutput_now }}</span>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="poweroutput_all" :render-header="renderheader" label="发电量|（kwh）" width="100">
               <template slot-scope="scope">
-                <span>{{ (scope.row.poweroutput_all = (Number(scope.row.poweroutput_now) - Number(scope.row.poweroutput_last)) * Number(scope.row.dnbbl)) }}</span>
+                <span v-if="scope.row.jjlx == '发电并网表'">{{
+                  (scope.row.poweroutput_all = (Number(scope.row.poweroutput_now) - Number(scope.row.poweroutput_last)) * Number(scope.row.dnbbl)).toFixed(2)
+                }}</span>
               </template>
             </el-table-column>
           </el-table-column>
           <el-table-column align="center" label="光伏上网电量" width="300">
             <el-table-column align="center" prop="swdl_last" label="上期反向有功" width="100">
               <template slot-scope="scope">
-                <input v-if="mainEdit == 0 && !scope.row.swdl_last" v-model="scope.row.swdl_last" style="width: 89%" type="number" @input="InputChange" />
-                <span v-else>{{ scope.row.swdl_last }}</span>
+                <input
+                  v-if="mainEdit == 0 && !scope.row.swdl_last && scope.row.jjlx == '上网关口表（反向）'"
+                  v-model="scope.row.swdl_last"
+                  style="width: 89%"
+                  type="number"
+                  @input="InputChange"
+                />
+                <span v-if="mainEdit !== 0 && scope.row.swdl_last && scope.row.jjlx !== '上网关口表（反向）'">{{ scope.row.swdl_last }}</span>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="swdl_now" label="本期反向有功" width="100">
               <template slot-scope="scope">
-                <input v-if="mainEdit == 0" v-model="scope.row.swdl_now" style="width: 89%" type="number" @input="InputChange" />
-                <span v-else>{{ scope.row.swdl_now }}</span>
+                <input v-if="mainEdit == 0 && scope.row.jjlx == '上网关口表（反向）'" v-model="scope.row.swdl_now" style="width: 89%" type="number" @input="InputChange" />
+                <span v-if="mainEdit !== 0 && scope.row.jjlx !== '上网关口表（反向）'">{{ scope.row.swdl_now }}</span>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="swdl_all" :render-header="renderheader" label="上网电量|(kwh)" width="100">
               <template slot-scope="scope">
-                <span>{{ (scope.row.swdl_all = (Number(scope.row.swdl_now) - Number(scope.row.swdl_last)) * Number(scope.row.dnbbl)) }}</span>
+                <span v-if="scope.row.jjlx == '上网关口表（反向）'">{{
+                  (scope.row.swdl_all = (Number(scope.row.swdl_now) - Number(scope.row.swdl_last)) * Number(scope.row.dnbbl)).toFixed(2)
+                }}</span>
               </template>
             </el-table-column>
           </el-table-column>
@@ -103,7 +119,14 @@
         </el-table>
       </div>
       <div class="bottomTable">
-        <el-table :data="tableData" border class="bottomTable" show-summary :summary-method="getBottomSummaries" :header-cell-style="{ background: '#DCE6F1', color: 'black' }">
+        <el-table
+          :data="tableDataBottom"
+          border
+          class="bottomTable"
+          show-summary
+          :summary-method="getBottomSummaries"
+          :header-cell-style="{ background: '#DCE6F1', color: 'black' }"
+        >
           <el-table-column align="center" prop="jl_name" label="计量点" width="150"> </el-table-column>
           <el-table-column align="center" prop="price_avg" :render-header="renderheader" label="平均电价|（元/kwh）" width="150">
             <template slot-scope="scope">
@@ -315,7 +338,44 @@ export default {
       mainEdit: "",
       excelAllData: {},
       //组件数据
-      tableData: [],
+      tableDataTop: [],
+      tableDataBottom: [],
+      tableData: [
+        //  {
+        //   date: "2016-05-03",
+        //   dnbbl: "160",
+        //   poweroutput_now: "1201",
+        //   poweroutput_last: "121",
+        //   swdl_now: "1200",
+        //   frezz_time: "1661329593",
+        //   swdl_last: "120",
+        //   name: "王小虎",
+        //   address: "213123213",
+        //   price_j: "5",
+        //   poweruse_all: "5",
+        //   poweruse_j: "1",
+        //   poweruse_f: "1",
+        //   poweruse_p: "1",
+        //   poweruse_g: "1",
+        //   fees_all: "1",
+        //   fees_j: "1",
+        //   fees_f: "1",
+        //   fees_p: "1",
+        //   fees_g: "1",
+        //   lastnum_j: "1",
+        //   lastnum_f: "1",
+        //   lastnum_p: "1",
+        //   lastnum_g: "1",
+        //   nownum_j: "2",
+        //   nownum_f: "1",
+        //   nownum_p: "1",
+        //   nownum_g: "1",
+        //   price_j: "2",
+        //   price_f: "1",
+        //   price_p: "1",
+        //   price_g: "1",
+        // },
+      ],
     };
   },
   mounted() {
@@ -325,15 +385,20 @@ export default {
     };
     queryDataDetail(message).then((res) => {
       for (let k in res.data.childData[0]) {
-        // res.data.childData[0][k][0].poweruse_all = 0;
-        // res.data.childData[0][k][0].fees_all = 0;
-        // res.data.childData[0][k][0].lastnum_j = 1;
-        // res.data.childData[0][k][0].nownum_j = 2;
         this.tableData = res.data.childData[0][k];
       }
       this.excelAllData = res.data;
-      this.mainEdit = this.excelAllData.edit_flag;
-      console.log(this.tableData);
+      this.tableData = this.tableData.sort((a, b) => {
+        return a.show_rank - b.show_rank;
+      });
+      this.tableDataTop = JSON.parse(JSON.stringify(this.tableData));
+      this.tableDataBottom = JSON.parse(JSON.stringify(this.tableData));
+      this.tableDataBottom.forEach((item, index) => {
+        if (item.jjlx == "上网关口表（反向）") {
+          this.tableDataBottom.splice(index, 1);
+        }
+      });
+      this.mainEdit = 0;
     });
     //用于注册事件定义，不可删除
     let { componentId } = this.customConfig || {};
@@ -397,14 +462,44 @@ export default {
       console.log(this.tableData);
     },
     saveTable() {
-      if (this.excelAllData.zfzydl_all !== this.excelAllData.poweruse_all) {
+      if (this.excelAllData.zfzydl_all == this.excelAllData.poweruse_all) {
         return this.$message({
           message: "自发自用电量不匹配",
           type: "error",
         });
       } else {
+        this.tableDataTop.forEach((item, index) => {
+          this.tableDataBottom.forEach((itemSon, indexSon) => {
+            if (item.data_id == itemSon.data_id) {
+              item.jl_name = JSON.parse(JSON.stringify(itemSon.jl_name));
+              item.price_avg = JSON.parse(JSON.stringify(itemSon.price_avg));
+              item.poweruse_all = JSON.parse(JSON.stringify(itemSon.poweruse_all));
+              item.fees_all = JSON.parse(JSON.stringify(itemSon.fees_all));
+              item.lastnum_j = JSON.parse(JSON.stringify(itemSon.lastnum_j));
+              item.nownum_j = JSON.parse(JSON.stringify(itemSon.nownum_j));
+              item.poweruse_j = JSON.parse(JSON.stringify(itemSon.poweruse_j));
+              item.price_j = JSON.parse(JSON.stringify(itemSon.price_j));
+              item.fees_j = JSON.parse(JSON.stringify(itemSon.fees_j));
+              item.lastnum_f = JSON.parse(JSON.stringify(itemSon.lastnum_f));
+              item.nownum_f = JSON.parse(JSON.stringify(itemSon.nownum_f));
+              item.poweruse_f = JSON.parse(JSON.stringify(itemSon.poweruse_f));
+              item.price_f = JSON.parse(JSON.stringify(itemSon.price_f));
+              item.fees_f = JSON.parse(JSON.stringify(itemSon.fees_f));
+              item.lastnum_p = JSON.parse(JSON.stringify(itemSon.lastnum_p));
+              item.nownum_p = JSON.parse(JSON.stringify(itemSon.nownum_p));
+              item.poweruse_p = JSON.parse(JSON.stringify(itemSon.poweruse_p));
+              item.price_p = JSON.parse(JSON.stringify(itemSon.price_p));
+              item.fees_p = JSON.parse(JSON.stringify(itemSon.fees_p));
+              item.lastnum_g = JSON.parse(JSON.stringify(itemSon.lastnum_g));
+              item.nownum_g = JSON.parse(JSON.stringify(itemSon.nownum_g));
+              item.poweruse_g = JSON.parse(JSON.stringify(itemSon.poweruse_g));
+              item.price_g = JSON.parse(JSON.stringify(itemSon.price_g));
+              item.fees_g = JSON.parse(JSON.stringify(itemSon.fees_g));
+            }
+          });
+        });
         for (let k in this.excelAllData.childData[0]) {
-          this.excelAllData.childData[0][k] = this.tableData;
+          this.excelAllData.childData[0][k] = this.tableDataTop;
         }
         let message = {
           form_id: this.GetQueryString("form_id"),
@@ -454,6 +549,8 @@ export default {
           sums[index] = "";
         }
       });
+      sums[8] = Number(sums[8]).toFixed(2);
+      sums[11] = Number(sums[11]).toFixed(2);
       this.excelAllData.poweroutput_all = sums[8];
       this.excelAllData.swdl_all = sums[11];
       this.excelAllData.zfzydl_all = sums[12];
@@ -461,7 +558,6 @@ export default {
     },
     getBottomSummaries(param) {
       const { columns, data } = param;
-      console.log(param);
       const sums = [];
       columns.forEach((column, index) => {
         if (index === 0) {
@@ -489,7 +585,6 @@ export default {
         const values = data.map((item) => Number(item[column.property]));
         if (!values.every((value) => isNaN(value))) {
           sums[index] = values.reduce((prev, curr) => {
-            console.log(values);
             const value = Number(curr);
             if (!isNaN(value)) {
               return prev + curr;
@@ -538,6 +633,7 @@ export default {
       let s = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
       return Y + M + D + h + m + s;
     },
+
     // table表头换行
     renderheader(h, { column, $index }) {
       return h("span", {}, [h("span", {}, column.label.split("|")[0]), h("br"), h("span", {}, column.label.split("|")[1])]);

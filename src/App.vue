@@ -15,18 +15,41 @@
           <el-tab-pane label="终端" name="zhongduan" class="tabLable">
             <el-checkbox-group v-model="terminalCheckList">
               <div class="checkboxItem" v-for="(item, index) in terminalList" :key="index">
-                <el-checkbox :disabled="item.status == '紧急'" :label="item">{{ item.name }}</el-checkbox>
+                <el-checkbox v-show="item.status" :label="item">{{ item.name }}</el-checkbox>
+                <span v-show="!item.status" style="font-size: 14px; color: red; margin-left: 45px">{{ item.name }}</span>
                 <div class="checkboxItemIcon">
                   <img
                     src="../pluginTemp/images/handle.png"
-                    v-show="!item.status"
+                    v-show="item.status"
                     @click="handleUp(item)"
                     alt=""
+                    title="发言"
                     style="cursor: pointer; height: 24px; width: 24px; margin-right: 8px"
                   />
-                  <phone-call theme="filled" size="24" fill="#dc150e" v-show="item.status" @click="recall(item)" style="cursor: pointer; margin-right: 8px" />
-                  <people theme="outline" size="24" fill="#ffffff" v-show="!item.is_main && !item.status" @click="changemain(item)" style="cursor: pointer; margin-right: 8px" />
-                  <people theme="filled" size="24" fill="#0E98DC" v-show="item.is_main && !item.status" @click="changemain(item)" style="cursor: pointer; margin-right: 8px" />
+                  <img
+                    src="../pluginTemp/images/call_2.png"
+                    v-show="!item.status"
+                    @click="recall(item)"
+                    title="重拨"
+                    style="cursor: pointer; height: 27px; width: 27px; margin-right: 8px"
+                    alt=""
+                  />
+                  <img
+                    src="../pluginTemp/images/user_1.png"
+                    v-show="!item.is_main && item.status"
+                    @click="changemain(item)"
+                    title="主席"
+                    style="cursor: pointer; height: 27px; width: 27px; margin-right: 8px"
+                    alt=""
+                  />
+                  <img
+                    src="../pluginTemp/images/user_2.png"
+                    v-show="item.is_main && item.status"
+                    @click="changemain(item)"
+                    title="主席"
+                    style="cursor: pointer; height: 27px; width: 27px; margin-right: 8px"
+                    alt=""
+                  />
                 </div>
               </div>
             </el-checkbox-group>
@@ -34,18 +57,25 @@
           <el-tab-pane label="本地" name="bendi" class="tabLable">
             <el-checkbox-group v-model="localCheckList">
               <div class="checkboxItem" v-for="(item, index) in localList" :key="index">
-                <el-checkbox :disabled="item.status == '紧急'" :label="item.name"></el-checkbox>
+                <el-checkbox v-show="item.status" :label="item">{{ item.name }}</el-checkbox>
+                <span v-show="!item.status" style="font-size: 14px; color: red; margin-left: 45px">{{ item.name }}</span>
                 <div class="checkboxItemIcon">
                   <img
                     src="../pluginTemp/images/handle.png"
-                    v-show="!item.status"
+                    v-show="item.status"
                     @click="handleUp(item)"
                     alt=""
+                    title="发言"
                     style="cursor: pointer; height: 24px; width: 24px; margin-right: 8px"
                   />
-                  <phone-call theme="filled" size="24" fill="#dc150e" v-show="item.status" @click="recall(item)" style="cursor: pointer; margin-right: 8px" />
-                  <people theme="outline" size="24" fill="#ffffff" v-show="!item.is_main && !item.status" @click="changemain(item)" style="cursor: pointer; margin-right: 8px" />
-                  <people theme="filled" size="24" fill="#0E98DC" v-show="item.is_main && !item.status" @click="changemain(item)" style="cursor: pointer; margin-right: 8px" />
+                  <img
+                    src="../pluginTemp/images/call_2.png"
+                    v-show="!item.status"
+                    @click="recall(item)"
+                    title="重拨"
+                    style="cursor: pointer; height: 27px; width: 27px; margin-right: 8px"
+                    alt=""
+                  />
                 </div>
               </div>
             </el-checkbox-group>
@@ -53,18 +83,25 @@
           <el-tab-pane label="融合" name="ronghe" class="tabLable">
             <el-checkbox-group v-model="fuseCheckList">
               <div class="checkboxItem" v-for="(item, index) in fuseList" :key="index">
-                <el-checkbox :disabled="item.status == '紧急'" :label="item.name"></el-checkbox>
+                <el-checkbox v-show="item.status" :label="item">{{ item.name }}</el-checkbox>
+                <span v-show="!item.status" style="font-size: 14px; color: red; margin-left: 45px">{{ item.name }}</span>
                 <div class="checkboxItemIcon">
                   <img
                     src="../pluginTemp/images/handle.png"
-                    v-show="!item.status"
+                    v-show="item.status"
                     @click="handleUp(item)"
                     alt=""
+                    title="发言"
                     style="cursor: pointer; height: 24px; width: 24px; margin-right: 8px"
                   />
-                  <phone-call theme="filled" size="24" fill="#dc150e" v-show="item.status" @click="recall(item)" style="cursor: pointer; margin-right: 8px" />
-                  <people theme="outline" size="24" fill="#ffffff" v-show="!item.is_main && !item.status" @click="changemain(item)" style="cursor: pointer; margin-right: 8px" />
-                  <people theme="filled" size="24" fill="#0E98DC" v-show="item.is_main && !item.status" @click="changemain(item)" style="cursor: pointer; margin-right: 8px" />
+                  <img
+                    src="../pluginTemp/images/call_2.png"
+                    v-show="!item.status"
+                    @click="recall(item)"
+                    title="重拨"
+                    style="cursor: pointer; height: 27px; width: 27px; margin-right: 8px"
+                    alt=""
+                  />
                 </div>
               </div>
             </el-checkbox-group>
@@ -72,18 +109,25 @@
           <el-tab-pane label="监控" name="jiankong" class="tabLable">
             <el-checkbox-group v-model="monitorCheckList">
               <div class="checkboxItem" v-for="(item, index) in monitorList" :key="index">
-                <el-checkbox :disabled="item.status == '紧急'" :label="item.name"></el-checkbox>
+                <el-checkbox v-show="item.status" :label="item">{{ item.name }}</el-checkbox>
+                <span v-show="!item.status" style="font-size: 14px; color: red; margin-left: 45px">{{ item.name }}</span>
                 <div class="checkboxItemIcon">
                   <img
                     src="../pluginTemp/images/handle.png"
-                    v-show="!item.status"
+                    v-show="item.status"
                     @click="handleUp(item)"
                     alt=""
+                    title="发言"
                     style="cursor: pointer; height: 24px; width: 24px; margin-right: 8px"
                   />
-                  <phone-call theme="filled" size="24" fill="#dc150e" v-show="item.status" @click="recall(item)" style="cursor: pointer; margin-right: 8px" />
-                  <people theme="outline" size="24" fill="#ffffff" v-show="!item.is_main && !item.status" @click="changemain(item)" style="cursor: pointer; margin-right: 8px" />
-                  <people theme="filled" size="24" fill="#0E98DC" v-show="item.is_main && !item.status" @click="changemain(item)" style="cursor: pointer; margin-right: 8px" />
+                  <img
+                    src="../pluginTemp/images/call_2.png"
+                    v-show="!item.status"
+                    @click="recall(item)"
+                    style="cursor: pointer; height: 27px; width: 27px; margin-right: 8px"
+                    alt=""
+                    title="重拨"
+                  />
                 </div>
               </div>
             </el-checkbox-group>
@@ -98,10 +142,16 @@
           class="topCenterScreen"
           v-for="(item, index) in nowCenterScreen.window_layout"
           :key="index"
-          @drop="drop(item, nowCenterScreen.screen_num, index)"
           :style="{ position: 'absolute', border: '2px solid #113164', background: '#7d7d7d', width: item.w, height: item.h, top: item.y, left: item.x }"
         >
-            <iframe width="100%" v-if="videoList[index]" height="100%" frameborder="0" allowfullscreen :src="videoList[index].iFrameUrl"></iframe>
+          <div
+            class="dropDiv"
+            draggable="true"
+            @drop="drop(item, nowCenterScreen.screen_num, index)"
+            @dragstart="dragstart($event)"
+            style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"
+          ></div>
+          <iframe width="100%" v-if="videoList[index] && videoList[index].iFrameUrl" height="100%" frameborder="0" allowfullscreen :src="videoList[index].iFrameUrl"></iframe>
           <el-select
             class="agreement"
             v-show="index < videoList.length"
@@ -133,16 +183,16 @@
       </div>
       <div class="topRight">
         <div>
-          <img @click="openLogout" src="../pluginTemp/images/logout.png" alt="" />
+          <img @click="openLogout" title="结束会议" src="../pluginTemp/images/logout.png" alt="" />
         </div>
         <div>
-          <img @click="openStatus" src="../pluginTemp/images/setting.png" alt="" />
+          <img @click="openStatus" title="会场终端" src="../pluginTemp/images/setting.png" alt="" />
         </div>
         <div>
-          <img @click="lineStatus" src="../pluginTemp/images/line.png" alt="" />
+          <img @click="lineStatus" title="切换线路" src="../pluginTemp/images/line.png" alt="" />
         </div>
         <div>
-          <img @click="addStatus" src="../pluginTemp/images/add.png" alt="" />
+          <img @click="addStatus" title="添加临时资源" src="../pluginTemp/images/add.png" alt="" />
         </div>
       </div>
     </div>
@@ -151,9 +201,10 @@
         <el-tab-pane label="终端资源" name="zhongduan" class="tabPane">
           <el-carousel ref="cardShow" :autoplay="false" interval="0" indicator-position="none" :loop="false" arrow="never">
             <el-carousel-item>
-              <div draggable="true" @dragstart="dragstart($event)" v-for="(item, index) in buttomTabList.terminalList" :key="index" class="carouselItem">
+              <div v-for="(item, index) in buttomTabList.terminalList" :key="index" class="carouselItem">
+                <div draggable="true" @dragstart="dragstart($event)" style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"></div>
                 <div class="closeBox" v-show="item" @click="closeButtom(item, index, 'terminalList')">x</div>
-                <iframe width="100%" height="100%" frameborder="0" allowfullscreen :src="item.iFrameUrl"></iframe>
+                <iframe width="100%" v-if="item.iFrameUrl" height="100%" frameborder="0" allowfullscreen :src="item.iFrameUrl"></iframe>
               </div>
             </el-carousel-item>
           </el-carousel>
@@ -162,8 +213,9 @@
           <el-carousel ref="cardShow3" :autoplay="false" interval="0" indicator-position="none" :loop="false" arrow="never">
             <el-carousel-item>
               <div draggable="true" @dragstart="dragstart($event)" v-for="(item, index) in buttomTabList.localList" :key="index" class="carouselItem">
+                <div draggable="true" @dragstart="dragstart($event)" style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"></div>
                 <div class="closeBox" v-show="item" @click="closeButtom(item, index, 'localList')">x</div>
-                <iframe width="100%" height="100%" frameborder="0" allowfullscreen :src="item.iFrameUrl"></iframe>
+                <iframe width="100%" v-if="item.iFrameUrl" height="100%" frameborder="0" allowfullscreen :src="item.iFrameUrl"></iframe>
               </div>
             </el-carousel-item>
           </el-carousel>
@@ -172,8 +224,9 @@
           <el-carousel ref="cardShow1" :autoplay="false" interval="0" indicator-position="none" :loop="false" arrow="never">
             <el-carousel-item>
               <div draggable="true" @dragstart="dragstart($event)" v-for="(item, index) in buttomTabList.fuseList" :key="index" class="carouselItem">
+                <div draggable="true" @dragstart="dragstart($event)" style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"></div>
                 <div class="closeBox" v-show="item" @click="closeButtom(item, index, 'fuseList')">x</div>
-                <iframe width="100%" height="100%" frameborder="0" allowfullscreen :src="item.iFrameUrl"></iframe>
+                <iframe width="100%" v-if="item.iFrameUrl" height="100%" frameborder="0" allowfullscreen :src="item.iFrameUrl"></iframe>
               </div>
             </el-carousel-item>
           </el-carousel>
@@ -182,8 +235,9 @@
           <el-carousel ref="cardShow2" :autoplay="false" interval="0" indicator-position="none" :loop="false" arrow="never">
             <el-carousel-item>
               <div draggable="true" @dragstart="dragstart($event)" v-for="(item, index) in buttomTabList.monitorList" :key="index" class="carouselItem">
+                <div draggable="true" @dragstart="dragstart($event)" style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"></div>
                 <div class="closeBox" v-show="item" @click="closeButtom(item, index, 'monitorList')">x</div>
-                <iframe width="100%" height="100%" frameborder="0" allowfullscreen :src="item.iFrameUrl"></iframe>
+                <iframe width="100%" v-if="item.iFrameUrl" height="100%" frameborder="0" allowfullscreen :src="item.iFrameUrl"></iframe>
               </div>
             </el-carousel-item>
           </el-carousel>
@@ -197,8 +251,7 @@
         <el-button type="primary" @click="leaveMeetingAll">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog :visible.sync="statusDialogVisible" width="60%" :before-close="handleStatusClose" class="meetingStatus">
-      <span class="dialogX" @click="statusDialogVisible = false">x</span>
+    <el-dialog :visible.sync="statusDialogVisible" title="会场终端" width="60%" :before-close="handleStatusClose" class="meetingStatus">
       <div class="metting_all">
         <!-- 会议 -->
         <div class="metting">
@@ -206,10 +259,10 @@
           <div class="metting_top">
             <!-- 会场终端 -->
             <div class="metting_table">
-              <div class="table_title">
+              <!-- <div class="table_title">
                 <div>会场终端</div>
                 <img style="margin-left: 35%" src="../pluginTemp/images/ico_ty.png" alt="" />
-              </div>
+              </div> -->
               <!-- 搜索 -->
               <div class="metting_search">
                 <el-input placeholder="请输入搜索关键字" v-model="dialogSearch"></el-input>
@@ -227,6 +280,7 @@
               <el-table
                 :data="meetingStatusData"
                 max-height="500px"
+                style="margin-bottom: 30px"
                 :row-style="tableRowClassName"
                 :header-cell-style="{ background: '#012641', borderBottom: '1px solid #013657' }"
               >
@@ -237,59 +291,77 @@
                   <template slot-scope="scope">
                     <el-row :gutter="28">
                       <el-col :span="3">
-                        <div class="table_img" @click="handleUp(scope.row)">
-                          <img src="../pluginTemp/images/handle.png" alt="" />
+                        <div class="table_img" @click="handleUp(scope.row)" v-show="scope.row.status == 0">
+                          <img src="../pluginTemp/images/call_2.png" alt="" title="重拨" />
                           <!-- <img src="./assets/call_2.png" alt="" /> -->
                         </div>
                       </el-col>
                       <el-col :span="3">
-                        <div class="table_img" v-show="scope.row.is_main == true" @click="changemain(scope.row)">
-                          <img src="../pluginTemp/images/user_1.png" />
+                        <div class="table_img" @click="handleUp(scope.row)" v-show="scope.row.status">
+                          <img src="../pluginTemp/images/handle.png" alt="" title="发言" />
+                          <!-- <img src="./assets/call_2.png" alt="" /> -->
+                        </div>
+                      </el-col>
+                      <el-col :span="3">
+                        <div class="table_img" v-show="scope.row.is_main == false && scope.row.status == 1 && scope.row.type == 0" @click="changemain(scope.row)">
+                          <img src="../pluginTemp/images/user_1.png" title="主席" />
                           <!-- <img src="./assets/user_2.png" alt="" /> -->
                         </div>
                       </el-col>
                       <el-col :span="3">
-                        <div class="table_img" v-show="scope.row.is_main == false" @click="changemain(scope.row)">
-                          <img src="../pluginTemp/images/user_2.png" />
+                        <div class="table_img" v-show="scope.row.is_main == true && scope.row.status == 1 && scope.row.type == 0" @click="changemain(scope.row)">
+                          <img src="../pluginTemp/images/user_2.png" title="主席" />
                           <!-- <img src="./assets/user_2.png" alt="" /> -->
                         </div>
                       </el-col>
                       <el-col :span="3">
-                        <div class="table_img" v-show="scope.row.mic_status == 'on'" @click="imgShowChange('open', scope.row)">
-                          <img src="../pluginTemp/images/mic_1.png" alt="" />
+                        <div class="table_img" v-show="scope.row.mic_status == 'on' && scope.row.status == 1" @click="rowImgShowChange('open', scope.row)">
+                          <img src="../pluginTemp/images/mic_1.png" alt="" title="麦克风" />
                           <!-- <img src="./assets/mic_2.png" alt="" /> -->
                         </div>
                       </el-col>
                       <el-col :span="3">
-                        <div class="table_img" v-show="scope.row.mic_status == 'off'" @click="imgShowChange('off', scope.row)">
-                          <img src="../pluginTemp/images/mic_2.png" alt="" />
+                        <div class="table_img" v-show="scope.row.mic_status == 'off' && scope.row.status == 1" @click="rowImgShowChange('off', scope.row)">
+                          <img src="../pluginTemp/images/mic_2.png" alt="" title="麦克风" />
                           <!-- <img src="./assets/mic_2.png" alt="" /> -->
                         </div>
                       </el-col>
                       <el-col :span="3">
-                        <div class="table_img">
-                          <img src="../pluginTemp/images/mic_3.png" alt="" />
+                        <div class="table_img" v-show="!scope.row.mic_status && scope.row.status == 1">
+                          <img src="../pluginTemp/images/mic_3.png" alt="" title="麦克风" />
+                          <!-- <img src="./assets/mic_2.png" alt="" /> -->
+                        </div>
+                      </el-col>
+                      <el-col :span="3">
+                        <div class="table_img" v-show="scope.row.mic_status == 'on' && scope.row.status == 1">
+                          <img src="../pluginTemp/images/mic_4.png" alt="" title="远端麦克风" />
                           <!-- <img src="./assets/mic_4.png" alt="" /> -->
                         </div>
                       </el-col>
                       <el-col :span="3">
-                        <div class="table_img" v-show="scope.row.vol_status == 'on'" @click="hornChange(scope.row)">
-                          <img src="../pluginTemp/images/horn_1.png" alt="" />
+                        <div class="table_img" v-show="scope.row.mic_status == 'off' && scope.row.status == 1">
+                          <img src="../pluginTemp/images/mic_5.png" alt="" title="远端麦克风" />
+                          <!-- <img src="./assets/mic_4.png" alt="" /> -->
                         </div>
                       </el-col>
                       <el-col :span="3">
-                        <div class="table_img" v-show="scope.row.vol_status == 'off'" @click="hornChange(scope.row)">
-                          <img src="../pluginTemp/images/horn_2.png" alt="" />
+                        <div class="table_img" v-show="scope.row.vol_status == 'on' && scope.row.status == 1" @click="hornChange(scope.row)">
+                          <img src="../pluginTemp/images/horn_1.png" alt="" title="扬声器" />
                         </div>
                       </el-col>
                       <el-col :span="3">
-                        <div class="table_img" @click="rowMonitor(scope.row)">
-                          <img src="../pluginTemp/images/camera_1.png" alt="" />
+                        <div class="table_img" v-show="scope.row.vol_status == 'off' && scope.row.status == 1" @click="hornChange(scope.row)">
+                          <img src="../pluginTemp/images/horn_2.png" alt="" title="扬声器" />
                         </div>
                       </el-col>
                       <el-col :span="3">
-                        <div class="table_img" @click="rowFinishMeeting(scope.row)">
-                          <img src="../pluginTemp/images/leave_1.png" alt="" />
+                        <div class="table_img" @click="rowMonitor(scope.row)" v-show="scope.row.status">
+                          <img src="../pluginTemp/images/camera_1.png" alt="" title="预监" />
+                        </div>
+                      </el-col>
+                      <el-col :span="3">
+                        <div class="table_img" @click="rowFinishMeeting(scope.row)" v-show="scope.row.status">
+                          <img src="../pluginTemp/images/leave_1.png" alt="" title="离会" />
                         </div>
                       </el-col>
                     </el-row>
@@ -312,8 +384,8 @@
         <el-button type="primary" @click="lineDialogChange">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog :visible.sync="addDialogVisible" width="60%" :show-close="false" class="temporaryAdd">
-      <el-table :data="addtableData" style="width: 100%" height="500px">
+    <el-dialog :visible.sync="addDialogVisible" width="60%" class="temporaryAdd" title="添加临时资源">
+      <el-table :data="addtableData" style="width: 100%" height="380px" :header-cell-style="{ background: '#012641', borderBottom: '1px solid #013657', color: '#1985e1' }">
         <el-table-column align="center" prop="name" label="名称">
           <template slot-scope="scope">
             <el-input size="small" v-model="scope.row.name"></el-input>
@@ -349,7 +421,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-button class="addRow" @click="addRow" style="background: #171f34; color: #ffffff">➕新增</el-button>
+      <el-button class="addRow" @click="addRow" style="background: #002c47; color: #ffffff">+新增</el-button>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="addRowChange">确 定</el-button>
@@ -401,8 +473,8 @@ export default {
   },
   data() {
     return {
-      page_server: "https://streamedian.com",
-      video_size: "320x240",
+      page_server: "http://114.115.248.69",
+      video_size: "700x440",
       conference_id: "", //会议ID，
       videoObject: {
         container: ".video-content", // 容器的ID或className
@@ -440,7 +512,17 @@ export default {
       imgshow: true, //麦克风图片控制
       lineData: "IPV4", //线路数据
       videoStatus: true, //录播状态
-      addtableData: [], //新增弹窗表格
+      addtableData: [
+        {
+          name: "",
+          model: "",
+          type: "",
+          flag: "",
+          username: "",
+          password: "",
+          listId: "0",
+        },
+      ], //新增弹窗表格
       videoSouce: [], //每个屏幕的线路
       terminalList: [], //终端数据
       localList: [], //本地数据
@@ -492,11 +574,12 @@ export default {
       localCheckList: [], //本地值
       fuseCheckList: [], //融合值
       monitorCheckList: [], //监控值
-      listId: 0, //新增ID
+      listId: 1, //新增ID
       nowLocaltion: "终端", //当前的tab
       video_listData: [], //所有会议的初始数据
       data_id: "", //data_id
       mainHeight: "980px", //组件高度
+      nowDialogRadioSearch: "终端",
     };
   },
   computed: {},
@@ -506,7 +589,7 @@ export default {
     let { componentId } = this.customConfig || {};
     // let urlMessage = this.getUrlParams(window.location.href);
     let dataid = this.GetQueryString("data_id");
-     this.data_id = this.GetQueryString("data_id");
+    this.data_id = this.GetQueryString("data_id");
     // console.log(this.GetQueryString("data_id"));
     this.creatMeeting(dataid);
     componentId && window.componentCenter?.register(componentId, "comp", this, eventActionDefine);
@@ -565,95 +648,124 @@ export default {
         data_id: data_id,
         type: "1",
       };
-      create(message).then((res) => {
-        if (res.status == 200) {
-          this.conference_id = res.data.conference_id;
-          let message = {
-            conference_id: +this.conference_id,
-            external: "",
-            type: 1,
-          };
-          video_list(message).then((res) => {
-            this.video_listData = res.data;
-            if (res.data.is_recording) {
-              let message = {
-                conference_id: this.conference_id,
-                status: 1,
-              };
-              record(message).then((res) => {
-                if (res.status == 200) {
-                  this.$message({
-                    message: "正在录播中",
-                    type: "success",
+      create(message)
+        .then((res) => {
+          if (res.status == 200) {
+            this.windowLayout();
+            this.conference_id = res.data.conference_id;
+            let message = {
+              conference_id: +this.conference_id,
+              external: "",
+              type: 1,
+            };
+            video_list(message).then((res) => {
+              this.video_listData = res.data;
+              if (res.data.is_recording) {
+                let message = {
+                  conference_id: this.conference_id,
+                  status: 1,
+                };
+                record(message)
+                  .then((res) => {
+                    if (res.status == 200) {
+                      this.$message({
+                        message: "正在录播中",
+                        type: "success",
+                      });
+                    }
+                  })
+                  .catch((error) => {
+                    console.log(error.data.result);
+                    this.$message({
+                      message: error.data.result,
+                      type: "error",
+                    });
                   });
+              }
+              this.videoList = res.data.terminal_list;
+              this.videoList.forEach((item, index) => {
+                this.$nextTick(() => {
+                  let h = document.getElementsByClassName("topCenterScreen")[index].offsetHeight;
+                  let w = document.getElementsByClassName("topCenterScreen")[index].offsetWidth;
+                  item.video_size = `${w - 8}x${h - 8}`;
+                  item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
+                  item.ipv == 0 ? (this.videoSouce[index] = "IPV4") : (this.videoSouce[index] = "IPV6");
+                  this.$forceUpdate();
+                  console.log(item.iFrameUrl);
+                });
+              });
+              this.meetingStatusDataAll = res.data.terminal_list;
+              // this.meetingStatusData = this.meetingStatusDataAll;
+              this.terminalList = [];
+              this.terminalListRed = [];
+              this.localList = [];
+              this.localListRed = [];
+              this.fuseList = [];
+              this.fuseListRed = [];
+              this.monitorList = [];
+              this.monitorListRed = [];
+              res.data.terminal_list.forEach((item, index) => {
+                switch (item.type) {
+                  case 0:
+                    if (item.status == 1) {
+                      this.terminalList.push(item);
+                    } else {
+                      this.terminalListRed.push(item);
+                    }
+                    break;
+                  case 1:
+                    if (item.status == 1) {
+                      this.localList.push(item);
+                    } else {
+                      this.localListRed.push(item);
+                    }
+
+                    break;
+                  case 2:
+                    if (item.status == 1) {
+                      this.fuseList.push(item);
+                    } else {
+                      this.fuseListRed.push(item);
+                    }
+
+                    break;
+                  case 3:
+                    if (item.status == 1) {
+                      this.monitorList.push(item);
+                    } else {
+                      this.monitorListRed.push(item);
+                    }
+                    break;
                 }
               });
-            }
-            this.videoList = res.data.terminal_list;
-            this.videoList.forEach((item, index) => {
-              item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa("rtsp://rtsp.stream/pattern")}&r=${window.btoa(this.video_size)}`;
-              item.ipv == 0 ? (this.videoSouce[index] = "IPV4") : (this.videoSouce[index] = "IPV6");
-            });
-            this.meetingStatusDataAll = res.data.terminal_list;
-            this.meetingStatusDataAll.forEach((item, index) => {
-              if (item.type == 0) {
-                this.meetingStatusData.push(item);
-              }
-            });
-            // this.meetingStatusData = this.meetingStatusDataAll;
-            this.terminalList = [];
-            this.localList = [];
-            this.fuseList = [];
-            this.monitorList = [];
-            res.data.terminal_list.forEach((item, index) => {
-              switch (item.type) {
-                case 0:
-                  this.terminalList.push(item);
+              this.terminalList = this.terminalList.concat(this.terminalListRed);
+              this.localList = this.localList.concat(this.localListRed);
+              this.fuseList = this.fuseList.concat(this.fuseListRed);
+              this.monitorList = this.monitorList.concat(this.monitorListRed);
+              switch (this.nowDialogRadioSearch) {
+                case "终端":
+                  this.meetingStatusData = this.terminalList;
                   break;
-                case 1:
-                  this.localList.push(item);
+                case "本地":
+                  this.meetingStatusData = this.localList;
                   break;
-                case 2:
-                  this.fuseList.push(item);
+                case "融合":
+                  this.meetingStatusData = this.fuseList;
                   break;
-                case 3:
-                  this.monitorList.push(item);
+                case "监控":
+                  this.meetingStatusData = this.monitorList;
                   break;
               }
             });
+          }
+        })
+        .catch((error) => {
+          console.log(error.data.result);
+          this.$message({
+            message: error.data.result,
+            type: "error",
           });
-          this.windowLayout();
-        }
-      });
-    },
-    //临时资源添加
-    addResources() {
-      let message = {
-        conference_id: this.conference_id,
-        data_id: "111", // 新增为空
-        parent_id: "aa", //跳转二开页面带入的data_id
-        name: "名称",
-        model: "型号",
-        connection_identifier: "192.168.1.1",
-        user_name: "admin",
-        password: "sdy_23sZG",
-        KVParams: { key: "value" }, // 其他参数
-      };
-      add_resources(message).then((res) => {
-        console.log(res);
-      });
-    },
-    // 点击主席
-    zhuxichange(item, index) {
-      this.terminalList.forEach((item, itemIndex) => {
-        item.zhuxi = false;
-      });
-      this.terminalList[index].zhuxi = true;
-      this.$message({
-        message: "主席已变更",
-        type: "success",
-      });
-      this.searhVideoList();
+        });
     },
     // 重拨
     recall(row) {
@@ -661,15 +773,23 @@ export default {
         conference_id: this.conference_id,
         terminal_id: row.id,
       };
-      recall(message).then((res) => {
-        if (res.status == 200) {
+      recall(message)
+        .then((res) => {
+          if (res.status == 200) {
+            // this.$message({
+            //   message: "已重拨",
+            //   type: "success",
+            // });
+            this.searhVideoList();
+          }
+        })
+        .catch((error) => {
+          console.log(error.data.result);
           this.$message({
-            message: "已重拨",
-            type: "success",
+            message: error.data.result,
+            type: "error",
           });
-          this.searhVideoList();
-        }
-      });
+        });
     },
     // 呼叫
     changemain(row) {
@@ -677,15 +797,22 @@ export default {
         conference_id: this.conference_id,
         terminal_id: row.id,
       };
-      change_main(message).then((res) => {
-        if (res.status == 200) {
+      change_main(message)
+        .then((res) => {
+          if (res.status == 200) {
+            // this.$message({
+            //   message: "主席已切换，上屏到主区域",
+            //   type: "success",
+            // });
+            this.searhVideoList();
+          }
+        })
+        .catch((error) => {
           this.$message({
-            message: "主席已切换，上屏到主区域",
-            type: "success",
+            message: error.data.result,
+            type: "error",
           });
-          this.searhVideoList();
-        }
-      });
+        });
     },
     // 预监
     advance() {
@@ -695,21 +822,25 @@ export default {
       };
       switch (this.nowLocaltion) {
         case "终端":
+        case "终端资源":
           this.terminalCheckList.forEach((item, index) => {
             message.terminal_list.push(item.id);
           });
           break;
         case "本地":
+        case "本地设备":
           this.localCheckList.forEach((item, index) => {
             message.terminal_list.push(item.id);
           });
           break;
         case "融合":
+        case "融合通讯":
           this.fuseCheckList.forEach((item, index) => {
             message.terminal_list.push(item.id);
           });
           break;
         case "监控":
+        case "监控资源":
           this.monitorCheckList.forEach((item, index) => {
             message.terminal_list.push(item.id);
           });
@@ -721,54 +852,100 @@ export default {
           type: "warning",
         });
       }
-      preview(message).then((res) => {
-        if (res.status == 200) {
-          switch (this.nowLocaltion) {
-            case "终端":
-              res.data.forEach((item, index) => {
-                item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa("rtsp://rtsp.stream/pattern")}&r=${window.btoa(this.video_size)}`;
-              });
-              this.buttomTabList.terminalList = res.data;
-              break;
-            case "本地":
-              res.data.forEach((item, index) => {
-                item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa("rtsp://rtsp.stream/pattern")}&r=${window.btoa(this.video_size)}`;
-              });
-              this.buttomTabList.localList = res.data;
-              break;
-            case "融合":
-              res.data.forEach((item, index) => {
-                item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa("rtsp://rtsp.stream/pattern")}&r=${window.btoa(this.video_size)}`;
-              });
-              this.buttomTabList.fuseList = res.data;
-              break;
-            case "监控":
-              res.data.forEach((item, index) => {
-                item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa("rtsp://rtsp.stream/pattern")}&r=${window.btoa(this.video_size)}`;
-              });
-              this.buttomTabList.monitorList = res.data;
-              break;
+      preview(message)
+        .then((res) => {
+          if (res.status == 200) {
+            switch (this.nowLocaltion) {
+              case "终端":
+              case "终端资源":
+                this.buttomTabList.terminalList = res.data;
+                this.buttomTabList.terminalList.forEach((item, index) => {
+                  this.$nextTick(() => {
+                    let h = document.getElementsByClassName("carouselItem")[0].offsetHeight;
+                    let w = document.getElementsByClassName("carouselItem")[0].offsetWidth;
+                    item.video_size = `${w - 8}x${h - 8}`;
+                    item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
+                    this.$forceUpdate();
+                  });
+                });
+                break;
+              case "本地":
+              case "本地设备":
+                this.buttomTabList.localList = res.data;
+                this.buttomTabList.localList.forEach((item, index) => {
+                  this.$nextTick(() => {
+                    let h = document.getElementsByClassName("carouselItem")[0].offsetHeight;
+                    let w = document.getElementsByClassName("carouselItem")[0].offsetWidth;
+                    item.video_size = `${w - 8}x${h - 8}`;
+                    item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
+                    this.$forceUpdate();
+                  });
+                });
+
+                break;
+              case "融合":
+              case "融合通讯":
+                this.buttomTabList.fuseList = res.data;
+                this.buttomTabList.fuseList.forEach((item, index) => {
+                  this.$nextTick(() => {
+                    let h = document.getElementsByClassName("carouselItem")[0].offsetHeight;
+                    let w = document.getElementsByClassName("carouselItem")[0].offsetWidth;
+                    item.video_size = `${w - 8}x${h - 8}`;
+                    item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
+                    this.$forceUpdate();
+                  });
+                });
+                break;
+              case "监控":
+              case "监控资源":
+                this.buttomTabList.monitorList = res.data;
+                this.buttomTabList.monitorList.forEach((item, index) => {
+                  this.$nextTick(() => {
+                    let h = document.getElementsByClassName("carouselItem")[0].offsetHeight;
+                    let w = document.getElementsByClassName("carouselItem")[0].offsetWidth;
+                    item.video_size = `${w - 8}x${h - 8}`;
+                    item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
+                    this.$forceUpdate();
+                  });
+                });
+                break;
+            }
+            this.$message({
+              message: "预监资源已更新",
+              type: "success",
+            });
           }
+        })
+        .catch((error) => {
+          console.log(error.data.result);
           this.$message({
-            message: "预监资源已更新",
-            type: "success",
+            message: error.data.result,
+            type: "error",
           });
-        }
-      });
+        });
     },
     handleUp(row) {
       let message = {
         conference_id: this.conference_id,
         terminal_id: row.id,
       };
-      say(message).then((res) => {
-        if (res.status == 200) {
+      say(message)
+        .then((res) => {
+          if (res.status == 200) {
+            // this.$message({
+            //   message: "发言成功，上屏至第二区域",
+            //   type: "success",
+            // });
+            this.searhVideoList();
+          }
+        })
+        .catch((error) => {
+          console.log(error.data.result);
           this.$message({
-            message: "发言成功，上屏至第二区域",
-            type: "success",
+            message: error.data.result,
+            type: "error",
           });
-        }
-      });
+        });
     },
     // 搜索方法
     handleSearch() {
@@ -782,11 +959,11 @@ export default {
     },
     // 底部删除
     closeButtom(item, index, type) {
-      this.buttomTabList[type] = this.buttomTabList[type].splice(index, 0);
-      this.$message({
-        message: "删除成功",
-        type: "success",
-      });
+      this.buttomTabList[type] = this.buttomTabList[type].splice(index, 1);
+      // this.$message({
+      //   message: "删除成功",
+      //   type: "success",
+      // });
     },
     // 拖动拖动源
     dragstart(event) {
@@ -797,7 +974,7 @@ export default {
       console.log(item, num, index, "接收源信息");
       let message = {
         conference_id: this.conference_id,
-        terminal_id: item.id,
+        terminal_id: this.videoList[index].id,
         screen_id: num,
         window_id: index,
       };
@@ -817,21 +994,29 @@ export default {
         terminal_id: item.id,
         ipv: val == "IPV4" ? 0 : 1,
       };
-      change_ipv(message).then((res) => {
-        if (res.status == 200) {
-          if (val == "IPV4") {
-            this.$message({
-              message: "已切换至IPV4",
-              type: "success",
-            });
-          } else {
-            this.$message({
-              message: "已切换至IPV6",
-              type: "success",
-            });
+      change_ipv(message)
+        .then((res) => {
+          if (res.status == 200) {
+            if (val == "IPV4") {
+              // this.$message({
+              //   message: "已切换至IPV4",
+              //   type: "success",
+              // });
+            } else {
+              // this.$message({
+              //   message: "已切换至IPV6",
+              //   type: "success",
+              // });
+            }
           }
-        }
-      });
+        })
+        .catch((error) => {
+          console.log(error.data.result);
+          this.$message({
+            message: error.data.result,
+            type: "error",
+          });
+        });
     },
     // 线路弹窗事件
     lineDialogChange() {
@@ -842,44 +1027,157 @@ export default {
         ipv: this.lineData == "IPV4" ? 0 : 1, // 0 、为默认ipv4 1 、ipv6
       };
       change_ipv(message).then((res) => {
-        console.log(res);
-      });
-      this.lineDialogVisible = false;
-      this.$message({
-        message: "保存成功",
-        type: "success",
+        if (res.status == 200) {
+          this.lineDialogVisible = false;
+          this.$message({
+            message: "保存成功",
+            type: "success",
+          });
+          let message2 = {
+            conference_id: +this.conference_id,
+            external: "",
+            type: 1,
+          };
+          video_list(message2).then((res) => {
+            this.video_listData = res.data;
+            this.videoList = res.data.terminal_list;
+            this.meetingStatusDataAll = res.data.terminal_list;
+            this.meetingStatusData = this.meetingStatusDataAll;
+            this.videoList.forEach((item, index) => {
+              this.$nextTick(() => {
+                let h = document.getElementsByClassName("topCenterScreen")[index].offsetHeight;
+                let w = document.getElementsByClassName("topCenterScreen")[index].offsetWidth;
+                item.video_size = `${w - 8}x${h - 8}`;
+                item.ipv == 0 ? (this.videoSouce[index] = "IPV4") : (this.videoSouce[index] = "IPV6");
+                item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
+                this.$forceUpdate();
+              });
+            });
+            this.terminalList = [];
+            this.terminalListRed = [];
+            this.localList = [];
+            this.localListRed = [];
+            this.fuseList = [];
+            this.fuseListRed = [];
+            this.monitorList = [];
+            this.monitorListRed = [];
+            res.data.terminal_list.forEach((item, index) => {
+              switch (item.type) {
+                case 0:
+                  if (item.status == 1) {
+                    this.terminalList.push(item);
+                  } else {
+                    this.terminalListRed.push(item);
+                  }
+                  break;
+                case 1:
+                  if (item.status == 1) {
+                    this.localList.push(item);
+                  } else {
+                    this.localListRed.push(item);
+                  }
+
+                  break;
+                case 2:
+                  if (item.status == 1) {
+                    this.fuseList.push(item);
+                  } else {
+                    this.fuseListRed.push(item);
+                  }
+
+                  break;
+                case 3:
+                  if (item.status == 1) {
+                    this.monitorList.push(item);
+                  } else {
+                    this.monitorListRed.push(item);
+                  }
+                  break;
+              }
+            });
+            this.terminalList = this.terminalList.concat(this.terminalListRed);
+            this.localList = this.localList.concat(this.localListRed);
+            this.fuseList = this.fuseList.concat(this.fuseListRed);
+            this.monitorList = this.monitorList.concat(this.monitorListRed);
+            switch (this.nowDialogRadioSearch) {
+              case "终端":
+                this.meetingStatusData = this.terminalList;
+                break;
+              case "本地":
+                this.meetingStatusData = this.localList;
+                break;
+              case "融合":
+                this.meetingStatusData = this.fuseList;
+                break;
+              case "监控":
+                this.meetingStatusData = this.monitorList;
+                break;
+            }
+          });
+        }
       });
     },
     dialogRadioSearch(val) {
+      this.nowDialogRadioSearch = val;
       this.meetingStatusData = [];
-      switch (val) {
-        case "终端":
-          this.meetingStatusDataAll.forEach((item, index) => {
-            if (item.type == 0) {
-              this.meetingStatusData.push(item);
+      this.terminalList1 = [];
+      this.terminalListRed1 = [];
+      this.localList1 = [];
+      this.localListRed1 = [];
+      this.fuseList1 = [];
+      this.fuseListRed1 = [];
+      this.monitorList1 = [];
+      this.monitorListRed1 = [];
+      this.meetingStatusDataAll.forEach((item, index) => {
+        switch (item.type) {
+          case 0:
+            if (item.status == 1) {
+              this.terminalList1.push(item);
+            } else {
+              this.terminalListRed1.push(item);
             }
-          });
+            break;
+          case 1:
+            if (item.status == 1) {
+              this.localList1.push(item);
+            } else {
+              this.localListRed1.push(item);
+            }
+
+            break;
+          case 2:
+            if (item.status == 1) {
+              this.fuseList1.push(item);
+            } else {
+              this.fuseListRed1.push(item);
+            }
+
+            break;
+          case 3:
+            if (item.status == 1) {
+              this.monitorList1.push(item);
+            } else {
+              this.monitorListRed1.push(item);
+            }
+            break;
+        }
+      });
+      this.terminalList1 = this.terminalList1.concat(this.terminalListRed1);
+      this.localList1 = this.localList1.concat(this.localListRed1);
+      this.fuseList1 = this.fuseList1.concat(this.fuseListRed1);
+      this.monitorList1 = this.monitorList1.concat(this.monitorListRed1);
+      switch (this.nowDialogRadioSearch) {
+        case "终端":
+          this.meetingStatusData = this.terminalList1;
           break;
         case "本地":
-          this.meetingStatusDataAll.forEach((item, index) => {
-            if (item.type == 1) {
-              this.meetingStatusData.push(item);
-            }
-          });
+          this.meetingStatusData = this.localList1;
           break;
         case "融合":
-          this.meetingStatusDataAll.forEach((item, index) => {
-            if (item.type == 2) {
-              this.meetingStatusData.push(item);
-            }
-          });
+          this.meetingStatusData = this.fuseList1;
           break;
         case "监控":
-          this.meetingStatusDataAll.forEach((item, index) => {
-            if (item.type == 3) {
-              this.meetingStatusData.push(item);
-            }
-          });
+          this.meetingStatusData = this.monitorList1;
           break;
       }
     },
@@ -923,24 +1221,64 @@ export default {
         status: "",
       };
       this.videoStatus ? (message.status = 1) : (message.status = 0);
-      record(message).then((res) => {
-        if (res.status == 200) {
-          if (this.videoStatus) {
-            this.$message({
-              message: "正在录播中",
-              type: "success",
-            });
-          } else {
-            this.$message({
-              message: "录制已关闭",
-              type: "warning",
-            });
+      record(message)
+        .then((res) => {
+          if (res.status == 200) {
+            if (this.videoStatus) {
+              this.$message({
+                message: "正在录播中",
+                type: "success",
+              });
+            } else {
+              this.$message({
+                message: "录制已关闭",
+                type: "warning",
+              });
+            }
           }
-        }
-      });
+        })
+        .catch((error) => {
+          console.log(error.data.result);
+          this.$message({
+            message: error.data.result,
+            type: "error",
+          });
+        });
     },
     // 麦克风
     imgShowChange(val, item, index) {
+      let message = {
+        conference_id: this.conference_id,
+        terminal_id: this.videoList[index].id,
+      };
+      if (val == "off") {
+        message.status = 1;
+      } else if (val == "open") {
+        message.status = 0;
+      }
+      mic_all(message)
+        .then((res) => {
+          console.log(res);
+          if (res.status == 200) {
+            // this.$message({
+            //   message: "麦克风状态已切换",
+            //   type: "success",
+            // });
+            // message.status == 0 ? item.mic_status == "off" : item.mic_status == "on";
+            this.imgshow = !this.imgshow;
+            this.searhVideoList2(index);
+          }
+        })
+        .catch((error) => {
+          console.log(error.data.result);
+          this.$message({
+            message: error.data.result,
+            type: "error",
+          });
+        });
+    },
+    // ROW麦克风
+    rowImgShowChange(val, item, index) {
       let message = {
         conference_id: this.conference_id,
         terminal_id: item.id,
@@ -950,33 +1288,51 @@ export default {
       } else if (val == "open") {
         message.status = 0;
       }
-      mic_all(message).then((res) => {
-        console.log(res);
-        if (res.status == 200) {
+      mic_all(message)
+        .then((res) => {
+          console.log(res);
+          if (res.status == 200) {
+            // this.$message({
+            //   message: "麦克风状态已切换",
+            //   type: "success",
+            // });
+            message.status == 0 ? item.mic_status == "off" : item.mic_status == "on";
+            this.imgshow = !this.imgshow;
+            this.searhVideoList();
+          }
+        })
+        .catch((error) => {
+          console.log(error.data.result);
           this.$message({
-            message: "麦克风状态已切换",
-            type: "success",
+            message: error.data.result,
+            type: "error",
           });
-          message.status == 0 ? item.mic_status == "off" : item.mic_status == "on";
-          this.imgshow = !this.imgshow;
-          this.searhVideoList();
-        }
-      });
+        });
     },
+
     hornChange(row) {
       let message = {
         conference_id: this.conference_id,
         terminal_id: row.id,
         status: 1,
       };
-      change_all_loudspeaker(message).then((res) => {
-        if (res.status == 200) {
+      change_all_loudspeaker(message)
+        .then((res) => {
+          if (res.status == 200) {
+            // this.$message({
+            //   message: "扬声器状态已变更",
+            //   type: "success",
+            // });
+            this.searhVideoList();
+          }
+        })
+        .catch((error) => {
+          console.log(error.data.result);
           this.$message({
-            message: "扬声器状态已变更",
-            type: "success",
+            message: error.data.result,
+            type: "error",
           });
-        }
-      });
+        });
     },
     rowMonitor(row) {
       let message = {
@@ -984,28 +1340,56 @@ export default {
         terminal_list: [],
       };
       message.terminal_list[0] = row.id.toString();
-      preview(message).then((res) => {
-        if (res.status == 200) {
+      preview(message)
+        .then((res) => {
+          if (res.status == 200) {
+            // this.$message({
+            //   message: "已预监",
+            //   type: "success",
+            // });
+            this.searhVideoList();
+          }
+        })
+        .catch((error) => {
+          console.log(error.data.result);
           this.$message({
-            message: "已预监",
-            type: "success",
+            message: error.data.result,
+            type: "error",
           });
-          this.searhVideoList();
-        }
-      });
+        });
     },
     rowFinishMeeting(row) {
       let message = {
         conference_id: this.conference_id,
         terminal_id: row.id,
       };
-      hangup(message).then((res) => {
-        if (res.status == 200) {
+      hangup(message)
+        .then((res) => {
+          if (res.status == 200) {
+            // this.$message({
+            //   message: "已踢出会议",
+            //   type: "success",
+            // });
+            this.searhVideoList();
+          }
+        })
+        .catch((error) => {
+          console.log(error.data.result);
           this.$message({
-            message: "已踢出会议",
-            type: "success",
+            message: error.data.result,
+            type: "error",
           });
-        }
+        });
+    },
+    searhVideoList2(nowIndex) {
+      let message = {
+        conference_id: +this.conference_id,
+        external: "",
+        type: 1,
+      };
+      video_list(message).then((res) => {
+        this.video_listData = res.data;
+        this.videoList[nowIndex].mic_status = res.data.terminal_list[nowIndex].mic_status;
       });
     },
     searhVideoList() {
@@ -1016,51 +1400,82 @@ export default {
       };
       video_list(message).then((res) => {
         this.video_listData = res.data;
-        if (res.data.is_recording) {
-          let message = {
-            conference_id: this.conference_id,
-            status: 1,
-          };
-          record(message).then((res) => {
-            if (res.status == 200) {
-              this.$message({
-                message: "正在录播中",
-                type: "success",
-              });
-            }
-          });
-        }
         // this.videoList = res.data.terminal_list;
         this.meetingStatusDataAll = res.data.terminal_list;
         this.meetingStatusData = this.meetingStatusDataAll;
         this.videoList.forEach((item, index) => {
-          item.ipv == 0 ? (this.videoSouce[index] = "IPV4") : (this.videoSouce[index] = "IPV6");
-          item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa("rtsp://rtsp.stream/pattern")}&r=${window.btoa(this.video_size)}`;
+          this.$nextTick(() => {
+            let h = document.getElementsByClassName("topCenterScreen")[index].offsetHeight;
+            let w = document.getElementsByClassName("topCenterScreen")[index].offsetWidth;
+            item.video_size = `${w - 8}x${h - 8}`;
+            item.ipv == 0 ? (this.videoSouce[index] = "IPV4") : (this.videoSouce[index] = "IPV6");
+            item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
+            this.$forceUpdate();
+          });
         });
         this.terminalList = [];
+        this.terminalListRed = [];
         this.localList = [];
+        this.localListRed = [];
         this.fuseList = [];
+        this.fuseListRed = [];
         this.monitorList = [];
+        this.monitorListRed = [];
         res.data.terminal_list.forEach((item, index) => {
           switch (item.type) {
             case 0:
-              this.terminalList.push(item);
+              if (item.status == 1) {
+                this.terminalList.push(item);
+              } else {
+                this.terminalListRed.push(item);
+              }
               break;
             case 1:
-              this.localList.push(item);
+              if (item.status == 1) {
+                this.localList.push(item);
+              } else {
+                this.localListRed.push(item);
+              }
+
               break;
             case 2:
-              this.fuseList.push(item);
+              if (item.status == 1) {
+                this.fuseList.push(item);
+              } else {
+                this.fuseListRed.push(item);
+              }
+
               break;
             case 3:
-              this.monitorList.push(item);
+              if (item.status == 1) {
+                this.monitorList.push(item);
+              } else {
+                this.monitorListRed.push(item);
+              }
               break;
           }
         });
+        this.terminalList = this.terminalList.concat(this.terminalListRed);
+        this.localList = this.localList.concat(this.localListRed);
+        this.fuseList = this.fuseList.concat(this.fuseListRed);
+        this.monitorList = this.monitorList.concat(this.monitorListRed);
+        switch (this.nowDialogRadioSearch) {
+          case "终端":
+            this.meetingStatusData = this.terminalList;
+            break;
+          case "本地":
+            this.meetingStatusData = this.localList;
+            break;
+          case "融合":
+            this.meetingStatusData = this.fuseList;
+            break;
+          case "监控":
+            this.meetingStatusData = this.monitorList;
+            break;
+        }
       });
     },
     tableRowClassName(row) {
-      console.log(row.row.status);
       if (row.row.status == 0) {
         return {
           color: "red",
@@ -1076,34 +1491,58 @@ export default {
       let message = {
         local_venue_name: "3123",
       };
-      window_layout(message).then((res) => {
-        if (res.status == 200) {
-          this.centerScreen = res.data;
-          this.centerScreenIndex = this.centerScreen[0];
-          this.nowCenterScreen = this.centerScreen[0];
-          this.videoList.forEach((item, index) => {
-            item.ipv == 0 ? (this.videoSouce[index] = "IPV4") : "IPV6";
-            item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa("rtsp://rtsp.stream/pattern")}&r=${window.btoa(this.video_size)}`;
-          });
-          this.$nextTick(() => {
-            let elements = document.getElementsByClassName("topCenterScreen");
-            Array.prototype.forEach.call(elements, function (element) {
-              element.addEventListener("dragover", function (event) {
-                event.preventDefault();
-                event.stopPropagation();
-              });
-              element.addEventListener("dragEnter", function (event) {
-                event.preventDefault();
-                event.stopPropagation();
+      window_layout(message)
+        .then((res) => {
+          if (res.status == 200) {
+            this.centerScreen = res.data;
+            this.centerScreenIndex = this.centerScreen[0];
+            this.nowCenterScreen = this.centerScreen[0];
+            this.videoList.forEach((item, index) => {
+              this.$nextTick(() => {
+                let h = document.getElementsByClassName("topCenterScreen")[index].offsetHeight;
+                let w = document.getElementsByClassName("topCenterScreen")[index].offsetWidth;
+                item.video_size = `${w-8}x${h-8}`;
+                item.ipv == 0 ? (this.videoSouce[index] = "IPV4") : "IPV6";
+                item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
+                console.log(item.iFrameUrl);
+                this.$forceUpdate();
               });
             });
+            this.$nextTick(() => {
+              let elements = document.getElementsByClassName("dropDiv");
+              Array.prototype.forEach.call(elements, function (element) {
+                element.addEventListener("dragover", function (event) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                });
+                element.addEventListener("dragEnter", function (event) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                });
+              });
+            });
+          }
+        })
+        .catch((error) => {
+          this.$message({
+            message: error.data.result,
+            type: "error",
           });
-        }
-      });
+        });
     },
     centerScreenIndexChange(val) {
       this.nowCenterScreen = val;
-      console.log(val);
+      this.videoList.forEach((item, index) => {
+        this.$nextTick(() => {
+          let h = document.getElementsByClassName("topCenterScreen")[index].offsetHeight;
+          let w = document.getElementsByClassName("topCenterScreen")[index].offsetWidth;
+          item.video_size = `${w-8}x${h-8}`;
+          item.ipv == 0 ? (this.videoSouce[index] = "IPV4") : "IPV6";
+          item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
+          console.log(item.iFrameUrl);
+          this.$forceUpdate();
+        });
+      });
     },
     // tab改变
     handleClick(tab, event) {
@@ -1123,10 +1562,8 @@ export default {
     },
     // 离会按钮
     leaveMeeting(row) {
-      this.$message({
-        message: "已离会",
-        type: "warning",
-      });
+      if (res.status == 200) {
+      }
     },
     // 右侧退出会议按钮
     leaveMeetingAll() {
@@ -1137,13 +1574,25 @@ export default {
       };
       finish(message).then((res) => {
         if (res.status == 200) {
-          this.$message({
-            message: "已离会",
-            type: "warning",
-          });
+          // this.$message({
+          //   message: "已离会",
+          //   type: "warning",
+          // });
+          this.closeWindow();
           this.offDialogVisible = false;
         }
       });
+    },
+    closeWindow() {
+      var userAgent = navigator.userAgent;
+      if (userAgent.indexOf("Firefox") != -1 || userAgent.indexOf("Chrome") != -1) {
+        window.location.href = "about:blank";
+        window.close();
+      } else {
+        window.opener = null;
+        window.open("", "_self");
+        window.close();
+      }
     },
     // 弹窗新增行
     addRow() {
@@ -1156,7 +1605,14 @@ export default {
         password: "",
         listId: this.listId++,
       };
-      this.addtableData.push(message);
+      if (this.addtableData.length == 5) {
+        return this.$message({
+          message: "最多设置5条",
+          type: "warning",
+        });
+      } else {
+        this.addtableData.push(message);
+      }
     },
     addRowChange() {
       this.addtableData.forEach((item, index) => {
@@ -1172,10 +1628,10 @@ export default {
         };
         add_resources(this.conference_id, message).then((res) => {
           if (res.status == 200) {
-            this.$message({
-              message: "已添加",
-              type: "success",
-            });
+            // this.$message({
+            //   message: "已添加",
+            //   type: "success",
+            // });
             this.addDialogVisible = false;
           }
         });
@@ -1186,10 +1642,10 @@ export default {
       this.addtableData.forEach((item, index) => {
         if (item.listId == row.listId) {
           this.addtableData.splice(index, 1);
-          this.$message({
-            message: "删除成功",
-            type: "success",
-          });
+          // this.$message({
+          //   message: "删除成功",
+          //   type: "success",
+          // });
         }
       });
     },
@@ -1221,7 +1677,7 @@ export default {
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: end;
+  justify-content: space-around;
   background-color: rgba(0, 21, 41, 1);
 }
 .videoGreen {
@@ -1230,7 +1686,7 @@ export default {
 .screenNum {
   position: absolute;
   right: 7.1%;
-  top: 0.7%;
+  top: 2.7%;
   /deep/.el-radio-button__inner {
     padding: 5px 5px;
     color: #ffffff;
@@ -1254,15 +1710,18 @@ export default {
   margin-left: 0.5%;
 }
 .mainTop {
-  height: 67%;
+  height: 63%;
   width: 100%;
   display: flex;
   justify-content: space-around;
   .topLeft {
     border: 3.5px solid #2062a0;
     height: 100%;
-    width: 18.5%;
+    width: 15.5%;
     background-color: #113164;
+    /deep/.el-tabs__item {
+      padding: 0 10px !important;
+    }
     /deep/.el-tabs__content,
     .el-tabs {
       height: 90%;
@@ -1359,7 +1818,7 @@ export default {
   .topCenter {
     border: 3.5px solid #2062a0;
     height: 100%;
-    width: 73.5%;
+    width: 77%;
     position: relative;
     // display: flex;
     // flex-direction: column;
@@ -1415,7 +1874,7 @@ export default {
   .topRight {
     border: 3.5px solid #2062a0;
     height: 100%;
-    width: 6.5%;
+    width: 6%;
 
     div {
       display: flex;
@@ -1436,7 +1895,7 @@ export default {
 }
 .mainBottom {
   margin-top: 0.5%;
-  height: 28%;
+  height: 29.5%;
   box-sizing: border-box;
   width: 99%;
   margin-left: 0.5%;
@@ -1470,10 +1929,10 @@ export default {
     width: 100%;
   }
   /deep/.el-carousel__container {
-    height: 100%;
-    width: 92%;
+    height: 90%;
+    width: 100%;
     overflow: hidden;
-    margin-left: 3.3%;
+    margin-left: 0 %;
   }
   .arrowBox,
   .arrowBoxRight {
@@ -1538,10 +1997,11 @@ export default {
     padding: 0;
   }
   .el-dialog__header {
-    display: none;
+    border-bottom: 1px solid #ffffff;
   }
   .el-dialog__title {
     background: transparent;
+    color: #ffffff;
   }
   .el-dialog__close,
   .el-dialog__body {
@@ -1566,7 +2026,10 @@ export default {
       padding: 0;
     }
     .el-dialog__header {
-      display: none;
+      // display: none;
+      background: #001529;
+      border-color: #ffffff;
+      color: #ffffff;
     }
     .el-dialog__title {
       background: transparent;
@@ -1626,6 +2089,8 @@ export default {
     .metting_table {
       width: 100%;
       height: 100%;
+      border-radius: 15px;
+      border-bottom: 1px solid #2062a0;
       border-top-left-radius: 20px;
     }
     // 表格标题
@@ -1776,12 +2241,43 @@ export default {
   }
 }
 .temporaryAdd {
+  // 表格标题
+  .table_title {
+    margin-left: -21px;
+    background: url("../pluginTemp/images/bg_title@2x.png") no-repeat;
+    color: #ffffff;
+    height: 35px;
+    line-height: 35px;
+    width: 70%;
+    font-size: 15px;
+    padding-left: 20px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    margin-top: -28px;
+    margin-bottom: 20px;
+  }
+  .table_title img:first-child {
+    margin: 3px 4px 0 -4px;
+    width: 28px;
+    height: 28px;
+  }
+  .table_img img {
+    cursor: pointer;
+    margin-top: 7px;
+    width: 26px;
+    height: 26px;
+  }
   /deep/.el-table__cell {
     background: #171f34;
     .cell {
-      color: #ffffff;
       border: 0px;
     }
+  }
+  /deep/.el-input__inner {
+    background: #001529;
+    border-color: #014e70;
+    color: #ffffff;
   }
   /deep/.is-scrolling-none {
     background: #171f34 !important;
@@ -1792,9 +2288,10 @@ export default {
   /deep/.el-dialog {
     background: #171f34 !important;
     border-radius: 5px !important;
+    border-bottom: 1px solid #2062a0 !important;
   }
   /deep/.el-dialog__body {
-    padding: 30px 20px !important;
+    padding: 0px 20px 0px 20px !important;
   }
   /deep/.el-table--enable-row-hover .el-table__body tr:hover > td {
     /*更改鼠标悬停时表格高亮色*/
@@ -1826,5 +2323,4 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 </style>

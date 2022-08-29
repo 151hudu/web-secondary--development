@@ -51,7 +51,7 @@
         <div></div>
         <div class="div_Right"></div>
       </div>
-      <div class="topTable">
+  <div class="topTable">
         <el-table :data="tableDataTop" border show-summary :summary-method="getTopSummaries" :header-cell-style="{ background: '#DCE6F1', color: 'black' }">
           <el-table-column align="center" prop="dnbmc" label="电能表名称" width="150"> </el-table-column>
           <el-table-column align="center" prop="jjlx" label="计量类型" width="150"> </el-table-column>
@@ -64,7 +64,7 @@
               <template slot-scope="scope">
                 <template v-if="mainEdit == 0">
                   <template v-if="scope.row.jjlx == '发电并网表'">
-                    <input type="number" @input="InputChange" style="width: 89%" v-if="!scope.row.poweroutput_last" v-model="scope.row.poweroutput_last" />
+                    <input type="number" @input="InputChange" style="width: 89%" v-if="scope.row.poweroutput_last == null" v-model="scope.row.poweroutput_last" />
                     <span v-if="scope.row.poweroutput_last">{{ scope.row.poweroutput_last }}</span>
                   </template>
                 </template>
@@ -94,7 +94,7 @@
               <template slot-scope="scope">
                 <template v-if="mainEdit == 0">
                   <template v-if="scope.row.jjlx == '上网关口表（反向）'">
-                    <input v-if="!scope.row.swdl_last" v-model="scope.row.swdl_last" style="width: 89%" type="number" @input="InputChange" />
+                    <input v-if="scope.row.swdl_last == null" v-model="scope.row.swdl_last" style="width: 89%" type="number" @input="InputChange" />
                     <span v-if="scope.row.swdl_last">{{ scope.row.swdl_last }}</span>
                   </template>
                 </template>
@@ -134,17 +134,18 @@
           :header-cell-style="{ background: '#DCE6F1', color: 'black' }"
         >
           <el-table-column align="center" prop="jl_name" label="计量点" width="150"> </el-table-column>
-          <el-table-column align="center" prop="price_avg" :render-header="renderheader" label="平均电价|（元/kwh）" width="150">
-            <template slot-scope="scope">
+          <el-table-column align="center" prop="price_avg" :render-header="renderheader" :formatter="myfixedPrice_avg" label="平均电价|（元/kwh）" width="150">
+            <!-- <template slot-scope="scope">
               <span style="display: none">{{ (scope.row.price_avg = (Number(scope.row.fees_all) / Number(scope.row.poweruse_all)).toFixed(9)) }}</span>
+              <span style="display: none">{{ (scope.row.price_avg = myFixed(Number(scope.row.fees_all) / Number(scope.row.poweruse_all), 9)) }}</span>
               <span>{{ isNaN(scope.row.price_avg) || scope.row.price_avg == Infinity ? "0" : Number(scope.row.fees_all).toFixed(9) }}</span>
-            </template>
+            </template> -->
           </el-table-column>
           <el-table-column align="center" label="总" width="200">
             <el-table-column align="center" prop="poweruse_all" :render-header="renderheader" label="用量|（kwh）" width="100">
               <template slot-scope="scope">
                 <span>{{
-                  (scope.row.poweruse_all = Number(scope.row.poweruse_j) + Number(scope.row.poweruse_f) + Number(scope.row.poweruse_p) + Number(scope.row.poweruse_g))
+                  (scope.row.poweruse_all = Number(scope.row.poweruse_j) + Number(scope.row.poweruse_f) + Number(scope.row.poweruse_p) + Number(scope.row.poweruse_g)).toFixed(2)
                 }}</span>
               </template>
             </el-table-column>
@@ -157,7 +158,7 @@
           <el-table-column align="center" label="尖" width="500">
             <el-table-column align="center" prop="lastnum_j" label="上期结存数" width="100">
               <template slot-scope="scope">
-                <input v-if="mainEdit == 0 && !scope.row.lastnum_j" v-model="scope.row.lastnum_j" style="width: 89%" type="number" @input="InputChange" />
+                <input v-if="mainEdit == 0 && scope.row.lastnum_j == null" v-model="scope.row.lastnum_j" style="width: 89%" type="number" @input="InputChange" />
                 <span v-else>{{ scope.row.lastnum_j }}</span>
               </template>
             </el-table-column>
@@ -174,7 +175,7 @@
             </el-table-column>
             <el-table-column align="center" prop="price_j" :render-header="renderheader" label="电价|（元/kwh）" width="100">
               <template slot-scope="scope">
-                <span>{{ Number(scope.row.price_j).toFixed(5) }}</span>
+                <span>{{ myFixed(Number(scope.row.price_j), 5) }}</span>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="fees_j" :render-header="renderheader" label="电费|（元）" width="100">
@@ -186,7 +187,7 @@
           <el-table-column align="center" label="峰" width="500">
             <el-table-column align="center" prop="lastnum_f" label="上期结存数" width="100">
               <template slot-scope="scope">
-                <input v-if="mainEdit == 0 && !scope.row.lastnum_f" v-model="scope.row.lastnum_f" style="width: 89%" type="number" @input="InputChange" />
+                <input v-if="mainEdit == 0 && scope.row.lastnum_f == null" v-model="scope.row.lastnum_f" style="width: 89%" type="number" @input="InputChange" />
                 <span v-else>{{ scope.row.lastnum_f }}</span>
               </template>
             </el-table-column>
@@ -203,7 +204,7 @@
             >
             <el-table-column align="center" prop="price_f" :render-header="renderheader" label="电价|（元/kwh）" width="100">
               <template slot-scope="scope">
-                <span>{{ Number(scope.row.price_f).toFixed(5) }}</span>
+                <span>{{ myFixed(Number(scope.row.price_f), 5) }}</span>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="fees_f" :render-header="renderheader" label="电费|（元）" width="100">
@@ -215,7 +216,7 @@
           <el-table-column align="center" label="平" width="400">
             <el-table-column align="center" prop="lastnum_p" label="上期结存数" width="100">
               <template slot-scope="scope">
-                <input v-if="mainEdit == 0 && !scope.row.lastnum_p" v-model="scope.row.lastnum_p" style="width: 89%" type="number" @input="InputChange" />
+                <input v-if="mainEdit == 0 && scope.row.lastnum_p == null" v-model="scope.row.lastnum_p" style="width: 89%" type="number" @input="InputChange" />
                 <span v-else>{{ scope.row.lastnum_p }}</span>
               </template>
             </el-table-column>
@@ -232,7 +233,7 @@
             </el-table-column>
             <el-table-column align="center" prop="price_p" :render-header="renderheader" label="电价|（元/kwh）" width="100">
               <template slot-scope="scope">
-                <span>{{ Number(scope.row.price_p).toFixed(5) }}</span>
+                <span>{{ myFixed(Number(scope.row.price_p), 5) }}</span>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="fees_p" :render-header="renderheader" label="电费|（元）" width="100">
@@ -244,7 +245,7 @@
           <el-table-column align="center" label="谷" width="400">
             <el-table-column align="center" prop="lastnum_g" label="上期结存数" width="100">
               <template slot-scope="scope">
-                <input v-if="mainEdit == 0 && !scope.row.lastnum_g" v-model="scope.row.lastnum_g" style="width: 89%" type="number" @input="InputChange" />
+                <input v-if="mainEdit == 0 && scope.row.lastnum_g == null" v-model="scope.row.lastnum_g" style="width: 89%" type="number" @input="InputChange" />
                 <span v-else>{{ scope.row.lastnum_g }}</span>
               </template>
             </el-table-column>
@@ -261,7 +262,7 @@
             </el-table-column>
             <el-table-column align="center" prop="price_g" :render-header="renderheader" label="电价|（元/kwh）" width="100">
               <template slot-scope="scope">
-                <span>{{ Number(scope.row.price_g).toFixed(5) }}</span>
+                <span>{{ myFixed(Number(scope.row.price_g), 5) }}</span>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="fees_g" :render-header="renderheader" label="电费|（元）" width="100">
@@ -280,7 +281,7 @@
 import eventActionDefine from "./components/msgCompConfig";
 import { RadioButton, RadioGroup } from "element-ui";
 import Vue from "vue";
-import { queryDataDetail, saveData, queryViewTableInfo, exportTempleDetailData } from "././api/asset";
+import { queryDataDetail, saveData, queryViewTableInfo, exportTempleDetailData, queryAll } from "././api/asset";
 import utils from "@/utils";
 import $ from "jquery";
 import "./index.less";
@@ -346,9 +347,14 @@ export default {
       tableDataTop: [],
       tableDataBottom: [],
       tableData: [],
+      queryAllData: {},
     };
   },
   mounted() {
+    queryAll().then((res) => {
+      this.queryAllData = res.data;
+      console.log(res.data.export_excel_template_view_id.current_value);
+    });
     let message = {
       form_id: this.GetQueryString("form_id"),
       id: this.GetQueryString("data_id"),
@@ -358,6 +364,42 @@ export default {
         this.tableData = res.data.childData[0][k];
       }
       this.excelAllData = res.data;
+      this.tableData.forEach((item, index) => {
+        item.dnbbl ? (item.dnbbl = item.dnbbl) : (item.dnbbl = 0);
+        item.lastnum_all ? (item.lastnum_all = item.lastnum_all) : (item.lastnum_all = 0);
+        item.nownum_all ? (item.nownum_all = item.nownum_all) : (item.nownum_all = 0);
+        item.poweruse_all ? (item.poweruse_all = item.poweruse_all) : (item.poweruse_all = 0);
+        item.price_all ? (item.price_all = item.price_all) : (item.price_all = 0);
+        item.fees_all ? (item.fees_all = item.fees_all) : (item.fees_all = 0);
+        item.lastnum_j ? (item.lastnum_j = item.lastnum_j) : (item.lastnum_j = 0);
+        item.nownum_j ? (item.nownum_j = item.nownum_j) : (item.nownum_j = 0);
+        item.poweruse_j ? (item.poweruse_j = item.poweruse_j) : (item.poweruse_j = 0);
+        item.price_j ? (item.price_j = item.price_j) : (item.price_j = 0);
+        item.fees_j ? (item.fees_j = item.fees_j) : (item.fees_j = 0);
+        item.lastnum_f ? (item.lastnum_f = item.lastnum_f) : (item.lastnum_f = 0);
+        item.nownum_f ? (item.nownum_f = item.nownum_f) : (item.nownum_f = 0);
+        item.poweruse_f ? (item.poweruse_f = item.poweruse_f) : (item.poweruse_f = 0);
+        item.price_f ? (item.price_f = item.price_f) : (item.price_f = 0);
+        item.fees_f ? (item.fees_f = item.fees_f) : (item.fees_f = 0);
+        item.lastnum_p ? (item.lastnum_p = item.lastnum_p) : (item.lastnum_p = 0);
+        item.nownum_p ? (item.nownum_p = item.nownum_p) : (item.nownum_p = 0);
+        item.poweruse_p ? (item.poweruse_p = item.poweruse_p) : (item.poweruse_p = 0);
+        item.price_p ? (item.price_p = item.price_p) : (item.price_p = 0);
+        item.fees_p ? (item.fees_p = item.fees_p) : (item.fees_p = 0);
+        item.lastnum_g ? (item.lastnum_g = item.lastnum_g) : (item.lastnum_g = 0);
+        item.nownum_g ? (item.nownum_g = item.nownum_g) : (item.nownum_g = 0);
+        item.poweruse_g ? (item.poweruse_g = item.poweruse_g) : (item.poweruse_g = 0);
+        item.price_g ? (item.price_g = item.price_g) : (item.price_g = 0);
+        item.fees_g ? (item.fees_g = item.fees_g) : (item.fees_g = 0);
+        item.poweroutput_last ? (item.poweroutput_last = item.poweroutput_last) : (item.poweroutput_last = 0);
+        item.poweroutput_now ? (item.poweroutput_now = item.poweroutput_now) : (item.poweroutput_now = 0);
+        item.poweroutput_all ? (item.poweroutput_all = item.poweroutput_all) : (item.poweroutput_all = 0);
+        item.swdl_last ? (item.swdl_last = item.swdl_last) : (item.swdl_last = 0);
+        item.swdl_now ? (item.swdl_now = item.swdl_now) : (item.swdl_now = 0);
+        item.swdl_all ? (item.swdl_all = item.swdl_all) : (item.swdl_all = 0);
+        item.zfzydl_all ? (item.zfzydl_all = item.zfzydl_all) : (item.zfzydl_all = 0);
+        item.price_avg ? (item.price_avg = item.price_avg) : (item.price_avg = 0);
+      });
       this.tableData = this.tableData.sort((a, b) => {
         return a.show_rank - b.show_rank;
       });
@@ -389,30 +431,39 @@ export default {
     }
   },
   methods: {
+    myFixed(num, digit) {
+      if (Object.is(parseFloat(num), NaN)) {
+        // return console.log(`传入的值：${num}不是一个数字`);
+        return "-";
+      }
+      num = parseFloat(num);
+      return (Math.round((num + Number.EPSILON) * Math.pow(10, digit)) / Math.pow(10, digit)).toFixed(digit);
+    },
     handleValueChange(value) {
       this.triggerEvent("valueChange", {
         value,
       });
     },
     exportExcel() {
-      if (this.excelAllData.zfzydl_all !== this.excelAllData.poweruse_all) {
+      console.log(this.excelAllData.zfzydl_all, this.excelAllData.poweruse_all);
+      if (Number(this.excelAllData.zfzydl_all).toFixed(2) !== Number(this.excelAllData.poweruse_all).toFixed(2)) {
         return this.$message({
           message: "自发自用电量不匹配",
           type: "error",
         });
       } else {
         let message = {
-          view_id: this.GetQueryString("view_id"),
+          view_id: this.queryAllData.export_excel_template_view_id.current_value,
         };
         queryViewTableInfo(message).then((res) => {
           let message2 = {
             template_id: res.data.queryColumn.formViewDetailButtons[0].exportTemplates[0].id,
-            view_id: res.data.filters.defaultFilter.id,
+            view_id: this.queryAllData.export_excel_template_view_id.current_value,
             form_id: this.GetQueryString("form_id"),
             export_type: 1,
           };
           let message3 = {
-            queryParams: [{ colName: "data_id", type: 0, value: this.GetQueryString("id") }],
+            queryParams: [{ colName: "data_id", type: 0, value: this.GetQueryString("data_id") }],
           };
           exportTempleDetailData(message2, message3)
             .then((res) => {
@@ -433,7 +484,7 @@ export default {
       console.log(this.tableData);
     },
     saveTable() {
-      if (this.excelAllData.zfzydl_all == this.excelAllData.poweruse_all) {
+      if (Number(this.excelAllData.zfzydl_all).toFixed(2) !== Number(this.excelAllData.poweruse_all).toFixed(2)) {
         return this.$message({
           message: "自发自用电量不匹配",
           type: "error",
@@ -522,6 +573,8 @@ export default {
       });
       sums[8] = Number(sums[8]).toFixed(2);
       sums[11] = Number(sums[11]).toFixed(2);
+      sums[12] = Number(sums[8]).toFixed(2) - Number(sums[11]).toFixed(2);
+      console.log(sums[12]);
       this.excelAllData.poweroutput_all = sums[8];
       this.excelAllData.swdl_all = sums[11];
       this.excelAllData.zfzydl_all = sums[12];
@@ -591,11 +644,16 @@ export default {
       console.log(sums);
       return sums;
     },
+    myfixedPrice_avg(row) {
+      row.price_avg = this.myFixed(Number(row.fees_all) / Number(row.poweruse_all), 9);
+      if (row.price_avg == Infinity ? "0" : Number(row.fees_all).toFixed(9)) {
+        return row.price_avg;
+      } else {
+        return "";
+      }
+    },
     formatDate(row) {
       let date = new Date(row["frezz_time"]);
-      console.log(date);
-      console.log(row);
-      console.log(row["frezz_time"]);
       let Y = date.getFullYear() + "-";
       let M = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) + "-" : date.getMonth() + 1 + "-";
       let D = date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + " ";

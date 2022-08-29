@@ -62,6 +62,7 @@
           <el-table-column align="center" label="光伏发电量" width="300">
             <el-table-column align="center" prop="poweroutput_last" label="上期正向有功" width="100">
               <template slot-scope="scope">
+<<<<<<< HEAD
                 <template v-if="mainEdit == 0">
                   <template v-if="scope.row.jjlx == '发电并网表'">
                     <input type="number" @input="InputChange" style="width: 89%" v-if="!scope.row.poweroutput_last" v-model="scope.row.poweroutput_last" />
@@ -69,16 +70,31 @@
                   </template>
                 </template>
                 <span v-if="mainEdit !== 0 && scope.row.jjlx == '发电并网表'">{{ scope.row.poweroutput_last }}</span>
+=======
+                <input
+                  v-if="mainEdit == 0 && !scope.row.poweroutput_last && scope.row.jjlx == '发电并网表'"
+                  v-model="scope.row.poweroutput_last"
+                  style="width: 89%"
+                  type="number"
+                  @input="InputChange"
+                />
+                <span v-if="mainEdit !== 0 && scope.row.poweroutput_last && scope.row.jjlx !== '发电并网表'">{{ scope.row.poweroutput_last }}</span>
+>>>>>>> 172f3a44871a4b7b592f25aea6a66e4d044b27bb
               </template>
             </el-table-column>
             <el-table-column align="center" prop="poweroutput_now" label="本期正向有功" width="100">
               <template slot-scope="scope">
+<<<<<<< HEAD
                 <template v-if="mainEdit == 0">
                   <template v-if="scope.row.jjlx == '发电并网表'">
                     <input type="number" @input="InputChange" style="width: 89%" v-model="scope.row.poweroutput_now" />
                   </template>
                 </template>
                 <span v-if="mainEdit !== 0 && scope.row.jjlx == '发电并网表'">{{ scope.row.poweroutput_now }}</span>
+=======
+                <input v-if="mainEdit == 0 && scope.row.jjlx == '发电并网表'" v-model="scope.row.poweroutput_now" style="width: 89%" />
+                <span v-if="mainEdit !== 0 && scope.row.jjlx !== '发电并网表'">{{ scope.row.poweroutput_now }}</span>
+>>>>>>> 172f3a44871a4b7b592f25aea6a66e4d044b27bb
               </template>
             </el-table-column>
             <el-table-column align="center" prop="poweroutput_all" :render-header="renderheader" label="发电量|（kwh）" width="100">
@@ -92,6 +108,7 @@
           <el-table-column align="center" label="光伏上网电量" width="300">
             <el-table-column align="center" prop="swdl_last" label="上期反向有功" width="100">
               <template slot-scope="scope">
+<<<<<<< HEAD
                 <template v-if="mainEdit == 0">
                   <template v-if="scope.row.jjlx == '上网关口表（反向）'">
                     <input v-if="!scope.row.swdl_last" v-model="scope.row.swdl_last" style="width: 89%" type="number" @input="InputChange" />
@@ -99,16 +116,31 @@
                   </template>
                 </template>
                 <span v-if="mainEdit !== 0 && scope.row.jjlx == '上网关口表（反向）'">{{ scope.row.swdl_last }}</span>
+=======
+                <input
+                  v-if="mainEdit == 0 && !scope.row.swdl_last && scope.row.jjlx == '上网关口表（反向）'"
+                  v-model="scope.row.swdl_last"
+                  style="width: 89%"
+                  type="number"
+                  @input="InputChange"
+                />
+                <span v-if="mainEdit !== 0 && scope.row.swdl_last && scope.row.jjlx !== '上网关口表（反向）'">{{ scope.row.swdl_last }}</span>
+>>>>>>> 172f3a44871a4b7b592f25aea6a66e4d044b27bb
               </template>
             </el-table-column>
             <el-table-column align="center" prop="swdl_now" label="本期反向有功" width="100">
               <template slot-scope="scope">
+<<<<<<< HEAD
                 <template v-if="mainEdit == 0">
                   <template v-if="scope.row.jjlx == '上网关口表（反向）'">
                     <input v-model="scope.row.swdl_now" style="width: 89%" type="number" @input="InputChange" />
                   </template>
                 </template>
                 <span v-if="mainEdit !== 0 && scope.row.jjlx == '上网关口表（反向）'">{{ scope.row.swdl_now }}</span>
+=======
+                <input v-if="mainEdit == 0 && scope.row.jjlx == '上网关口表（反向）'" v-model="scope.row.swdl_now" style="width: 89%" type="number" @input="InputChange" />
+                <span v-if="mainEdit !== 0 && scope.row.jjlx !== '上网关口表（反向）'">{{ scope.row.swdl_now }}</span>
+>>>>>>> 172f3a44871a4b7b592f25aea6a66e4d044b27bb
               </template>
             </el-table-column>
             <el-table-column align="center" prop="swdl_all" :render-header="renderheader" label="上网电量|(kwh)" width="100">
@@ -146,6 +178,10 @@
                 <span>{{
                   (scope.row.poweruse_all = Number(scope.row.poweruse_j) + Number(scope.row.poweruse_f) + Number(scope.row.poweruse_p) + Number(scope.row.poweruse_g))
                 }}</span>
+<<<<<<< HEAD
+=======
+                <!-- <span>{{ isNaN(scope.row.poweruse_all) || scope.row.poweruse_all == Infinity ? "0" : Number(scope.row.poweruse_all).toFixed(2) }}</span> -->
+>>>>>>> 172f3a44871a4b7b592f25aea6a66e4d044b27bb
               </template>
             </el-table-column>
             <el-table-column align="center" prop="fees_all" :render-header="renderheader" label="电费|（kwh）" width="100">
@@ -345,7 +381,46 @@ export default {
       //组件数据
       tableDataTop: [],
       tableDataBottom: [],
+<<<<<<< HEAD
       tableData: [],
+=======
+      tableData: [
+        //  {
+        //   date: "2016-05-03",
+        //   dnbbl: "160",
+        //   poweroutput_now: "1201",
+        //   poweroutput_last: "121",
+        //   swdl_now: "1200",
+        //   frezz_time: "1661329593",
+        //   swdl_last: "120",
+        //   name: "王小虎",
+        //   address: "213123213",
+        //   price_j: "5",
+        //   poweruse_all: "5",
+        //   poweruse_j: "1",
+        //   poweruse_f: "1",
+        //   poweruse_p: "1",
+        //   poweruse_g: "1",
+        //   fees_all: "1",
+        //   fees_j: "1",
+        //   fees_f: "1",
+        //   fees_p: "1",
+        //   fees_g: "1",
+        //   lastnum_j: "1",
+        //   lastnum_f: "1",
+        //   lastnum_p: "1",
+        //   lastnum_g: "1",
+        //   nownum_j: "2",
+        //   nownum_f: "1",
+        //   nownum_p: "1",
+        //   nownum_g: "1",
+        //   price_j: "2",
+        //   price_f: "1",
+        //   price_p: "1",
+        //   price_g: "1",
+        // },
+      ],
+>>>>>>> 172f3a44871a4b7b592f25aea6a66e4d044b27bb
     };
   },
   mounted() {
@@ -366,10 +441,16 @@ export default {
       this.tableDataBottom.forEach((item, index) => {
         if (item.jjlx == "上网关口表（反向）") {
           this.tableDataBottom.splice(index, 1);
+<<<<<<< HEAD
           index - 1;
         }
       });
       this.mainEdit = this.excelAllData.edit_flag;
+=======
+        }
+      });
+      this.mainEdit = 0;
+>>>>>>> 172f3a44871a4b7b592f25aea6a66e4d044b27bb
     });
     //用于注册事件定义，不可删除
     let { componentId } = this.customConfig || {};
@@ -417,7 +498,11 @@ export default {
           exportTempleDetailData(message2, message3)
             .then((res) => {
               if (res.status == 200) {
+<<<<<<< HEAD
                 window.open(window.location.origin + res.data, "_self");
+=======
+                window.open("http://121.36.134.217:18080" + res.data, "_self");
+>>>>>>> 172f3a44871a4b7b592f25aea6a66e4d044b27bb
               }
             })
             .catch((error) => {

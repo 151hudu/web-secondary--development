@@ -1,13 +1,7 @@
 {
-<<<<<<< HEAD
-  "id": "4b4b00e2-55de-4f6b-a801-a4a7dd859ad8",
+  "id": "3c04d982-7da5-451c-a156-85f6b93ddea1",
   "type": "app",
-  "main": "app.5b2c557f.js",
-=======
-  "id": "4a91a020-5dbf-4265-b656-8ddb8c31aad7",
-  "type": "app",
-  "main": "app.40ad3b5c.js",
->>>>>>> 172f3a44871a4b7b592f25aea6a66e4d044b27bb
+  "main": "app.ba4e19b0.js",
   "version": "2",
   "props": {
     "type": "customize",

@@ -17,4 +17,6 @@ export const saveData = (params, data) => request.post(`/ext/bill/saveData?form_
 // 导出模板查询
 export const queryViewTableInfo = (params) => request.get(`/formView/queryViewTableInfo?view_id=${params.view_id}`,);
 // 导出模板查询
+export const queryAll = (params) => request.get(`/system/property/queryAll`,);
+// 导出模板查询
 export const exportTempleDetailData = (params, data) => request.post(`/form/exportTempleDetailData?form_id=${params.form_id}&view_id=${params.view_id}&template_id=${params.template_id}&export_type=${params.export_type}`, data);

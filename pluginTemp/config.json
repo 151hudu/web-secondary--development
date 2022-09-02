@@ -1,7 +1,7 @@
 {
-  "id": "3349b44f-sdff-75d655206b47",
+  "id": "806d8fcd-827b-4b56-a3c2-8cd0ed38cb16",
   "type": "analyzer",
-  "main": "main.fe03ff9e.js",
+  "main": "main.67dc8523.js",
   "version": "2",
   "props": {
     "img": "custom_table.png",
@@ -13,7 +13,22 @@
     "lib": [],
     "cssDep": [],
     "scriptName": "main.b42fe2f5.js",
-    "vars": ["headerBGColor"],
+    "vars": [
+      "外层边界线条颜色",
+      "外层边边界线条粗细",
+      "内层边界线条颜色",
+      "内层边界线条粗细",
+      "下层边界线条颜色",
+      "地图颜色",
+      "地图文字颜色",
+      "汇聚点",
+      "汇聚点颜色",
+      "飞线颜色",
+      "toolTip宽度",
+      "toolTip高度",
+      "toolTip文字颜色",
+      "toolTip文字大小"
+    ],
     "optionModules": []
   }
 }

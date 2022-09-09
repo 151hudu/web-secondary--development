@@ -1,18 +1,12 @@
 {
-  "id": "f1c7b5c4-0c91-42bc-8c65-f50d68af5def",
-  "type": "app",
-  "main": "app.1deb4c02.js",
+  "id": "d9f25048-baca-40d8-ab94-e6cb373e8c74",
+  "type": "reporting",
+  "main": "app.242eeb0d.js",
   "version": "2",
   "props": {
-    "type": "customize",
-    "img": "APP_0001.png",
-    "name": "应用二开_vue",
-    "loadStyle": 0,
-    "lib": [],
-    "css_script": [],
-    "customconf": [
-      "id",
-      "buttons"
-    ]
+    "styleArr": "[\"title\",\"key\", \"eventCenterConfig\"]",
+    "columnStyle": "{title:'自定义'}",
+    "componentAttributes": "{\"style\":[\"title\"],\"data\":[\"key\"],\"interaction\":[\"eventCenterConfig\"]}",
+    "assetColumnList": "[{\"col_name\":\"自定义\",\"col_datatype\":0}]"
   }
 }

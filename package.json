@@ -1,5 +1,5 @@
 {
-  "name": "app-vue-plugin",
+  "name": "om-reporting-plugin-vue-boilerplate",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -15,15 +15,13 @@
     "not dead"
   ],
   "dependencies": {
-    "@njsdata/app-sdk": "^1.0.0",
     "@vue/babel-helper-vue-jsx-merge-props": "^1.2.1",
     "@vue/babel-preset-jsx": "^1.2.4",
     "axios": "^0.23.0",
     "core-js": "^3.6.5",
-    "element-ui": "^2.15.9",
-    "jquery": "^3.6.0",
+    "element-ui": "^2.15.6",
     "querystringify": "^2.2.0",
-    "vue": "^2.7.8"
+    "vue": "^2.6.11"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

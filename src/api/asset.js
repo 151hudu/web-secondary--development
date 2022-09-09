@@ -30,8 +30,12 @@ export const change_all_loudspeaker = (data) => request.post(`/customize/confere
 // 切换上屏
 export const up_screen = (data) => request.post(`/customize/conference/up_screen`, data);
 // 窗口布局
-export const window_layout = (data) => request.post(`/customize/conference/window_layout?local_venue_name=3123`, data);
+export const window_layout = (data) => request.post(`/customize/conference/window_layout`, data);
 // 结束会议
 export const finish = (data) => request.post(`/customize/conference/finish`, data);
 // 挂断资源（踢出会议）
 export const hangup = (data) => request.post(`/customize/conference/hangup`, data);
+// 屏幕模板布局
+export const screen_template_layout = (data) => request.post(`/customize/conference/screen_template_layout`, data);
+// 屏幕模板切换
+export const change_screen_template = (data) => request.post(`/customize/conference/change_screen_template`, data);

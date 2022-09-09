@@ -6,8 +6,13 @@
     ></span>
     <div class="screenNum">
       <el-radio-group v-model="centerScreenIndex" size="mini" @change="centerScreenIndexChange">
-        <el-radio-button :label="item" v-for="(item, index) in centerScreen" :key="index">{{ item.window_layout.length }}</el-radio-button>
+        <el-radio-button v-for="(item, index) in centerScreen" :label="item.screen_name" :key="item.screen_num" :value="index">{{ item.screen_name }}</el-radio-button>
       </el-radio-group>
+    </div>
+    <div class="templateChoose">
+      <el-select size="mini" v-model="templateChoose" placeholder="模板选择" @change="templateChooseChange">
+        <el-option v-for="(item, index) in templateChooseOption" :key="item.template_num" :label="item.template_name" :value="index">{{ item.template_name }}</el-option>
+      </el-select>
     </div>
     <div class="mainTop">
       <div class="topLeft">
@@ -133,6 +138,7 @@
             </el-checkbox-group>
           </el-tab-pane>
         </el-tabs>
+        <i class="el-icon-refresh refreshIcon" @click="searhVideoList"></i>
         <div class="advance">
           <el-button @click="advance">预监</el-button>
         </div>
@@ -148,34 +154,42 @@
             class="dropDiv"
             draggable="true"
             @drop="drop(item, nowCenterScreen.screen_num, index)"
-            @dragstart="dragstart($event)"
-            style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"
+            @dragstart="dragstart($event, item, index, 'center')"
+            @dblclick="singleVideoShowCli(item, index, 'top')"
+            style="width: 100%; height: calc(100% - 70px); position: absolute; background: transparent"
           ></div>
-          <iframe width="100%" v-if="videoList[index] && videoList[index].iFrameUrl" height="100%" frameborder="0" allowfullscreen :src="videoList[index].iFrameUrl"></iframe>
+          <iframe
+            width="100%"
+            v-if="centerShowVideo[index] && centerShowVideo[index].iFrameUrl"
+            height="100%"
+            frameborder="0"
+            allowfullscreen
+            :src="centerShowVideo[index].iFrameUrl"
+          ></iframe>
           <el-select
             class="agreement"
-            v-show="index < videoList.length"
+            v-show="index < centerShowVideo.length"
             v-model="videoSouce[index]"
             :placeholder="item.ipv == 0 ? 'IPV4' : 'IPV6'"
-            @change="videoLineChange($event, videoList[index])"
+            @change="videoLineChange($event, centerShowVideo[index])"
           >
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
-          <div style="color: #ffffff; position: absolute; top: 0; left: 0" v-if="videoList[index] && index < videoList.length">
-            {{ videoList[index].name }}
+          <div style="color: #ffffff; position: absolute; top: 0; left: 0" v-if="centerShowVideo[index] && index < centerShowVideo.length">
+            {{ centerShowVideo[index].name }}
           </div>
           <img
             class="micIcon"
             style="right: 2.8px"
             @click="imgShowChange('open', item, index)"
-            v-show="index < videoList.length && videoList[index].mic_status == 'on'"
+            v-show="index < centerShowVideo.length && centerShowVideo[index].mic_status == 'on'"
             src="../pluginTemp/images/openMIC.png"
             alt=""
           />
           <img
             class="micIcon"
             @click="imgShowChange('off', item, index)"
-            v-show="index < videoList.length && videoList[index].mic_status == 'off'"
+            v-show="index < centerShowVideo.length && centerShowVideo[index].mic_status == 'off'"
             src="../pluginTemp/images/offMIC.png"
             alt=""
           />
@@ -202,7 +216,12 @@
           <el-carousel ref="cardShow" :autoplay="false" interval="0" indicator-position="none" :loop="false" arrow="never">
             <el-carousel-item>
               <div v-for="(item, index) in buttomTabList.terminalList" :key="index" class="carouselItem">
-                <div draggable="true" @dragstart="dragstart($event)" style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"></div>
+                <div
+                  draggable="true"
+                  @dragstart="dragstart($event, item, index, 'bottom')"
+                  @dblclick="singleVideoShowCli(item, index, 'bottom')"
+                  style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"
+                ></div>
                 <div class="closeBox" v-show="item" @click="closeButtom(item, index, 'terminalList')">x</div>
                 <iframe width="100%" v-if="item.iFrameUrl" height="100%" frameborder="0" allowfullscreen :src="item.iFrameUrl"></iframe>
               </div>
@@ -212,8 +231,13 @@
         <el-tab-pane label="本地设备" name="bendi" class="tabPane">
           <el-carousel ref="cardShow3" :autoplay="false" interval="0" indicator-position="none" :loop="false" arrow="never">
             <el-carousel-item>
-              <div draggable="true" @dragstart="dragstart($event)" v-for="(item, index) in buttomTabList.localList" :key="index" class="carouselItem">
-                <div draggable="true" @dragstart="dragstart($event)" style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"></div>
+              <div draggable="true" v-for="(item, index) in buttomTabList.localList" :key="index" class="carouselItem">
+                <div
+                  draggable="true"
+                  @dblclick="singleVideoShowCli(item, index, 'bottom')"
+                  @dragstart="dragstart($event, item, index, 'bottom')"
+                  style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"
+                ></div>
                 <div class="closeBox" v-show="item" @click="closeButtom(item, index, 'localList')">x</div>
                 <iframe width="100%" v-if="item.iFrameUrl" height="100%" frameborder="0" allowfullscreen :src="item.iFrameUrl"></iframe>
               </div>
@@ -223,8 +247,13 @@
         <el-tab-pane label="融合通讯" name="ronghe" class="tabPane">
           <el-carousel ref="cardShow1" :autoplay="false" interval="0" indicator-position="none" :loop="false" arrow="never">
             <el-carousel-item>
-              <div draggable="true" @dragstart="dragstart($event)" v-for="(item, index) in buttomTabList.fuseList" :key="index" class="carouselItem">
-                <div draggable="true" @dragstart="dragstart($event)" style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"></div>
+              <div draggable="true" v-for="(item, index) in buttomTabList.fuseList" :key="index" class="carouselItem">
+                <div
+                  draggable="true"
+                  @dragstart="dragstart($event, item, index, 'bottom')"
+                  @dblclick="singleVideoShowCli(item, index, 'bottom')"
+                  style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"
+                ></div>
                 <div class="closeBox" v-show="item" @click="closeButtom(item, index, 'fuseList')">x</div>
                 <iframe width="100%" v-if="item.iFrameUrl" height="100%" frameborder="0" allowfullscreen :src="item.iFrameUrl"></iframe>
               </div>
@@ -234,8 +263,13 @@
         <el-tab-pane label="监控资源" name="jiankong" class="tabPane">
           <el-carousel ref="cardShow2" :autoplay="false" interval="0" indicator-position="none" :loop="false" arrow="never">
             <el-carousel-item>
-              <div draggable="true" @dragstart="dragstart($event)" v-for="(item, index) in buttomTabList.monitorList" :key="index" class="carouselItem">
-                <div draggable="true" @dragstart="dragstart($event)" style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"></div>
+              <div draggable="true" v-for="(item, index) in buttomTabList.monitorList" :key="index" class="carouselItem">
+                <div
+                  draggable="true"
+                  @dblclick="singleVideoShowCli(item, index, 'bottom')"
+                  @dragstart="dragstart($event, item, index, 'bottom')"
+                  style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"
+                ></div>
                 <div class="closeBox" v-show="item" @click="closeButtom(item, index, 'monitorList')">x</div>
                 <iframe width="100%" v-if="item.iFrameUrl" height="100%" frameborder="0" allowfullscreen :src="item.iFrameUrl"></iframe>
               </div>
@@ -291,7 +325,7 @@
                   <template slot-scope="scope">
                     <el-row :gutter="28">
                       <el-col :span="3">
-                        <div class="table_img" @click="handleUp(scope.row)" v-show="scope.row.status == 0">
+                        <div class="table_img" @click="handleUp(scope.row)" v-show="scope.row.status == 0 && scope.row.type == 0">
                           <img src="../pluginTemp/images/call_2.png" alt="" title="重拨" />
                           <!-- <img src="./assets/call_2.png" alt="" /> -->
                         </div>
@@ -315,42 +349,42 @@
                         </div>
                       </el-col>
                       <el-col :span="3">
-                        <div class="table_img" v-show="scope.row.mic_status == 'on' && scope.row.status == 1" @click="rowImgShowChange('open', scope.row)">
+                        <div class="table_img" v-show="scope.row.mic_status == 'on' && scope.row.status == 1 && scope.row.type == 0" @click="rowImgShowChange('open', scope.row)">
                           <img src="../pluginTemp/images/mic_1.png" alt="" title="麦克风" />
                           <!-- <img src="./assets/mic_2.png" alt="" /> -->
                         </div>
                       </el-col>
                       <el-col :span="3">
-                        <div class="table_img" v-show="scope.row.mic_status == 'off' && scope.row.status == 1" @click="rowImgShowChange('off', scope.row)">
+                        <div class="table_img" v-show="scope.row.mic_status == 'off' && scope.row.status == 1 && scope.row.type == 0" @click="rowImgShowChange('off', scope.row)">
                           <img src="../pluginTemp/images/mic_2.png" alt="" title="麦克风" />
                           <!-- <img src="./assets/mic_2.png" alt="" /> -->
                         </div>
                       </el-col>
                       <el-col :span="3">
-                        <div class="table_img" v-show="!scope.row.mic_status && scope.row.status == 1">
+                        <div class="table_img" v-show="!scope.row.mic_status && scope.row.status == 1 && scope.row.type == 0">
                           <img src="../pluginTemp/images/mic_3.png" alt="" title="麦克风" />
                           <!-- <img src="./assets/mic_2.png" alt="" /> -->
                         </div>
                       </el-col>
                       <el-col :span="3">
-                        <div class="table_img" v-show="scope.row.mic_status == 'on' && scope.row.status == 1">
+                        <div class="table_img" v-show="scope.row.mic_status == 'on' && scope.row.status == 1 && scope.row.type == 0">
                           <img src="../pluginTemp/images/mic_4.png" alt="" title="远端麦克风" />
                           <!-- <img src="./assets/mic_4.png" alt="" /> -->
                         </div>
                       </el-col>
                       <el-col :span="3">
-                        <div class="table_img" v-show="scope.row.mic_status == 'off' && scope.row.status == 1">
+                        <div class="table_img" v-show="scope.row.mic_status == 'off' && scope.row.status == 1 && scope.row.type == 0">
                           <img src="../pluginTemp/images/mic_5.png" alt="" title="远端麦克风" />
                           <!-- <img src="./assets/mic_4.png" alt="" /> -->
                         </div>
                       </el-col>
                       <el-col :span="3">
-                        <div class="table_img" v-show="scope.row.vol_status == 'on' && scope.row.status == 1" @click="hornChange(scope.row)">
+                        <div class="table_img" v-show="scope.row.vol_status == 'on' && scope.row.status == 1 && scope.row.type == 0" @click="hornChange(scope.row)">
                           <img src="../pluginTemp/images/horn_1.png" alt="" title="扬声器" />
                         </div>
                       </el-col>
                       <el-col :span="3">
-                        <div class="table_img" v-show="scope.row.vol_status == 'off' && scope.row.status == 1" @click="hornChange(scope.row)">
+                        <div class="table_img" v-show="scope.row.vol_status == 'off' && scope.row.status == 1 && scope.row.type == 0" @click="hornChange(scope.row)">
                           <img src="../pluginTemp/images/horn_2.png" alt="" title="扬声器" />
                         </div>
                       </el-col>
@@ -360,7 +394,7 @@
                         </div>
                       </el-col>
                       <el-col :span="3">
-                        <div class="table_img" @click="rowFinishMeeting(scope.row)" v-show="scope.row.status">
+                        <div class="table_img" @click="rowFinishMeeting(scope.row)" v-show="scope.row.status && scope.row.type == 0">
                           <img src="../pluginTemp/images/leave_1.png" alt="" title="离会" />
                         </div>
                       </el-col>
@@ -384,7 +418,7 @@
         <el-button type="primary" @click="lineDialogChange">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog :visible.sync="addDialogVisible" width="60%" class="temporaryAdd" title="添加临时资源">
+    <el-dialog :visible.sync="addDialogVisible" width="980px" class="temporaryAdd" title="添加临时资源">
       <el-table :data="addtableData" style="width: 100%" height="380px" :header-cell-style="{ background: '#012641', borderBottom: '1px solid #013657', color: '#1985e1' }">
         <el-table-column align="center" prop="name" label="名称">
           <template slot-scope="scope">
@@ -427,15 +461,17 @@
         <el-button type="primary" @click="addRowChange">确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog :visible.sync="singleVideoShow" ref="singleVideoDialog" :title="this.singleVideoInfo.name" width="900px" :before-close="handleCloseSingle">
+      <div class="singleVideoDialogHeight">
+        <iframe width="100%" height="100%" frameborder="0" allowfullscreen :src="this.singleVideoInfo.iFrameUrl"></iframe>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 // import appService from "@njsdata/app-sdk";
 
-import "video.js/dist/video-js.css";
-import { videoPlayer } from "vue-video-player";
-import "videojs-flash";
 import eventActionDefine from "./components/msgCompConfig";
 import {
   queryAssetById,
@@ -454,9 +490,11 @@ import {
   window_layout,
   finish,
   hangup,
+  screen_template_layout,
+  change_screen_template,
 } from "./api/asset";
 import "./index.css";
-import { Five, People, PhoneCall } from "@icon-park/vue";
+import { Five, People, PhoneCall, Refresh } from "@icon-park/vue";
 import { finished } from "stream";
 const CKplayer = window.ckplayer;
 export default {
@@ -466,44 +504,16 @@ export default {
     info: Object,
   },
   components: {
-    videoPlayer,
     Five,
     People,
     PhoneCall,
+    Refresh,
   },
   data() {
     return {
       page_server: "http://114.115.248.69",
       video_size: "700x440",
       conference_id: "", //会议ID，
-      videoObject: {
-        container: ".video-content", // 容器的ID或className
-        variable: "player", // 播放函数名称
-        autoplay: true, // 是否自动播放
-        live: true, // 是否是直播视频 true = 直播，false = 点播}
-      },
-      playerOptions: {
-        playbackRates: [0.5, 1.0, 1.5, 2.1], // 可选的播放速度
-        autoplay: false, // 如果为true,浏览器准备好时开始回放。
-        muted: false, // 默认情况下将会消除任何音频。
-        loop: false, // 是否视频一结束就重新开始。
-        preload: "auto", // 建议浏览器在<video>加载元素后是否应该开始下载视频数据。auto浏览器选择最佳行为,立即开始加载视频（如果浏览器支持）
-        language: "zh-CN",
-        fluid: true, // 当true时，Video.js player将拥有流体大小。换句话说，它将按比例缩放以适应其容器。
-        sources: [
-          {
-            type: "rtmp/mp4", // 类型
-            src: "rtmp://mobliestream.c3tv.com:554/live/goodtv.sdp", // url地址
-          },
-        ],
-        notSupportedMessage: "此视频暂无法播放，请稍后再试", // 允许覆盖Video.js无法播放媒体源时显示的默认信息。
-        controlBar: {
-          timeDivider: true, // 当前时间和持续时间的分隔符
-          durationDisplay: true, // 显示持续时间
-          remainingTimeDisplay: false, // 是否显示剩余时间功能
-          fullscreenToggle: true, // 是否显示全屏按钮
-        },
-      },
       activeName: "zhongduan",
       offDialogVisible: false,
       statusDialogVisible: false,
@@ -530,6 +540,7 @@ export default {
       monitorList: [], //监控数据
       centerScreen: [],
       nowCenterScreen: [],
+      windowLayoutOption: [],
       videoList: [],
       radioSearch: "终端", //弹窗radio搜索
       dialogSearch: "", //弹窗搜索
@@ -545,12 +556,20 @@ export default {
       ], //线路选项
       modelOptions: [
         {
-          value: "华为",
-          label: "华为",
+          value: "华为中端",
+          label: "华为终端",
         },
         {
-          value: "中兴",
-          label: "中兴",
+          value: "中兴终端",
+          label: "中兴终端",
+        },
+        {
+          value: "小鱼终端",
+          label: "小鱼终端",
+        },
+        {
+          value: "华平终端",
+          label: "华平终端",
         },
       ], //弹窗模型选项
       typeOptions: [
@@ -561,15 +580,19 @@ export default {
       ], //弹窗类型选项
       modelOptionsModel: "",
       typeOptionsModel: "",
-      centerScreenIndex: {},
+      centerScreenIndex: "左辅屏",
+      singleVideoShow: false,
+      singleVideoInfo: {},
+      templateChoose: {},
+      templateChooseOption: [],
       meetingStatusData: [], //弹窗最终展示数据
-      meetingStatusDataAll: [], //弹窗展示数据
       buttomTabList: {
         terminalList: [],
         localList: [],
         fuseList: [],
         monitorList: [],
       },
+      centerShowVideo: [], //中间屏幕展示的
       terminalCheckList: [], //终端值
       localCheckList: [], //本地值
       fuseCheckList: [], //融合值
@@ -580,68 +603,22 @@ export default {
       data_id: "", //data_id
       mainHeight: "980px", //组件高度
       nowDialogRadioSearch: "终端",
+      movingInfo: {},
+      movingInfoIndex: "",
+      movingInfoType: "",
+      nowLocal_venue_name: "",
+      nowLocal_venue_num: "",
     };
   },
   computed: {},
   mounted() {
-    // console.log(document.getElementsByClassName("ant-layout-content"));
-    // this.mainHeight = document.getElementsByClassName("ant-layout-content")[0].offsetHeight + "px";
     let { componentId } = this.customConfig || {};
-    // let urlMessage = this.getUrlParams(window.location.href);
     let dataid = this.GetQueryString("data_id");
     this.data_id = this.GetQueryString("data_id");
-    // console.log(this.GetQueryString("data_id"));
     this.creatMeeting(dataid);
     componentId && window.componentCenter?.register(componentId, "comp", this, eventActionDefine);
   },
   methods: {
-    initVideoPlayer() {
-      // 第一个选中的要播放的video标签, 记得是video标签,
-      const currentInstance = this.$video(this.$refs.videos, {
-        autoplay: true, // 是否自动播放
-        controls: true, // 是否显示控件
-      });
-
-      currentInstance.src({
-        src: "rtmp://media3.scctv.net/live/scctv_800",
-        type: "rtmp/flv", // 这个type值必写, 告诉videojs这是一个rtmp流视频
-      });
-    },
-    GetQueryString(name) {
-      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
-      var r = window.location.search.substr(1).match(reg); //获取url中"?"符后的字符串并正则匹配
-      var context = "";
-      if (r != null) context = r[2];
-      reg = null;
-      r = null;
-      return context == null || context == "" || context == "undefined" ? "" : context;
-    },
-    // 处理资产数据
-    translatePlatformDataToJsonArray(originTableData) {
-      let originTableHeader = originTableData.data[0];
-      let tableHeader = [];
-      originTableHeader.forEach((item) => {
-        tableHeader.push(item.col_name);
-      });
-      let tableBody = originTableData.data[1];
-      let tableData = [];
-      tableBody.forEach((tableItem) => {
-        let temp = {};
-        tableItem.forEach((item, index) => {
-          temp[tableHeader[index]] = item;
-        });
-        tableData.push(temp);
-      });
-      return tableData;
-    },
-    getUrlParams(url) {
-      let pattern = /(\w+|[\u4e00-\u9fa5]+)=(\w+|[\u4e00-\u9fa5]+)/gi;
-      let result = {};
-      url.replace(pattern, ($, $1, $2) => {
-        result[$1] = $2;
-      });
-      return result;
-    },
     // 创建会议
     creatMeeting(data_id) {
       let message = {
@@ -651,7 +628,6 @@ export default {
       create(message)
         .then((res) => {
           if (res.status == 200) {
-            this.windowLayout();
             this.conference_id = res.data.conference_id;
             let message = {
               conference_id: +this.conference_id,
@@ -660,6 +636,8 @@ export default {
             };
             video_list(message).then((res) => {
               this.video_listData = res.data;
+              this.nowLocal_venue_name = res.data.local_venue_name;
+              this.windowLayout();
               if (res.data.is_recording) {
                 let message = {
                   conference_id: this.conference_id,
@@ -675,7 +653,6 @@ export default {
                     }
                   })
                   .catch((error) => {
-                    console.log(error.data.result);
                     this.$message({
                       message: error.data.result,
                       type: "error",
@@ -683,89 +660,112 @@ export default {
                   });
               }
               this.videoList = res.data.terminal_list;
-              this.videoList.forEach((item, index) => {
+              this.centerShowVideo = JSON.parse(JSON.stringify(res.data.terminal_list));
+              this.centerShowVideo.forEach((item, index) => {
                 this.$nextTick(() => {
                   let h = document.getElementsByClassName("topCenterScreen")[index].offsetHeight;
                   let w = document.getElementsByClassName("topCenterScreen")[index].offsetWidth;
-                  item.video_size = `${w - 8}x${h - 8}`;
+                  item.video_size = `${w - 8}x${h - 10}`;
                   item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
                   item.ipv == 0 ? (this.videoSouce[index] = "IPV4") : (this.videoSouce[index] = "IPV6");
                   this.$forceUpdate();
-                  console.log(item.iFrameUrl);
                 });
               });
-              this.meetingStatusDataAll = res.data.terminal_list;
-              // this.meetingStatusData = this.meetingStatusDataAll;
-              this.terminalList = [];
-              this.terminalListRed = [];
-              this.localList = [];
-              this.localListRed = [];
-              this.fuseList = [];
-              this.fuseListRed = [];
-              this.monitorList = [];
-              this.monitorListRed = [];
-              res.data.terminal_list.forEach((item, index) => {
-                switch (item.type) {
-                  case 0:
-                    if (item.status == 1) {
-                      this.terminalList.push(item);
-                    } else {
-                      this.terminalListRed.push(item);
-                    }
-                    break;
-                  case 1:
-                    if (item.status == 1) {
-                      this.localList.push(item);
-                    } else {
-                      this.localListRed.push(item);
-                    }
-
-                    break;
-                  case 2:
-                    if (item.status == 1) {
-                      this.fuseList.push(item);
-                    } else {
-                      this.fuseListRed.push(item);
-                    }
-
-                    break;
-                  case 3:
-                    if (item.status == 1) {
-                      this.monitorList.push(item);
-                    } else {
-                      this.monitorListRed.push(item);
-                    }
-                    break;
-                }
-              });
-              this.terminalList = this.terminalList.concat(this.terminalListRed);
-              this.localList = this.localList.concat(this.localListRed);
-              this.fuseList = this.fuseList.concat(this.fuseListRed);
-              this.monitorList = this.monitorList.concat(this.monitorListRed);
-              switch (this.nowDialogRadioSearch) {
-                case "终端":
-                  this.meetingStatusData = this.terminalList;
-                  break;
-                case "本地":
-                  this.meetingStatusData = this.localList;
-                  break;
-                case "融合":
-                  this.meetingStatusData = this.fuseList;
-                  break;
-                case "监控":
-                  this.meetingStatusData = this.monitorList;
-                  break;
-              }
+              this.handleRedData();
             });
           }
         })
         .catch((error) => {
-          console.log(error.data.result);
+          console.log(error);
           this.$message({
             message: error.data.result,
             type: "error",
           });
         });
+    },
+    // 主屏幕布局
+    windowLayout() {
+      let message = {
+        local_venue_name: this.conference_id,
+      };
+      window_layout(message)
+        .then((res) => {
+          if (res.status == 200) {
+            this.centerScreen = res.data;
+            this.centerScreenIndex = this.centerScreen[0].screen_name;
+            this.nowLocal_venue_num = this.centerScreen[0].screen_num;
+            this.nowCenterScreen = this.centerScreen[0];
+            let message2 = {
+              local_venue_name: this.nowLocal_venue_name,
+              screen_num: this.nowLocal_venue_num,
+            };
+            screen_template_layout(message2).then((res) => {
+              this.templateChooseOption = res.data;
+              this.templateChoose = "";
+            });
+            this.centerShowVideo.forEach((item, index) => {
+              this.$nextTick(() => {
+                let h = document.getElementsByClassName("topCenterScreen")[index].offsetHeight;
+                let w = document.getElementsByClassName("topCenterScreen")[index].offsetWidth;
+                item.video_size = `${w - 8}x${h - 10}`;
+                item.ipv == 0 ? (this.videoSouce[index] = "IPV4") : "IPV6";
+                item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
+                this.$forceUpdate();
+              });
+            });
+            this.$nextTick(() => {
+              let elements = document.getElementsByClassName("dropDiv");
+              Array.prototype.forEach.call(elements, function (element) {
+                element.addEventListener("dragover", function (event) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                });
+                element.addEventListener("dragEnter", function (event) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                });
+              });
+            });
+          }
+        })
+        .catch((error) => {
+          this.$message({
+            message: error.data.result,
+            type: "error",
+          });
+        });
+    },
+    // 查询视频资源
+    searhVideoList() {
+      let message = {
+        conference_id: +this.conference_id,
+        external: "",
+        type: 1,
+      };
+      video_list(message).then((res) => {
+        // this.video_listData = res.data;
+        this.videoList = res.data.terminal_list;
+        this.meetingStatusData = res.data.terminal_list;
+        // this.videoList.forEach((item, index) => {
+        //   this.$nextTick(() => {
+        //     let h = document.getElementsByClassName("topCenterScreen")[index].offsetHeight;
+        //     let w = document.getElementsByClassName("topCenterScreen")[index].offsetWidth;
+        //     item.video_size = `${w - 8}x${h - 10}`;
+        //     item.ipv == 0 ? (this.videoSouce[index] = "IPV4") : (this.videoSouce[index] = "IPV6");
+        //     item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
+        //     this.$forceUpdate();
+        //   });
+        // });
+        this.handleRedData();
+      });
+    },
+    // tab改变
+    handleClick(tab, event) {
+      this.nowLocaltion = tab.label;
+      this.terminalCheckList = [];
+      this.localCheckList = [];
+      this.fuseCheckList = [];
+      this.monitorCheckList = [];
     },
     // 重拨
     recall(row) {
@@ -776,15 +776,10 @@ export default {
       recall(message)
         .then((res) => {
           if (res.status == 200) {
-            // this.$message({
-            //   message: "已重拨",
-            //   type: "success",
-            // });
             this.searhVideoList();
           }
         })
         .catch((error) => {
-          console.log(error.data.result);
           this.$message({
             message: error.data.result,
             type: "error",
@@ -800,11 +795,64 @@ export default {
       change_main(message)
         .then((res) => {
           if (res.status == 200) {
-            // this.$message({
-            //   message: "主席已切换，上屏到主区域",
-            //   type: "success",
-            // });
             this.searhVideoList();
+          }
+        })
+        .catch((error) => {
+          this.$message({
+            message: error.data.result,
+            type: "error",
+          });
+        });
+    },
+    // 发言
+    handleUp(row) {
+      let message = {
+        conference_id: this.conference_id,
+        terminal_id: row.id,
+      };
+      say(message)
+        .then((res) => {
+          if (res.status == 200) {
+            let info = this.centerShowVideo[1];
+            this.centerShowVideo[1] = row;
+            this.centerShowVideo[1].video_size = info.video_size;
+            this.centerShowVideo[1].iFrameUrl = `${this.page_server}/embed?s=${window.btoa(this.centerShowVideo[1].video_url)}&r=${window.btoa(
+              this.centerShowVideo[1].video_size
+            )}`;
+            this.$forceUpdate();
+            this.searhVideoList();
+          }
+        })
+        .catch((error) => {
+          this.$message({
+            message: error.data.result,
+            type: "error",
+          });
+        });
+    },
+    // 录播
+    videoChange() {
+      this.videoStatus = this.videoStatus;
+      let message = {
+        conference_id: this.conference_id,
+        status: "",
+      };
+      this.videoStatus ? (message.status = 1) : (message.status = 0);
+      record(message)
+        .then((res) => {
+          if (res.status == 200) {
+            if (this.videoStatus) {
+              this.$message({
+                message: "正在录播中",
+                type: "success",
+              });
+            } else {
+              this.$message({
+                message: "录制已关闭",
+                type: "warning",
+              });
+            }
           }
         })
         .catch((error) => {
@@ -863,7 +911,7 @@ export default {
                   this.$nextTick(() => {
                     let h = document.getElementsByClassName("carouselItem")[0].offsetHeight;
                     let w = document.getElementsByClassName("carouselItem")[0].offsetWidth;
-                    item.video_size = `${w - 8}x${h - 8}`;
+                    item.video_size = `${w - 8}x${h - 10}`;
                     item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
                     this.$forceUpdate();
                   });
@@ -874,14 +922,14 @@ export default {
                 this.buttomTabList.localList = res.data;
                 this.buttomTabList.localList.forEach((item, index) => {
                   this.$nextTick(() => {
+                    console.log(document.getElementsByClassName("carouselItem")[0]).offsetHeight;
                     let h = document.getElementsByClassName("carouselItem")[0].offsetHeight;
                     let w = document.getElementsByClassName("carouselItem")[0].offsetWidth;
-                    item.video_size = `${w - 8}x${h - 8}`;
+                    item.video_size = `${w - 8}x${h - 10}`;
                     item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
                     this.$forceUpdate();
                   });
                 });
-
                 break;
               case "融合":
               case "融合通讯":
@@ -890,7 +938,7 @@ export default {
                   this.$nextTick(() => {
                     let h = document.getElementsByClassName("carouselItem")[0].offsetHeight;
                     let w = document.getElementsByClassName("carouselItem")[0].offsetWidth;
-                    item.video_size = `${w - 8}x${h - 8}`;
+                    item.video_size = `${w - 8}x${h - 10}`;
                     item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
                     this.$forceUpdate();
                   });
@@ -903,7 +951,7 @@ export default {
                   this.$nextTick(() => {
                     let h = document.getElementsByClassName("carouselItem")[0].offsetHeight;
                     let w = document.getElementsByClassName("carouselItem")[0].offsetWidth;
-                    item.video_size = `${w - 8}x${h - 8}`;
+                    item.video_size = `${w - 8}x${h - 10}`;
                     item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
                     this.$forceUpdate();
                   });
@@ -924,71 +972,188 @@ export default {
           });
         });
     },
-    handleUp(row) {
-      let message = {
-        conference_id: this.conference_id,
-        terminal_id: row.id,
-      };
-      say(message)
-        .then((res) => {
-          if (res.status == 200) {
-            // this.$message({
-            //   message: "发言成功，上屏至第二区域",
-            //   type: "success",
-            // });
-            this.searhVideoList();
-          }
-        })
-        .catch((error) => {
-          console.log(error.data.result);
-          this.$message({
-            message: error.data.result,
-            type: "error",
-          });
-        });
-    },
-    // 搜索方法
-    handleSearch() {
-      this.meetingStatusData = [];
-      this.meetingStatusDataAll.map((item) => {
-        if (item.name.indexOf(this.dialogSearch) !== -1) {
-          this.meetingStatusData.push(item);
-        }
-      });
-      this.radioSearch = "";
-    },
-    // 底部删除
+    // 预监删除
     closeButtom(item, index, type) {
-      this.buttomTabList[type] = this.buttomTabList[type].splice(index, 1);
-      // this.$message({
-      //   message: "删除成功",
-      //   type: "success",
-      // });
+      this.buttomTabList[type].splice(index, 1);
     },
     // 拖动拖动源
-    dragstart(event) {
-      console.log(event, "拖动源信息");
+    dragstart(event, item, index, type) {
+      this.movingInfo = JSON.parse(JSON.stringify(item));
+      this.movingInfoIndex = index;
+      this.movingInfoType = type;
+      console.log(type, "拖动源信息");
     },
     // 拖动接收源
     drop(item, num, index) {
       console.log(item, num, index, "接收源信息");
       let message = {
         conference_id: this.conference_id,
-        terminal_id: this.videoList[index].id,
+        terminal_id: this.centerShowVideo[index].id,
         screen_id: num,
         window_id: index,
       };
       up_screen(message).then((res) => {
-        console.log(res);
+        if (res.status == 200) {
+          if (this.movingInfoType == "bottom") {
+            this.movingInfo.video_size = this.centerShowVideo[index].video_size;
+            this.movingInfo.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(this.movingInfo.video_url)}&r=${window.btoa(this.movingInfo.video_size)}`;
+            this.centerShowVideo.splice(index, 1, this.movingInfo);
+            switch (this.nowLocaltion) {
+              case "终端":
+              case "终端资源":
+                this.buttomTabList.terminalList.splice(this.movingInfoIndex, 1);
+                break;
+              case "本地":
+              case "本地设备":
+                this.buttomTabList.localList.splice(this.movingInfoIndex, 1);
+                break;
+              case "融合":
+              case "融合通讯":
+                this.buttomTabList.fuseList.splice(this.movingInfoIndex, 1);
+                break;
+              case "监控":
+              case "监控资源":
+                this.buttomTabList.monitorList.splice(this.movingInfoIndex, 1);
+                break;
+            }
+          } else {
+            let message2 = {
+              conference_id: this.conference_id,
+              terminal_id: this.centerShowVideo[this.movingInfoIndex].id,
+              screen_id: this.nowCenterScreen.screen_num,
+              window_id: this.movingInfoIndex,
+            };
+            up_screen(message2).then((res) => {
+              console.log(res);
+            });
+            let info = this.centerShowVideo[index];
+            let size = this.centerShowVideo[this.movingInfoIndex].video_size;
+            this.centerShowVideo[index] = this.centerShowVideo[this.movingInfoIndex];
+            this.centerShowVideo[index].video_size = info.video_size;
+            this.centerShowVideo[index].iFrameUrl = `${this.page_server}/embed?s=${window.btoa(this.centerShowVideo[index].video_url)}&r=${window.btoa(
+              this.centerShowVideo[index].video_size
+            )}`;
+            this.centerShowVideo[this.movingInfoIndex] = info;
+            this.centerShowVideo[this.movingInfoIndex].video_size = size;
+            this.centerShowVideo[this.movingInfoIndex].iFrameUrl = `${this.page_server}/embed?s=${window.btoa(
+              this.centerShowVideo[this.movingInfoIndex].video_url
+            )}&r=${window.btoa(this.centerShowVideo[this.movingInfoIndex].video_size)}`;
+            this.$forceUpdate();
+          }
+        }
       });
     },
     dragleave(event) {
       event.preventDefault();
-      console.log("dragleave");
+    },
+    centerScreenIndexChange(val) {
+      let message = {
+        local_venue_name: this.nowLocal_venue_name,
+        screen_num: "",
+        template_num: 0,
+      };
+      this.centerScreen.forEach((item, index) => {
+        if (item.screen_name == val) {
+          message.screen_num = item.screen_num;
+          this.nowCenterScreen = item;
+          this.nowLocal_venue_num = item.screen_num;
+        }
+      });
+      change_screen_template(message).then((res) => {
+        if (res.status == 200) {
+          let message = {
+            conference_id: +this.conference_id,
+            external: "",
+            type: 1,
+          };
+          video_list(message).then((res) => {
+            this.videoList = res.data.terminal_list;
+            this.meetingStatusData = res.data.terminal_list;
+            this.buttomTabList.terminalList = [];
+            this.buttomTabList.fuseList = [];
+            this.buttomTabList.localList = [];
+            this.buttomTabList.monitorList = [];
+            this.centerShowVideo = JSON.parse(JSON.stringify(res.data.terminal_list));
+            let message2 = {
+              local_venue_name: this.nowLocal_venue_name,
+              screen_num: this.nowLocal_venue_num,
+            };
+            screen_template_layout(message2).then((res) => {
+              this.templateChooseOption = res.data;
+            });
+            this.centerShowVideo.forEach((item, index) => {
+              this.$nextTick(() => {
+                let h = document.getElementsByClassName("topCenterScreen")[index].offsetHeight;
+                let w = document.getElementsByClassName("topCenterScreen")[index].offsetWidth;
+                item.video_size = `${w - 8}x${h - 10}`;
+                item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
+                item.ipv == 0 ? (this.videoSouce[index] = "IPV4") : (this.videoSouce[index] = "IPV6");
+                this.$forceUpdate();
+              });
+            });
+            this.handleRedData();
+          });
+        }
+      });
+    },
+    // 屏幕布局切换
+    templateChooseChange(val) {
+      this.nowCenterScreen = this.templateChooseOption[val];
+      this.centerShowVideo.forEach((item, index) => {
+        this.$nextTick(() => {
+          let h = document.getElementsByClassName("topCenterScreen")[index].offsetHeight;
+          let w = document.getElementsByClassName("topCenterScreen")[index].offsetWidth;
+          item.video_size = `${w - 8}x${h - 10}`;
+          item.ipv == 0 ? (this.videoSouce[index] = "IPV4") : "IPV6";
+          item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
+          this.$forceUpdate();
+        });
+      });
+    },
+    // 麦克风
+    imgShowChange(val, item, index) {
+      let message = {
+        conference_id: this.conference_id,
+        terminal_id: this.centerShowVideo[index].id,
+      };
+      if (val == "off") {
+        message.status = 1;
+      } else if (val == "open") {
+        message.status = 0;
+      }
+      mic_all(message)
+        .then((res) => {
+          if (res.status == 200) {
+            // let message2 = {
+            //   conference_id: +this.conference_id,
+            //   external: "",
+            //   type: 1,
+            // };
+            // video_list(message2).then((res) => {
+            //   this.video_listData = res.data;
+            this.centerShowVideo[index].mic_status == "off" ? (this.centerShowVideo[index].mic_status = "on") : (this.centerShowVideo[index].mic_status = "off");
+            // });
+          }
+        })
+        .catch((error) => {
+          this.$message({
+            message: error.data.result,
+            type: "error",
+          });
+        });
+    },
+    // 弹窗搜索方法
+    handleSearch() {
+      this.meetingStatusData = [];
+      this.videoList.map((item) => {
+        if (item.name.indexOf(this.dialogSearch) !== -1) {
+          this.meetingStatusData.push(item);
+        }
+      });
+      this.radioSearch = "";
     },
     // 线路切换
     videoLineChange(val, item) {
-      console.log(val, item);
       let message = {
         conference_id: this.conference_id,
         terminal_id: item.id,
@@ -1011,16 +1176,36 @@ export default {
           }
         })
         .catch((error) => {
-          console.log(error.data.result);
           this.$message({
             message: error.data.result,
             type: "error",
           });
         });
     },
+    // 右侧退出会议按钮
+    leaveMeetingAll() {
+      let message = {
+        conference_id: this.conference_id,
+        data_id: this.data_id,
+        type: 1, //1 紧急会议 0 普通会议
+      };
+      finish(message).then((res) => {
+        if (res.status == 200) {
+          var userAgent = navigator.userAgent;
+          if (userAgent.indexOf("Firefox") != -1 || userAgent.indexOf("Chrome") != -1) {
+            window.location.href = "about:blank";
+            window.close();
+          } else {
+            window.opener = null;
+            window.open("", "_self");
+            window.close();
+          }
+          this.offDialogVisible = false;
+        }
+      });
+    },
     // 线路弹窗事件
     lineDialogChange() {
-      console.log(this.lineData);
       let message = {
         conference_id: +this.conference_id,
         terminal_id: "", // 为空，切换整个会议Ip线路，不为空切换终端ip线路
@@ -1040,83 +1225,24 @@ export default {
           };
           video_list(message2).then((res) => {
             this.video_listData = res.data;
-            this.videoList = res.data.terminal_list;
-            this.meetingStatusDataAll = res.data.terminal_list;
-            this.meetingStatusData = this.meetingStatusDataAll;
-            this.videoList.forEach((item, index) => {
+            this.centerShowVideo = res.data.terminal_list;
+            this.meetingStatusData = this.videoList;
+            this.centerShowVideo.forEach((item, index) => {
               this.$nextTick(() => {
                 let h = document.getElementsByClassName("topCenterScreen")[index].offsetHeight;
                 let w = document.getElementsByClassName("topCenterScreen")[index].offsetWidth;
-                item.video_size = `${w - 8}x${h - 8}`;
+                item.video_size = `${w - 8}x${h - 10}`;
                 item.ipv == 0 ? (this.videoSouce[index] = "IPV4") : (this.videoSouce[index] = "IPV6");
                 item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
                 this.$forceUpdate();
               });
             });
-            this.terminalList = [];
-            this.terminalListRed = [];
-            this.localList = [];
-            this.localListRed = [];
-            this.fuseList = [];
-            this.fuseListRed = [];
-            this.monitorList = [];
-            this.monitorListRed = [];
-            res.data.terminal_list.forEach((item, index) => {
-              switch (item.type) {
-                case 0:
-                  if (item.status == 1) {
-                    this.terminalList.push(item);
-                  } else {
-                    this.terminalListRed.push(item);
-                  }
-                  break;
-                case 1:
-                  if (item.status == 1) {
-                    this.localList.push(item);
-                  } else {
-                    this.localListRed.push(item);
-                  }
-
-                  break;
-                case 2:
-                  if (item.status == 1) {
-                    this.fuseList.push(item);
-                  } else {
-                    this.fuseListRed.push(item);
-                  }
-
-                  break;
-                case 3:
-                  if (item.status == 1) {
-                    this.monitorList.push(item);
-                  } else {
-                    this.monitorListRed.push(item);
-                  }
-                  break;
-              }
-            });
-            this.terminalList = this.terminalList.concat(this.terminalListRed);
-            this.localList = this.localList.concat(this.localListRed);
-            this.fuseList = this.fuseList.concat(this.fuseListRed);
-            this.monitorList = this.monitorList.concat(this.monitorListRed);
-            switch (this.nowDialogRadioSearch) {
-              case "终端":
-                this.meetingStatusData = this.terminalList;
-                break;
-              case "本地":
-                this.meetingStatusData = this.localList;
-                break;
-              case "融合":
-                this.meetingStatusData = this.fuseList;
-                break;
-              case "监控":
-                this.meetingStatusData = this.monitorList;
-                break;
-            }
+            this.handleRedData();
           });
         }
       });
     },
+    // 弹窗tabs筛选
     dialogRadioSearch(val) {
       this.nowDialogRadioSearch = val;
       this.meetingStatusData = [];
@@ -1128,7 +1254,7 @@ export default {
       this.fuseListRed1 = [];
       this.monitorList1 = [];
       this.monitorListRed1 = [];
-      this.meetingStatusDataAll.forEach((item, index) => {
+      this.videoList.forEach((item, index) => {
         switch (item.type) {
           case 0:
             if (item.status == 1) {
@@ -1181,9 +1307,224 @@ export default {
           break;
       }
     },
+    // ROW麦克风
+    rowImgShowChange(val, item, index) {
+      let message = {
+        conference_id: this.conference_id,
+        terminal_id: item.id,
+      };
+      if (val == "off") {
+        message.status = 1;
+      } else if (val == "open") {
+        message.status = 0;
+      }
+      mic_all(message)
+        .then((res) => {
+          console.log(res);
+          if (res.status == 200) {
+            message.status == 0 ? item.mic_status == "off" : item.mic_status == "on";
+            this.imgshow = !this.imgshow;
+            this.searhVideoList();
+          }
+        })
+        .catch((error) => {
+          this.$message({
+            message: error.data.result,
+            type: "error",
+          });
+        });
+    },
+    // ROW喇叭
+    hornChange(row) {
+      let message = {
+        conference_id: this.conference_id,
+        terminal_id: row.id,
+        status: 1,
+      };
+      change_all_loudspeaker(message)
+        .then((res) => {
+          if (res.status == 200) {
+            this.searhVideoList();
+          }
+        })
+        .catch((error) => {
+          this.$message({
+            message: error.data.result,
+            type: "error",
+          });
+        });
+    },
+    // ROW预监
+    rowMonitor(row) {
+      let message = {
+        conference_id: this.conference_id,
+        terminal_list: [],
+      };
+      message.terminal_list[0] = row.id.toString();
+      preview(message)
+        .then((res) => {
+          if (res.status == 200) {
+            // this.searhVideoList();
+            let message0 = false;
+            let message1 = false;
+            let message2 = false;
+            let message3 = false;
+            let data = JSON.parse(JSON.stringify(row));
+            switch (row.type) {
+              case 0:
+                this.buttomTabList.terminalList.forEach((item, index) => {
+                  if (item.data_id == row.data_id) {
+                    message0 = true;
+                  }
+                });
+                if (!message0) {
+                  this.$nextTick(() => {
+                    let w = +document.getElementsByClassName("el-carousel__item")[0].offsetWidth / 5;
+                    let h = document.getElementsByClassName("el-carousel__item")[0].offsetHeight;
+                    data.video_size = `${w - 8}x${h - 10}`;
+                    data.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(data.video_url)}&r=${window.btoa(data.video_size)}`;
+                    this.buttomTabList.terminalList.push(data);
+                    this.$forceUpdate();
+                  });
+                }
+                break;
+              case 1:
+                this.buttomTabList.localList.forEach((item, index) => {
+                  if (item.data_id == row.data_id) {
+                    message1 = true;
+                  }
+                });
+                if (!message1) {
+                  this.$nextTick(() => {
+                    let w = +document.getElementsByClassName("el-carousel__item")[1].offsetWidth / 5;
+                    let h = document.getElementsByClassName("el-carousel__item")[1].offsetHeight;
+                    data.video_size = `${w - 8}x${h - 10}`;
+                    data.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(data.video_url)}&r=${window.btoa(data.video_size)}`;
+                    this.buttomTabList.localList.push(data);
+                    this.$forceUpdate();
+                  });
+                }
+                break;
+              case 2:
+                this.buttomTabList.fuseList.forEach((item, index) => {
+                  if (item.data_id == row.data_id) {
+                    message2 = true;
+                  }
+                });
+                if (!message2) {
+                  this.$nextTick(() => {
+                    let w = +document.getElementsByClassName("el-carousel__item")[2].offsetWidth / 5;
+                    let h = document.getElementsByClassName("el-carousel__item")[2].offsetHeight;
+                    data.video_size = `${w - 8}x${h - 10}`;
+                    data.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(data.video_url)}&r=${window.btoa(data.video_size)}`;
+                    this.buttomTabList.fuseList.push(data);
+                    this.$forceUpdate();
+                  });
+                }
+                break;
+              case 3:
+                this.buttomTabList.monitorList.forEach((item, index) => {
+                  if (item.data_id == row.data_id) {
+                    message3 = true;
+                  }
+                });
+                if (!message3) {
+                  this.$nextTick(() => {
+                    let w = +document.getElementsByClassName("el-carousel__item")[3].offsetWidth / 5;
+                    let h = document.getElementsByClassName("el-carousel__item")[3].offsetHeight;
+                    data.video_size = `${w - 8}x${h - 10}`;
+                    data.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(data.video_url)}&r=${window.btoa(data.video_size)}`;
+                    this.buttomTabList.monitorList.push(data);
+                    console.log(this.buttomTabList.monitorList);
+                    this.$forceUpdate();
+                  });
+                }
+                break;
+            }
+          }
+        })
+        .catch((error) => {
+          this.$message({
+            message: error.data.result,
+            type: "error",
+          });
+        });
+    },
+    // ROW踢出会议
+    rowFinishMeeting(row) {
+      let message = {
+        conference_id: this.conference_id,
+        terminal_id: row.id,
+      };
+      hangup(message)
+        .then((res) => {
+          if (res.status == 200) {
+            this.searhVideoList();
+          }
+        })
+        .catch((error) => {
+          this.$message({
+            message: error.data.result,
+            type: "error",
+          });
+        });
+    },
+    // 添加临时资源
+    addRowChange() {
+      this.addtableData.forEach((item, index) => {
+        let message = {
+          data_id: null,
+          parent_id: this.GetQueryString("data_id"),
+          name: item.name,
+          model: item.model,
+          type: item.type,
+          connection_identifier: item.flag,
+          user_name: item.username,
+          password: item.password,
+        };
+        add_resources(this.conference_id, message).then((res) => {
+          if (res.status == 200) {
+            this.addDialogVisible = false;
+            this.searhVideoList();
+          }
+        });
+      });
+    },
+    // 弹窗新增行
+    addRow() {
+      let message = {
+        name: "",
+        model: "",
+        type: "",
+        flag: "",
+        username: "",
+        password: "",
+        listId: this.listId++,
+      };
+      if (this.addtableData.length == 5) {
+        return this.$message({
+          message: "最多设置5条",
+          type: "warning",
+        });
+      } else {
+        this.addtableData.push(message);
+      }
+    },
+    // 弹窗删除行
+    deleteRow(row) {
+      this.addtableData.forEach((item, index) => {
+        if (item.listId == row.listId) {
+          this.addtableData.splice(index, 1);
+        }
+      });
+    },
     // 退出弹窗
     handleClose() {
       this.offDialogVisible = false;
+    },
+    // 放大视频弹窗
+    handleCloseSingle() {
+      this.singleVideoShow = false;
     },
     // 会场状态弹窗
     handleStatusClose() {
@@ -1213,268 +1554,96 @@ export default {
     addStatus() {
       this.addDialogVisible = true;
     },
-    // 录播
-    videoChange() {
-      this.videoStatus = this.videoStatus;
-      let message = {
-        conference_id: this.conference_id,
-        status: "",
-      };
-      this.videoStatus ? (message.status = 1) : (message.status = 0);
-      record(message)
-        .then((res) => {
-          if (res.status == 200) {
-            if (this.videoStatus) {
-              this.$message({
-                message: "正在录播中",
-                type: "success",
-              });
-            } else {
-              this.$message({
-                message: "录制已关闭",
-                type: "warning",
-              });
-            }
-          }
-        })
-        .catch((error) => {
-          console.log(error.data.result);
-          this.$message({
-            message: error.data.result,
-            type: "error",
-          });
-        });
-    },
-    // 麦克风
-    imgShowChange(val, item, index) {
-      let message = {
-        conference_id: this.conference_id,
-        terminal_id: this.videoList[index].id,
-      };
-      if (val == "off") {
-        message.status = 1;
-      } else if (val == "open") {
-        message.status = 0;
-      }
-      mic_all(message)
-        .then((res) => {
-          console.log(res);
-          if (res.status == 200) {
-            // this.$message({
-            //   message: "麦克风状态已切换",
-            //   type: "success",
-            // });
-            // message.status == 0 ? item.mic_status == "off" : item.mic_status == "on";
-            this.imgshow = !this.imgshow;
-            this.searhVideoList2(index);
-          }
-        })
-        .catch((error) => {
-          console.log(error.data.result);
-          this.$message({
-            message: error.data.result,
-            type: "error",
-          });
-        });
-    },
-    // ROW麦克风
-    rowImgShowChange(val, item, index) {
-      let message = {
-        conference_id: this.conference_id,
-        terminal_id: item.id,
-      };
-      if (val == "off") {
-        message.status = 1;
-      } else if (val == "open") {
-        message.status = 0;
-      }
-      mic_all(message)
-        .then((res) => {
-          console.log(res);
-          if (res.status == 200) {
-            // this.$message({
-            //   message: "麦克风状态已切换",
-            //   type: "success",
-            // });
-            message.status == 0 ? item.mic_status == "off" : item.mic_status == "on";
-            this.imgshow = !this.imgshow;
-            this.searhVideoList();
-          }
-        })
-        .catch((error) => {
-          console.log(error.data.result);
-          this.$message({
-            message: error.data.result,
-            type: "error",
-          });
-        });
-    },
-
-    hornChange(row) {
-      let message = {
-        conference_id: this.conference_id,
-        terminal_id: row.id,
-        status: 1,
-      };
-      change_all_loudspeaker(message)
-        .then((res) => {
-          if (res.status == 200) {
-            // this.$message({
-            //   message: "扬声器状态已变更",
-            //   type: "success",
-            // });
-            this.searhVideoList();
-          }
-        })
-        .catch((error) => {
-          console.log(error.data.result);
-          this.$message({
-            message: error.data.result,
-            type: "error",
-          });
-        });
-    },
-    rowMonitor(row) {
-      let message = {
-        conference_id: this.conference_id,
-        terminal_list: [],
-      };
-      message.terminal_list[0] = row.id.toString();
-      preview(message)
-        .then((res) => {
-          if (res.status == 200) {
-            // this.$message({
-            //   message: "已预监",
-            //   type: "success",
-            // });
-            this.searhVideoList();
-          }
-        })
-        .catch((error) => {
-          console.log(error.data.result);
-          this.$message({
-            message: error.data.result,
-            type: "error",
-          });
-        });
-    },
-    rowFinishMeeting(row) {
-      let message = {
-        conference_id: this.conference_id,
-        terminal_id: row.id,
-      };
-      hangup(message)
-        .then((res) => {
-          if (res.status == 200) {
-            // this.$message({
-            //   message: "已踢出会议",
-            //   type: "success",
-            // });
-            this.searhVideoList();
-          }
-        })
-        .catch((error) => {
-          console.log(error.data.result);
-          this.$message({
-            message: error.data.result,
-            type: "error",
-          });
-        });
-    },
-    searhVideoList2(nowIndex) {
-      let message = {
-        conference_id: +this.conference_id,
-        external: "",
-        type: 1,
-      };
-      video_list(message).then((res) => {
-        this.video_listData = res.data;
-        this.videoList[nowIndex].mic_status = res.data.terminal_list[nowIndex].mic_status;
-      });
-    },
-    searhVideoList() {
-      let message = {
-        conference_id: +this.conference_id,
-        external: "",
-        type: 1,
-      };
-      video_list(message).then((res) => {
-        this.video_listData = res.data;
-        // this.videoList = res.data.terminal_list;
-        this.meetingStatusDataAll = res.data.terminal_list;
-        this.meetingStatusData = this.meetingStatusDataAll;
-        this.videoList.forEach((item, index) => {
-          this.$nextTick(() => {
-            let h = document.getElementsByClassName("topCenterScreen")[index].offsetHeight;
-            let w = document.getElementsByClassName("topCenterScreen")[index].offsetWidth;
-            item.video_size = `${w - 8}x${h - 8}`;
-            item.ipv == 0 ? (this.videoSouce[index] = "IPV4") : (this.videoSouce[index] = "IPV6");
-            item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
-            this.$forceUpdate();
-          });
-        });
-        this.terminalList = [];
-        this.terminalListRed = [];
-        this.localList = [];
-        this.localListRed = [];
-        this.fuseList = [];
-        this.fuseListRed = [];
-        this.monitorList = [];
-        this.monitorListRed = [];
-        res.data.terminal_list.forEach((item, index) => {
-          switch (item.type) {
-            case 0:
-              if (item.status == 1) {
-                this.terminalList.push(item);
-              } else {
-                this.terminalListRed.push(item);
-              }
-              break;
-            case 1:
-              if (item.status == 1) {
-                this.localList.push(item);
-              } else {
-                this.localListRed.push(item);
-              }
-
-              break;
-            case 2:
-              if (item.status == 1) {
-                this.fuseList.push(item);
-              } else {
-                this.fuseListRed.push(item);
-              }
-
-              break;
-            case 3:
-              if (item.status == 1) {
-                this.monitorList.push(item);
-              } else {
-                this.monitorListRed.push(item);
-              }
-              break;
-          }
-        });
-        this.terminalList = this.terminalList.concat(this.terminalListRed);
-        this.localList = this.localList.concat(this.localListRed);
-        this.fuseList = this.fuseList.concat(this.fuseListRed);
-        this.monitorList = this.monitorList.concat(this.monitorListRed);
-        switch (this.nowDialogRadioSearch) {
+    // 放大视频弹窗
+    singleVideoShowCli(item, index, type) {
+      if (type == "top") {
+        this.singleVideoInfo = JSON.parse(JSON.stringify(this.centerShowVideo[index]));
+      } else {
+        switch (this.nowLocaltion) {
           case "终端":
-            this.meetingStatusData = this.terminalList;
+          case "终端资源":
+          this.singleVideoInfo = JSON.parse(JSON.stringify(this.buttomTabList.terminalList[index]));
             break;
           case "本地":
-            this.meetingStatusData = this.localList;
+          case "本地设备":
+          this.singleVideoInfo = JSON.parse(JSON.stringify(this.buttomTabList.localList[index]));
             break;
           case "融合":
-            this.meetingStatusData = this.fuseList;
+          case "融合通讯":
+          this.singleVideoInfo = JSON.parse(JSON.stringify(this.buttomTabList.fuseList[index]));
             break;
           case "监控":
-            this.meetingStatusData = this.monitorList;
+          case "监控资源":
+          this.singleVideoInfo = JSON.parse(JSON.stringify(this.buttomTabList.monitorList[index]));
+            break;
+        }
+      }
+      this.singleVideoInfo.video_size = `900x540`;
+      this.singleVideoInfo.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(this.singleVideoInfo.video_url)}&r=${window.btoa(this.singleVideoInfo.video_size)}`;
+      this.singleVideoShow = true;
+    },
+    // 处理红色数据
+    handleRedData() {
+      this.terminalList = [];
+      this.terminalListRed = [];
+      this.localList = [];
+      this.localListRed = [];
+      this.fuseList = [];
+      this.fuseListRed = [];
+      this.monitorList = [];
+      this.monitorListRed = [];
+      this.videoList.forEach((item, index) => {
+        switch (item.type) {
+          case 0:
+            if (item.status == 1) {
+              this.terminalList.push(item);
+            } else {
+              this.terminalListRed.push(item);
+            }
+            break;
+          case 1:
+            if (item.status == 1) {
+              this.localList.push(item);
+            } else {
+              this.localListRed.push(item);
+            }
+            break;
+          case 2:
+            if (item.status == 1) {
+              this.fuseList.push(item);
+            } else {
+              this.fuseListRed.push(item);
+            }
+            break;
+          case 3:
+            if (item.status == 1) {
+              this.monitorList.push(item);
+            } else {
+              this.monitorListRed.push(item);
+            }
             break;
         }
       });
+      this.terminalList = this.terminalList.concat(this.terminalListRed);
+      this.localList = this.localList.concat(this.localListRed);
+      this.fuseList = this.fuseList.concat(this.fuseListRed);
+      this.monitorList = this.monitorList.concat(this.monitorListRed);
+      switch (this.nowDialogRadioSearch) {
+        case "终端":
+          this.meetingStatusData = this.terminalList;
+          break;
+        case "本地":
+          this.meetingStatusData = this.localList;
+          break;
+        case "融合":
+          this.meetingStatusData = this.fuseList;
+          break;
+        case "监控":
+          this.meetingStatusData = this.monitorList;
+          break;
+      }
     },
+    // 表格行样式
     tableRowClassName(row) {
       if (row.row.status == 0) {
         return {
@@ -1486,173 +1655,37 @@ export default {
         };
       }
     },
-    // 主屏幕布局
-    windowLayout() {
-      let message = {
-        local_venue_name: "3123",
-      };
-      window_layout(message)
-        .then((res) => {
-          if (res.status == 200) {
-            this.centerScreen = res.data;
-            this.centerScreenIndex = this.centerScreen[0];
-            this.nowCenterScreen = this.centerScreen[0];
-            this.videoList.forEach((item, index) => {
-              this.$nextTick(() => {
-                let h = document.getElementsByClassName("topCenterScreen")[index].offsetHeight;
-                let w = document.getElementsByClassName("topCenterScreen")[index].offsetWidth;
-                item.video_size = `${w-8}x${h-8}`;
-                item.ipv == 0 ? (this.videoSouce[index] = "IPV4") : "IPV6";
-                item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
-                console.log(item.iFrameUrl);
-                this.$forceUpdate();
-              });
-            });
-            this.$nextTick(() => {
-              let elements = document.getElementsByClassName("dropDiv");
-              Array.prototype.forEach.call(elements, function (element) {
-                element.addEventListener("dragover", function (event) {
-                  event.preventDefault();
-                  event.stopPropagation();
-                });
-                element.addEventListener("dragEnter", function (event) {
-                  event.preventDefault();
-                  event.stopPropagation();
-                });
-              });
-            });
-          }
-        })
-        .catch((error) => {
-          this.$message({
-            message: error.data.result,
-            type: "error",
-          });
-        });
+    // 获取URL参数
+    GetQueryString(name) {
+      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+      var r = window.location.search.substr(1).match(reg); //获取url中"?"符后的字符串并正则匹配
+      var context = "";
+      if (r != null) context = r[2];
+      reg = null;
+      r = null;
+      return context == null || context == "" || context == "undefined" ? "" : context;
     },
-    centerScreenIndexChange(val) {
-      this.nowCenterScreen = val;
-      this.videoList.forEach((item, index) => {
-        this.$nextTick(() => {
-          let h = document.getElementsByClassName("topCenterScreen")[index].offsetHeight;
-          let w = document.getElementsByClassName("topCenterScreen")[index].offsetWidth;
-          item.video_size = `${w-8}x${h-8}`;
-          item.ipv == 0 ? (this.videoSouce[index] = "IPV4") : "IPV6";
-          item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
-          console.log(item.iFrameUrl);
-          this.$forceUpdate();
-        });
+    // 处理资产数据
+    translatePlatformDataToJsonArray(originTableData) {
+      let originTableHeader = originTableData.data[0];
+      let tableHeader = [];
+      originTableHeader.forEach((item) => {
+        tableHeader.push(item.col_name);
       });
-    },
-    // tab改变
-    handleClick(tab, event) {
-      this.nowLocaltion = tab.label;
-      this.terminalCheckList = [];
-      this.localCheckList = [];
-      this.fuseCheckList = [];
-      this.monitorCheckList = [];
-    },
-    // 箭头点击
-    arrowClick(val) {
-      if (val === "right") {
-        this.$refs.cardShow.next();
-      } else {
-        this.$refs.cardShow.prev();
-      }
-    },
-    // 离会按钮
-    leaveMeeting(row) {
-      if (res.status == 200) {
-      }
-    },
-    // 右侧退出会议按钮
-    leaveMeetingAll() {
-      let message = {
-        conference_id: this.conference_id,
-        data_id: this.data_id,
-        type: 1, //1 紧急会议 0 普通会议
-      };
-      finish(message).then((res) => {
-        if (res.status == 200) {
-          // this.$message({
-          //   message: "已离会",
-          //   type: "warning",
-          // });
-          this.closeWindow();
-          this.offDialogVisible = false;
-        }
-      });
-    },
-    closeWindow() {
-      var userAgent = navigator.userAgent;
-      if (userAgent.indexOf("Firefox") != -1 || userAgent.indexOf("Chrome") != -1) {
-        window.location.href = "about:blank";
-        window.close();
-      } else {
-        window.opener = null;
-        window.open("", "_self");
-        window.close();
-      }
-    },
-    // 弹窗新增行
-    addRow() {
-      let message = {
-        name: "",
-        model: "",
-        type: "",
-        flag: "",
-        username: "",
-        password: "",
-        listId: this.listId++,
-      };
-      if (this.addtableData.length == 5) {
-        return this.$message({
-          message: "最多设置5条",
-          type: "warning",
+      let tableBody = originTableData.data[1];
+      let tableData = [];
+      tableBody.forEach((tableItem) => {
+        let temp = {};
+        tableItem.forEach((item, index) => {
+          temp[tableHeader[index]] = item;
         });
-      } else {
-        this.addtableData.push(message);
-      }
-    },
-    addRowChange() {
-      this.addtableData.forEach((item, index) => {
-        let message = {
-          data_id: null,
-          parent_id: this.GetQueryString("data_id"),
-          name: item.name,
-          model: item.model,
-          type: item.type,
-          connection_identifier: item.flag,
-          user_name: item.username,
-          password: item.password,
-        };
-        add_resources(this.conference_id, message).then((res) => {
-          if (res.status == 200) {
-            // this.$message({
-            //   message: "已添加",
-            //   type: "success",
-            // });
-            this.addDialogVisible = false;
-          }
-        });
+        tableData.push(temp);
       });
-    },
-    // 弹窗删除行
-    deleteRow(row) {
-      this.addtableData.forEach((item, index) => {
-        if (item.listId == row.listId) {
-          this.addtableData.splice(index, 1);
-          // this.$message({
-          //   message: "删除成功",
-          //   type: "success",
-          // });
-        }
-      });
+      return tableData;
     },
     // 获取会议信息
     do_EventCenter_getMettingInfo(value) {
       console.log("----->", value);
-
       this.data_id = value.data_id;
       if (value.mettingID) {
         this.conference_id = value.mettingID;
@@ -1685,7 +1718,7 @@ export default {
 }
 .screenNum {
   position: absolute;
-  right: 7.1%;
+  left: 16.1%;
   top: 2.7%;
   /deep/.el-radio-button__inner {
     padding: 5px 5px;
@@ -1698,6 +1731,24 @@ export default {
     .el-radio-button__inner {
       background: #409eff;
     }
+  }
+}
+.templateChoose {
+  position: absolute;
+  top: 2.6%;
+  right: 6.5%;
+  /deep/.el-select {
+    width: 100px;
+  }
+  /deep/.el-input__suffix {
+    top: 3px;
+  }
+  /deep/.el-input__inner {
+    height: 22px;
+    line-height: 22px;
+    border-radius: 3px;
+    top: 3px;
+    padding-right: 0px;
   }
 }
 .videoRed {
@@ -1718,6 +1769,7 @@ export default {
     border: 3.5px solid #2062a0;
     height: 100%;
     width: 15.5%;
+    position: relative;
     background-color: #113164;
     /deep/.el-tabs__item {
       padding: 0 10px !important;
@@ -1755,6 +1807,14 @@ export default {
           justify-content: space-between;
         }
       }
+    }
+    .refreshIcon {
+      position: absolute;
+      top: 6px;
+      right: 10px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #ffffff;
     }
     .advance {
       height: 10%;
@@ -1932,7 +1992,7 @@ export default {
     height: 90%;
     width: 100%;
     overflow: hidden;
-    margin-left: 0 %;
+    margin-left: 0%;
   }
   .arrowBox,
   .arrowBoxRight {
@@ -2309,6 +2369,10 @@ export default {
   width: 100% !important;
   border-top: 0px !important;
   border-radius: 0px !important;
+}
+.singleVideoDialogHeight {
+  height: 550px !important;
+  margin-top: -20px;
 }
 @font-face {
   font-family: "iconfont";

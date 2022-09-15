@@ -82,7 +82,7 @@ export default {
       queryAssetById(td_conference_room_maintenance_child).then((res) => {
         this.td_conference_room_maintenance_childData = this.translatePlatformDataToJsonArray(res);
         this.td_conference_room_maintenance_childData.forEach((item, index) => {
-          if (item.parent_id == this.mainFromData.meeting_room) {
+          if (item.parent_id == this.mainFromData.meeting_room && item.equipment_name.indexOf('屏') != -1) {
             console.log(item);
 
             // this.td_event_plans_equipment_childData.forEach((itemSon, indexSon) => {
@@ -237,7 +237,7 @@ export default {
       this.mainFromData.meeting_room = value.value;
       this.mainFromMeetingEquipment_nameData = [];
       this.td_conference_room_maintenance_childData.forEach((item, index) => {
-        if (item.parent_id == this.mainFromData.meeting_room) {
+        if (item.parent_id == this.mainFromData.meeting_room&& item.equipment_name.indexOf('屏') != -1) {
           // this.td_event_plans_equipment_childData.forEach((itemSon, indexSon) => {
           //   if (item.equipment_name == itemSon.equipment_name) {
           //     item.td_screen_distribution_templateData = itemSon.screen_layout;

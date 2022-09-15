@@ -1,8 +1,22 @@
 import request from "./request";
 
 /**
- * 查询资产
- * @param id 资产ID
+ * 查询资产(新的)
+ * @param {*} params
  */
-export const queryAssetById = (id) => request.post(`/asset/getAssetData?asset_id=${id}`, []);
-export const logout = (id) => request.post(`/sso/authority/logout`);
+export const getAllData = (params) =>
+  request.post(`panNeng/queryByCollectorId `, params);
+
+/**
+ * 查询资产
+ */
+export const update = (id) => request.get("panNeng/fullUpdate");
+// 查询通知
+export const queryList = (params) => request.post(`sysInfo/queryList`, params);
+export const setCookie = (token) =>
+  request.get("system/authority/setCookie?token=" + token);
+// 已读通知
+export const read = (id) => request.get(`sysInfo/read?id=${id}`);
+export const isLogin = () => request.get("system/authority/isLogin");
+export const login = (params) =>
+  request.post(`/system/authority/loginAccount4Application`, params);

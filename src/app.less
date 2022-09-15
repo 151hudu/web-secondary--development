@@ -1,28 +1,102 @@
-.mainTop {
-  width: 100%;
-  background-color: #313a52;
+.PNDL_head {
+  height: 60px;
   display: flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  .leftInfo {
+  .logo {
+    background: #131926;
+    height: 100%;
+    text-align: center;
     display: flex;
-    .logo {
-      height: 40px;
-      width: 40px;
-    }
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.3s, background 0.3s,
+      padding 0.1s cubic-bezier(0.215, 0.61, 0.355, 1);
     .title {
-      margin-left: 10px;
-      width: auto;
-      height: 40px;
-      line-height: 40px;
+      font-weight: 900;
       font-size: 20px;
-      color: #ffffff;
+      line-height: 60px;
+      color: #fff;
+    }
+  }
+  .PNDL_head_content {
+    padding-left: 30px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    height: 60px;
+    border: 2px solid rgba(215, 215, 215, 1);
+    flex: 1;
+    .left {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      .inputText {
+        margin-left: 40px;
+        color: rgba(0, 0, 0, 0.45);
+        .ant-select-selector {
+          border-radius: 10px !important;
+        }
+      }
+      li::marker {
+        content: none;
+      }
+      li {
+        float: left;
+      }
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      .dropUser {
+        // width: 88px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 16px;
+        text-align: center;
+        line-height: 20px;
+      }
     }
   }
 
-  .logout {
-    color: #ffffff;
-    margin-right: 50px;
-    cursor: pointer;
+  .unlock-modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    height: 100%;
+    background-color: #adadad;
+  }
+}
+.infoModal {
+  // position: absolute !important;
+  // top: 6% !important;
+  // left: 74%;
+  .ant-modal-content {
+    border-radius: 15px;
+    .ant-modal-header {
+      border-radius: 15px 15px 0 0;
+      // padding: 10px 24px 5px;
+    }
+    // .ant-modal-body {
+    //   padding: 0px 15px;
+    //   .ant-spin-nested-loading {
+    //     height: 100%;
+    //     .ant-spin-container {
+    //       height: 100%;
+    //     }
+    //   }
+    //   .ant-list-items {
+    //     height: 100%;
+    //     overflow: auto;
+    //   }
+    //   .ant-list-items::-webkit-scrollbar {
+    //     width: 0px;
+    //   }
+    // }
   }
 }

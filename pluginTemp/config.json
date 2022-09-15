@@ -1,7 +1,7 @@
 {
-  "id": "8155a4b7-b0d4-4cb5-b7b4-2b22e7171056",
+  "id": "47c6467f-489e-4fb3-a903-74c25f9586a2",
   "type": "head",
-  "main": "main.fbeb0f74.js",
+  "main": "main.c42dc303.js",
   "version": "2",
   "props": {
     "type": "head",
@@ -10,11 +10,6 @@
     "loadStyle": 0,
     "lib": [],
     "css_script": [],
-    "customconf": [
-      "title",
-      "logoUrl",
-      "mainHeight",
-      "logoutUrl"
-    ]
+    "customconf": []
   }
 }

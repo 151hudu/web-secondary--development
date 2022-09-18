@@ -1,7 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { Select, Breadcrumb, Modal, Form, Input, Button, Avatar, Badge, Dropdown, Menu, List, Table } from "antd";
+import {
+  Select,
+  Breadcrumb,
+  Modal,
+  Form,
+  Input,
+  Button,
+  Avatar,
+  Badge,
+  Dropdown,
+  Menu,
+  List,
+  Table,
+} from "antd";
 import moment from "moment";
-import { MenuUnfoldOutlined, MenuFoldOutlined, LockOutlined, FullscreenOutlined, CaretDownOutlined } from "@ant-design/icons";
+import {
+  MenuUnfoldOutlined,
+  MenuFoldOutlined,
+  LockOutlined,
+  FullscreenOutlined,
+  CaretDownOutlined,
+} from "@ant-design/icons";
 import * as ReportingService from "./api/asset";
 import appService from "@njsdata/app-sdk";
 import { mockData } from "./mock";
@@ -11,7 +30,8 @@ import logo from "./2.png";
 import "./app.less";
 const count = 6;
 const pageNum = 1;
-const Cookie = "eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY2MDYzNzQyMDE2OSwidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.k040f5ITc7zlFmxdmozdcXWjpvST6tIQPbi51-Na8mY";
+const Cookie =
+  "eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY2MDYzNzQyMDE2OSwidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.k040f5ITc7zlFmxdmozdcXWjpvST6tIQPbi51-Na8mY";
 // 格式化数据增加面包屑数据
 const formatData = (data, topData = []) => {
   data.forEach((item) => {
@@ -22,11 +42,6 @@ const formatData = (data, topData = []) => {
     }
   });
   return data;
-};
-const sortBy = (field) => {
-  return (x, y) => {
-    return Date.parse(new Date(y[field]))  - Date.parse(new Date(x[field])) ;
-  };
 };
 let websocket;
 // 平级树形数据
@@ -64,7 +79,7 @@ const App = (props) => {
   const [infoCount, setInfoCount] = useState(0);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 4,
+    pageSize: 6,
     showSizeChanger: false,
   });
   async function getInfoData(params) {
@@ -87,29 +102,21 @@ const App = (props) => {
     });
     setInfoCount(res.totalCount);
     let dataSource = [];
-    console.log(Date.parse(new Date()));
     res.results.map((data, index) => {
       let info_content = JSON.parse(data?.info_content) || {};
       let d = {
         id: data.id,
         key: index,
         actionTime: info_content.time,
-        dianzhanName: info_content.equipment_info_name,
-        shebeiName: info_content.power_plant_name,
+        dianzhanName: info_content.power_plant_name,
+        shebeiName: info_content.equipment_info_name,
         content: info_content.emergency_content,
         info_status: data.info_status,
       };
       dataSource.push(d);
     });
-    dataSource.sort(sortBy('actionTime'))
     setData(dataSource);
-    setPagination({
-      ...pagin,
-      total: res.totalCount,
-      showTotal: (total) => {
-        return `共 ${total} 条记录`;
-      },
-    });
+    setPagination({ ...pagin, total: res.totalCount });
     return res;
   }
   useEffect(() => {
@@ -141,7 +148,9 @@ const App = (props) => {
       };
       websocket.onclose = function (e) {
         console.log("连接关闭");
-        console.log("websocket 断开: " + e.code + " " + e.reason + " " + e.wasClean);
+        console.log(
+          "websocket 断开: " + e.code + " " + e.reason + " " + e.wasClean
+        );
         console.log(e);
         console.log("WebSocket连接关闭");
       };
@@ -163,7 +172,9 @@ const App = (props) => {
     if (menuId) {
       const id = menuId.split("#")[0];
       setKey(id);
-      const breadCrumb = flatArr(menuData).find((item) => item.id === id)?.breadCrumbItem;
+      const breadCrumb = flatArr(menuData).find(
+        (item) => item.id === id
+      )?.breadCrumbItem;
       setBreadCrumbs(breadCrumb);
     }
 
@@ -173,7 +184,9 @@ const App = (props) => {
       window.PubSub.subscribe("menuClick", (_, { key }) => {
         const data1 = key.split("#")[0];
         setKey(data1);
-        const breadCrumb = flatArr(menuData).find((item) => item.id === data1)?.breadCrumbItem;
+        const breadCrumb = flatArr(menuData).find(
+          (item) => item.id === data1
+        )?.breadCrumbItem;
         setBreadCrumbs(breadCrumb);
       });
     window.PubSub &&
@@ -323,48 +336,37 @@ const App = (props) => {
       title: "序号",
       dataIndex: "index",
       key: "index",
-      width: "66px",
-      render: (_, record) => (pagination.current - 1) * pagination.pageSize + parseInt(record.key) + 1,
-      align: "center", //头部单元格和列内容水平居中
-      className: "blueThead",
+      width: "10%",
+      render: (_, record) =>
+        (pagination.current - 1) * pagination.pageSize +
+        parseInt(record.key) +
+        1,
     },
     {
       title: "动作时间",
       key: "actionTime",
       dataIndex: "actionTime",
-      sorter: (a, b) => Date.parse(new Date(a.actionTime)) - Date.parse(new Date(b.actionTime)),
-      width: "188px",
-      align: "center", //头部单元格和列内容水平居中
+      width: "20%",
     },
     {
       title: "电站名称",
       key: "dianzhanName",
       dataIndex: "dianzhanName",
-      width: "158px",
-      sorter: (a, b) => a.dianzhanName - b.dianzhanName,
-      align: "center", //头部单元格和列内容水平居中
     },
     {
       title: "设备名称",
       key: "shebeiName",
       dataIndex: "shebeiName",
-      sorter: (a, b) => a.shebeiName - b.shebeiName,
-      align: "center", //头部单元格和列内容水平居中
-      width: "113px",
+      width: "10%",
     },
     {
       title: "事件内容",
       key: "content",
       dataIndex: "content",
-      sorter: (a, b) => a.content - b.content,
-      align: "center", //头部单元格和列内容水平居中
-      width: "323px",
     },
     {
       title: "操作",
       key: "action",
-      align: "center", //头部单元格和列内容水平居中
-      width: "95px",
       render: (_, record) => (
         <Button
           type="primary"
@@ -408,13 +410,21 @@ const App = (props) => {
       ) : (
         <div className="logo" style={{ width: 255 }}>
           <img style={{ width: 50, height: 50 }} alt="" src={logo} />
-          <span className="title">分布式光伏服务平台</span>
+          <sapn className="title">分布式光伏服务平台</sapn>
         </div>
       )}
       <div className="PNDL_head_content">
         <div className="left">
           <div onClick={() => toggleCollapsed()}>
-            {collapsed ? <MenuUnfoldOutlined style={{ fontSize: "40px", color: "#666666" }} /> : <MenuFoldOutlined style={{ fontSize: "40px", color: "#666666" }} />}
+            {collapsed ? (
+              <MenuUnfoldOutlined
+                style={{ fontSize: "40px", color: "#666666" }}
+              />
+            ) : (
+              <MenuFoldOutlined
+                style={{ fontSize: "40px", color: "#666666" }}
+              />
+            )}
           </div>
           <Breadcrumb style={{ marginLeft: 40 }}>
             {breadCrumbs?.map((item) => (
@@ -433,7 +443,9 @@ const App = (props) => {
                   if (newValue) {
                     const id = newValue?.split("#")[0];
                     setKey(id);
-                    const breadCrumb = flatArr(menuData).find((item) => item.id === id)?.breadCrumbItem;
+                    const breadCrumb = flatArr(menuData).find(
+                      (item) => item.id === id
+                    )?.breadCrumbItem;
                     setBreadCrumbs(breadCrumb);
                     window.PubSub &&
                       window.PubSub.publish("menuClick", {
@@ -453,14 +465,27 @@ const App = (props) => {
         </div>
 
         <div className="header-right">
-          <FullscreenOutlined onClick={onEnlarge} style={{ fontSize: "25px", color: "#666666" }} />
-          <LockOutlined onClick={onLockScreen} style={{ fontSize: "25px", color: "#666666", marginLeft: 10 }} />
+          <FullscreenOutlined
+            onClick={onEnlarge}
+            style={{ fontSize: "25px", color: "#666666" }}
+          />
+          <LockOutlined
+            onClick={onLockScreen}
+            style={{ fontSize: "25px", color: "#666666", marginLeft: 10 }}
+          />
           <Badge count={infoCount} onClick={() => setInfoModalVisible(true)}>
             <Avatar
               size={28}
               style={{ marginLeft: 10, backgroundColor: "#fff0" }}
               icon={
-                <svg t="1660548868120" className="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2611">
+                <svg
+                  t="1660548868120"
+                  class="icon"
+                  viewBox="0 0 1024 1024"
+                  version="1.1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  p-id="2611"
+                >
                   <path
                     d="M593.861938 788.582269 424.670537 788.582269c-9.444093 0-18.437931 3.931542-24.695448 10.902304-6.313799 6.970762-9.441023 16.32378-8.547677 25.675776 2.860141 29.191856 16.32378 56.238862 38.009685 76.018348 21.772886 20.016893 50.161447 31.0379 79.889515 31.0379 29.696346 0 58.084906-11.022031 79.830163-30.977525 21.714558-19.839861 35.178197-46.885843 38.068014-76.255755 0.595564-9.473769-2.534729-18.707061-8.638751-25.498744C612.299869 792.513812 603.306031 788.582269 593.861938 788.582269zM555.020304 863.825974c-25.082258 22.877033-66.604954 22.817682-91.567485 0.060375-7.596002-6.970762-13.404288-15.429411-17.157775-24.723078l125.82266 0C568.394916 848.51629 562.643935 856.914564 555.020304 863.825974z"
                     p-id="2612"
@@ -492,8 +517,23 @@ const App = (props) => {
       {localStorage.getItem("externalPassword") && !show ? (
         <div className="unlock-modal">
           <div style={{ marginTop: 300 }}>
-            <Form style={{ width: 500, margin: "auto" }} name="basic" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} form={form} autoComplete="off" onFinish={onFinish}>
-              <Form.Item label="开锁密码" name="externalPassword" rules={[{ required: true, message: "请输入开锁密码！" }, { validator: checkPassword }]}>
+            <Form
+              style={{ width: 500, margin: "auto" }}
+              name="basic"
+              labelCol={{ span: 4 }}
+              wrapperCol={{ span: 20 }}
+              form={form}
+              autoComplete="off"
+              onFinish={onFinish}
+            >
+              <Form.Item
+                label="开锁密码"
+                name="externalPassword"
+                rules={[
+                  { required: true, message: "请输入开锁密码！" },
+                  { validator: checkPassword },
+                ]}
+              >
                 <Input placeholder="请输入开锁密码" />
               </Form.Item>
               <Form.Item wrapperCol={{ offset: 21, span: 3 }}>
@@ -512,7 +552,12 @@ const App = (props) => {
           onOk={handleOk}
           closable={false}
           footer={[
-            <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
+            <Button
+              key="submit"
+              type="primary"
+              loading={loading}
+              onClick={handleOk}
+            >
               确定
             </Button>,
             <Button key="cancel" onClick={cancel}>
@@ -520,8 +565,18 @@ const App = (props) => {
             </Button>,
           ]}
         >
-          <Form name="basic" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} form={form} autoComplete="off">
-            <Form.Item label="锁屏密码" name="password" rules={[{ required: true, message: "请输入密码！" }]}>
+          <Form
+            name="basic"
+            labelCol={{ span: 4 }}
+            wrapperCol={{ span: 20 }}
+            form={form}
+            autoComplete="off"
+          >
+            <Form.Item
+              label="锁屏密码"
+              name="password"
+              rules={[{ required: true, message: "请输入密码！" }]}
+            >
               <Input placeholder="请输入锁屏密码" />
             </Form.Item>
           </Form>
@@ -576,7 +631,7 @@ const App = (props) => {
       )} */}
       {infoModalVisible && (
         <Modal
-          title="┃ 告警事件"
+          title="告警事件"
           mask={false}
           className="infoModal"
           centered={true}
@@ -588,7 +643,14 @@ const App = (props) => {
           width={1000}
           // bodyStyle={{ height: "480px" }}
         >
-          <Table columns={columns} bordered rowKey={(record) => record.id} dataSource={data} pagination={pagination} loading={loading} onChange={handleTableChange} />
+          <Table
+            columns={columns}
+            rowKey={(record) => record.id}
+            dataSource={data}
+            pagination={pagination}
+            loading={loading}
+            onChange={handleTableChange}
+          />
         </Modal>
       )}
     </div>

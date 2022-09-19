@@ -1,7 +1,7 @@
 {
-  "id": "f1c7b5c4-0c91-42bc-8c65-f50d68af5def",
+  "id": "20b79d76-37df-4221-8a1b-409ff9baa306",
   "type": "app",
-  "main": "app.1deb4c02.js",
+  "main": "app.fffadfc0.js",
   "version": "2",
   "props": {
     "type": "customize",
@@ -11,8 +11,17 @@
     "lib": [],
     "css_script": [],
     "customconf": [
-      "id",
-      "buttons"
+      "assetId",
+      "show_name",
+      "multi_storey",
+      "father_node",
+      "iframe_URL",
+      "unit_height",
+      "multiple_choice",
+      "data_filed",
+      "icon_URL",
+      "title",
+      "permissions_flag"
     ]
   }
 }

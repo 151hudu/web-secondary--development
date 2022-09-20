@@ -343,22 +343,14 @@ const App = (props) => {
       key: "dianzhanName",
       dataIndex: "dianzhanName",
       width: "158px",
-<<<<<<< HEAD
-      sorter: (a, b) => a.dianzhanName - b.dianzhanName,
-=======
       sorter: (a, b) =>  a.dianzhanName.localeCompare( b.dianzhanName,"zh"),
->>>>>>> 8a229e72dfcb5493508f41489b48b961416b8a21
       align: "center", //头部单元格和列内容水平居中
     },
     {
       title: "设备名称",
       key: "shebeiName",
       dataIndex: "shebeiName",
-<<<<<<< HEAD
-      sorter: (a, b) => a.shebeiName - b.shebeiName,
-=======
       sorter: (a, b) =>  a.shebeiName.localeCompare( b.shebeiName,"zh"),
->>>>>>> 8a229e72dfcb5493508f41489b48b961416b8a21
       align: "center", //头部单元格和列内容水平居中
       width: "113px",
     },
@@ -366,11 +358,6 @@ const App = (props) => {
       title: "事件内容",
       key: "content",
       dataIndex: "content",
-<<<<<<< HEAD
-      sorter: (a, b) => a.content - b.content,
-      align: "center", //头部单元格和列内容水平居中
-      width: "323px",
-=======
       sorter: (a, b) =>  a.content.localeCompare( b.content,"zh"),
       align: "center", //头部单元格和列内容水平居中
       width: "323px",
@@ -381,7 +368,6 @@ const App = (props) => {
           {text}
         </span>
       ),
->>>>>>> 8a229e72dfcb5493508f41489b48b961416b8a21
     },
     {
       title: "操作",

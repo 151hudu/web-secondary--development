@@ -1,11 +1,7 @@
 {
   "id": "47c6467f-489e-4fb3-a903-74c25f9586a2",
   "type": "head",
-<<<<<<< HEAD
-  "main": "main.15f9ced6.js",
-=======
-  "main": "main.141d7316.js",
->>>>>>> 8a229e72dfcb5493508f41489b48b961416b8a21
+  "main": "main.a41fbc83.js",
   "version": "2",
   "props": {
     "type": "head",

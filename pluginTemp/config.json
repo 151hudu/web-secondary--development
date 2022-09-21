@@ -1,0 +1,20 @@
+{
+  "id": "a2f87f76-160d-4cca-bda8-31dc8d1d6dea",
+  "type": "bigscreen",
+  "main": "app.b0ad1109.js",
+  "version": "2",
+  "props": {
+    "img": "APP_0001.png",
+    "disableimg": "disabled_custom_table.png",
+    "name": "Vue版本的演示Demo",
+    "className": "className-demo",
+    "vars": [
+      "tip图标颜色",
+      "tip图标大小",
+      "tip标题",
+      "tip内容",
+      "tips_Content_Title",
+      "tips_Content_Value"
+    ]
+  }
+}

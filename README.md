@@ -186,6 +186,7 @@ class EventBus {
   constructor() {
     this.listeners = {};
   }
+
   register(eventName, callback) {
     this.listeners[eventName] = this.listeners[eventName] || [];
     this.listeners[eventName].push({

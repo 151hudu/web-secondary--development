@@ -28,7 +28,7 @@ const utils = {
    * @returns {Boolean}
    */
   arrayContainsSame: (arr1, arr2) => {
-    let result = [...arr1, ...arr2];
+    let result = [...arr1, ...arr2]
     let set = new Set(result);
     if (set.size === result.length) {
       return false;
@@ -41,14 +41,11 @@ const utils = {
    */
   generateUUID: () => {
     let d = new Date().getTime();
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
-      /[xy]/g,
-      function (c) {
-        let r = (d + Math.random() * 16) % 16 | 0;
-        d = Math.floor(d / 16);
-        return (c == "x" ? r : (r & 0x3) | 0x8).toString(16);
-      }
-    );
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+      let r = (d + Math.random() * 16) % 16 | 0;
+      d = Math.floor(d / 16);
+      return (c == "x" ? r : (r & 0x3) | 0x8).toString(16);
+    });
   },
   /**
    * 获取隐藏元素的宽高
@@ -69,17 +66,18 @@ const utils = {
 
     return {
       width: width,
-      height: height,
-    };
+      height: height
+    }
 
     function getNoneNode(node) {
-      let display = getStyles(node).getPropertyValue("display"),
+      let display = getStyles(node).getPropertyValue('display'),
         tagName = node.nodeName.toLowerCase();
-      if (display != "none" && tagName != "body") {
+      if (display != 'none'
+          && tagName != 'body') {
         getNoneNode(node.parentNode);
       } else {
         noneNodes.push(node);
-        if (tagName != "body") {
+        if (tagName != 'body') {
           getNoneNode(node.parentNode);
         }
       }
@@ -87,6 +85,7 @@ const utils = {
 
     //这方法才能获取最终是否有display属性设置，不能style.display。
     function getStyles(elem) {
+
       // Support: IE<=11+, Firefox<=30+ (#15098, #14150)
       // IE throws on elements created in popups
       // FF meanwhile throws on frame elements through "defaultView.getComputedStyle"
@@ -96,7 +95,8 @@ const utils = {
         view = window;
       }
       return view.getComputedStyle(elem);
-    }
+    };
+
 
     function setNodeStyle() {
       let i = 0;
@@ -105,14 +105,11 @@ const utils = {
           display = noneNodes[i].style.display,
           style = noneNodes[i].getAttribute("style");
         //覆盖其他display样式
-        noneNodes[i].setAttribute(
-          "style",
-          "visibility:hidden;display:block !important;" + style
-        );
+        noneNodes[i].setAttribute("style", "visibility:hidden;display:block !important;" + style);
         nodeStyle[i] = {
           visibility: visibility,
-          display: display,
-        };
+          display: display
+        }
       }
     }
 
@@ -122,6 +119,7 @@ const utils = {
         noneNodes[i].style.visibility = nodeStyle[i].visibility;
         noneNodes[i].style.display = nodeStyle[i].display;
       }
+
     }
   },
   /**
@@ -136,7 +134,7 @@ const utils = {
     if (
       element.style &&
       ((element.style.display && element.style.display == "none") ||
-        (element.style.visibility && element.style.visibility == "hidden"))
+       (element.style.visibility && element.style.visibility == "hidden"))
     ) {
       return false;
     }
@@ -147,7 +145,7 @@ const utils = {
       if (
         parent.style &&
         ((parent.style.display && parent.style.display == "none") ||
-          (parent.style.visibility && parent.style.visibility == "hidden"))
+         (parent.style.visibility && parent.style.visibility == "hidden"))
       ) {
         return false;
       } else {
@@ -157,6 +155,6 @@ const utils = {
 
     return true;
   },
-};
+}
 
-export default utils;
+export default utils

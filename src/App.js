@@ -25,7 +25,7 @@ const formatData = (data, topData = []) => {
 };
 const sortBy = (field) => {
   return (x, y) => {
-    return Date.parse(new Date(y[field]))  - Date.parse(new Date(x[field])) ;
+    return Date.parse(new Date(y[field])) - Date.parse(new Date(x[field]));
   };
 };
 let websocket;
@@ -103,7 +103,7 @@ const App = (props) => {
       };
       dataSource.push(d);
     });
-    dataSource.sort(sortBy('actionTime'))
+    dataSource.sort(sortBy("actionTime"));
     setData(dataSource);
     setPagination({
       ...pagin,
@@ -343,14 +343,14 @@ const App = (props) => {
       key: "dianzhanName",
       dataIndex: "dianzhanName",
       width: "158px",
-      sorter: (a, b) =>  a.dianzhanName.localeCompare( b.dianzhanName,"zh"),
+      sorter: (a, b) => a.dianzhanName.localeCompare(b.dianzhanName, "zh"),
       align: "center", //头部单元格和列内容水平居中
     },
     {
       title: "设备名称",
       key: "shebeiName",
       dataIndex: "shebeiName",
-      sorter: (a, b) =>  a.shebeiName.localeCompare( b.shebeiName,"zh"),
+      sorter: (a, b) => a.shebeiName.localeCompare(b.shebeiName, "zh"),
       align: "center", //头部单元格和列内容水平居中
       width: "113px",
     },
@@ -358,16 +358,10 @@ const App = (props) => {
       title: "事件内容",
       key: "content",
       dataIndex: "content",
-      sorter: (a, b) =>  a.content.localeCompare( b.content,"zh"),
+      sorter: (a, b) => a.content.localeCompare(b.content, "zh"),
       align: "center", //头部单元格和列内容水平居中
       width: "323px",
-      render: (text) => (
-        <span
-        style={{marginLeft:"15px"}}
-        >
-          {text}
-        </span>
-      ),
+      render: (text) => <span style={{ marginLeft: "15px" }}>{text}</span>,
     },
     {
       title: "操作",
@@ -423,14 +417,24 @@ const App = (props) => {
       <div className="PNDL_head_content">
         <div className="left">
           <div onClick={() => toggleCollapsed()}>
-            {collapsed ? <MenuUnfoldOutlined style={{ fontSize: "40px", color: "#666666" }} /> : <MenuFoldOutlined style={{ fontSize: "40px", color: "#666666" }} />}
+            {
+              <svg width="24" height="19" viewBox="0 0 24 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M1.5 0C0.671573 0 0 0.671573 0 1.5C0 2.32843 0.671573 3 1.5 3C2.32843 3 3 2.32843 3 1.5C3 0.671573 2.32843 0 1.5 0ZM6.5 0C5.67157 0 5 0.671573 5 1.5C5 2.32843 5.67157 3 6.5 3H22.5C23.3284 3 24 2.32843 24 1.5C24 0.671573 23.3284 0 22.5 0H6.5ZM0 9.5C0 8.67157 0.671573 8 1.5 8C2.32843 8 3 8.67157 3 9.5C3 10.3284 2.32843 11 1.5 11C0.671573 11 0 10.3284 0 9.5ZM6.5 8C5.67157 8 5 8.67157 5 9.5C5 10.3284 5.67157 11 6.5 11H22.5C23.3284 11 24 10.3284 24 9.5C24 8.67157 23.3284 8 22.5 8H6.5ZM0 17.5C0 16.6716 0.671573 16 1.5 16C2.32843 16 3 16.6716 3 17.5C3 18.3284 2.32843 19 1.5 19C0.671573 19 0 18.3284 0 17.5ZM6.5 16C5.67157 16 5 16.6716 5 17.5C5 18.3284 5.67157 19 6.5 19H22.5C23.3284 19 24 18.3284 24 17.5C24 16.6716 23.3284 16 22.5 16H6.5Z"
+                  fill="#0084FF"
+                />
+              </svg>
+            }
           </div>
-          <Breadcrumb style={{ marginLeft: 40 }}>
-            {breadCrumbs?.map((item) => (
-              <Breadcrumb.Item>{item}</Breadcrumb.Item>
+          <Breadcrumb style={{ marginLeft: 16 }}>
+            {breadCrumbs?.map((item, index) => (
+              // <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: index == 0 ? 700 : 400, color: "#0084FF" }}>{item}</Breadcrumb.Item>
+              <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: index == 0 ? 700 : 400, color: "#0084FF" }}>{index==breadCrumbs.length-1?item.replace(/\//g,' '):item}</Breadcrumb.Item>
             ))}
           </Breadcrumb>
-          <div className="inputText" onClick={() => setVisible(true)}>
+          {/* <div className="inputText" onClick={() => setVisible(true)}>
             {visible ? (
               <Select
                 showSearch
@@ -458,7 +462,7 @@ const App = (props) => {
             ) : (
               <span style={{ marginLeft: 12 }}>请输入内容</span>
             )}
-          </div>
+          </div> */}
         </div>
 
         <div className="header-right">

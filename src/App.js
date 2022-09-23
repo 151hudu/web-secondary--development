@@ -48,7 +48,7 @@ const App = (props) => {
   const [collapsed, setCollapsed] = useState(false);
   const [key, setKey] = useState("453601f6-b5ea-a393-a5e0-e0e243cdb62b");
   const [menuData, setMenuData] = useState([]);
-  const [breadCrumbs, setBreadCrumbs] = useState(['12312321','213211321321']);
+  const [breadCrumbs, setBreadCrumbs] = useState([]);
   const [visible, setVisible] = useState(false);
   const [value, setValue] = useState(undefined);
   const [options, setOptions] = useState([]);
@@ -414,7 +414,7 @@ const App = (props) => {
           <span className="title">分布式光伏服务平台</span>
         </div>
       )}
-      <div className="PNDL_head_content" style={{ backgroundColor: '#fff' }}>
+      <div className="PNDL_head_content">
         <div className="left">
           <div onClick={() => toggleCollapsed()}>
             {
@@ -431,7 +431,7 @@ const App = (props) => {
           <Breadcrumb style={{ marginLeft: 16 }}>
             {breadCrumbs?.map((item, index) => (
               // <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: index == 0 ? 700 : 400, color: "#0084FF" }}>{item}</Breadcrumb.Item>
-              <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: index == 0 ? 700 : 400, color: "#0084FF" }}>{index==breadCrumbs.length-1?item:item}</Breadcrumb.Item>
+              <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: index == 0 ? 700 : 400, color: "#0084FF" }}>{index==breadCrumbs.length-1?item.replace(/\//g,' '):item}</Breadcrumb.Item>
             ))}
           </Breadcrumb>
           {/* <div className="inputText" onClick={() => setVisible(true)}>

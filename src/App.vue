@@ -1,163 +1,123 @@
 <template>
   <!-- 定义外层容器标识，宽高百分百 不可删除 -->
   <div :id="identification" style="width: 100%; height: 100%" :ref="identification">
-    <el-tabs v-model="tabModel" type="card" @tab-click="handleClick">
-      <el-tab-pane label="月报" name="月报">
-        <div class="topOption">
-          <div class="topChoose">
-            <span style="margin-right: 15px; line-height: 32px; margin-top: 15px">选择月份:</span>
-            <el-date-picker v-model="monthPickerStart" style="margin-top: 15px" type="month" :picker-options="pickerOptionsMonth1" @change="monthChange()" placeholder="起始时间" />
-            <div class="iconBox">
-              <img src="../pluginTemp/images/date.png" alt="" />
-            </div>
-            <span style="line-height: 32px; margin-left: 15px; margin-right: 15px; margin-top: 15px"> — </span>
-            <el-date-picker v-model="monthPickerEnd" style="margin-top: 15px" type="month" :picker-options="pickerOptionsMonth2" @change="monthChange()" placeholder="结束时间" />
-            <div class="iconBox">
-              <img src="../pluginTemp/images/date.png" alt="" />
-            </div>
-          </div>
-          <div class="export" @click="exportExcel('month')">
-            <img src="../pluginTemp/images/export.png" alt="" />
-          </div>
+    <button :class="{ p_Report: true, active: stateR == 'month' }" @click="reportClick('month')">月报</button>
+    <button :class="{ p_Report: true, active: stateR == 'year' }" @click="reportClick('year')">年报</button>
+    <div class="topOption">
+      <div class="topChoose">
+        <span style="margin-right: 15px; line-height: 32px; margin-top: 15px; font-size: 16px" v-show="stateM">选择月份:</span>
+        <el-date-picker
+          v-show="stateM"
+          v-model="monthPickerStart"
+          clear-icon="el-icon-error"
+          style="margin-top: 15px"
+          type="month"
+          :picker-options="pickerOptionsMonth1"
+          @change="monthChange()"
+          placeholder="起始时间"
+        />
+        <div class="iconBox" v-show="stateM">
+          <img src="../pluginTemp/images/date.png" alt="" />
         </div>
-        <el-descriptions title="" :column="1" style="margin-top: 30px" border>
-          <el-descriptions-item
-            label="发电单元名称"
-            label-class-name="my-label"
-            labelStyle="width:231px;height:40px;background:#E9F3FD;text-align:center;font-weight:700;color:#000"
-            contentStyle="font-weight:400"
-            content-class-name="my-content"
-            >{{ monthTableData.powerCellName }}</el-descriptions-item
-          >
-        </el-descriptions>
-        <el-descriptions title="" :column="2" border>
-          <el-descriptions-item
-            label="装机容量"
-            label-class-name="my-label"
-            labelStyle="width:231px;background:#E9F3FD;text-align:center;font-weight:700;color:#000"
-            contentStyle="font-weight:400;background:rgba(249,252,255,1) "
-            content-class-name="my-content"
-            >{{ monthTableData.machineVolume ? monthTableData.machineVolume + "kWp" : "" }}
-          </el-descriptions-item>
-          <el-descriptions-item
-            label="用电类型"
-            label-class-name="my-label"
-            labelStyle="width:231px;background:#E9F3FD;text-align:center;font-weight:700;color:#000"
-            content-class-name="my-content"
-            contentStyle="font-weight:400;background:rgba(249,252,255,1) "
-            >{{ monthTableData.powerType }}</el-descriptions-item
-          >
-          <el-descriptions-item
-            label="结算类型"
-            label-class-name="my-label"
-            labelStyle="width:231px;background:#E9F3FD;text-align:center;font-weight:700;color:#000"
-            contentStyle="font-weight:400"
-            content-class-name="my-content"
-            >{{ monthTableData.settlementType }}</el-descriptions-item
-          >
-          <el-descriptions-item
-            label="费率"
-            label-class-name="my-label"
-            labelStyle="width:231px;background:#E9F3FD;text-align:center;font-weight:700;color:#000"
-            content-class-name="my-content"
-            contentStyle="font-weight:400"
-            >{{ monthTableData.discountRate ? monthTableData.discountRate + "折" : "" }}</el-descriptions-item
-          >
-        </el-descriptions>
-        <el-table
-          :data="monthTableData.propertyList"
-          border
-          style="width: 100%"
-          :stripe="true"
-          :header-cell-style="{
-            background: '#E9F3FD',
-            height: '49px',
-            color: '#000000',
-            padding: 0,
-          }"
-          show-summary
-          :cell-style="{ fontWeight: 700 }"
-        >
-          <el-table-column align="center" prop="date" label="月份" width="231"> </el-table-column>
-          <el-table-column sortable align="center" :render-header="renderheader" prop="powerOutput" label="发电量|(kWh)"> </el-table-column>
-          <el-table-column sortable align="center" :render-header="renderheader" prop="powerOngrid" label="上网电量|(kWh)"> </el-table-column>
-          <el-table-column sortable align="center" :render-header="renderheader" prop="powerSelfuse" label="自发自用电量|(kWh)"> </el-table-column>
-          <el-table-column sortable align="center" :render-header="renderheader" prop="feesSelfuse" label="自发自用电费|(元)"> </el-table-column>
-        </el-table>
-      </el-tab-pane>
-      <el-tab-pane label="年报" name="年报">
-        <div class="topOption">
-          <span></span>
-          <div class="export" @click="exportExcel('month')">
-            <img src="../pluginTemp/images/export.png" alt="" />
-          </div>
+        <span v-show="stateM" style="line-height: 32px; margin-left: 15px; margin-right: 15px; margin-top: 15px"> — </span>
+        <el-date-picker
+          v-model="monthPickerEnd"
+          clear-icon="el-icon-error"
+          style="margin-top: 15px"
+          type="month"
+          :picker-options="pickerOptionsMonth2"
+          @change="monthChange()"
+          placeholder="结束时间"
+          v-show="stateM"
+        />
+        <div class="iconBox" v-show="stateM">
+          <img src="../pluginTemp/images/date.png" alt="" />
         </div>
-        <el-descriptions title="" :column="1" style="margin-top: 30px"  border>
-          <el-descriptions-item
-            label="发电单元名称"
-            label-class-name="my-label"
-            labelStyle="width:231px;background:#E9F3FD;text-align:center;font-weight:700;color:#000"
-            contentStyle="font-weight:400"
-            content-class-name="my-content"
-            >{{ yearTableData.powerCellName }}</el-descriptions-item
-          >
-        </el-descriptions>
-        <el-descriptions title="" :column="2" border>
-          <el-descriptions-item
-            label="装机容量"
-            label-class-name="my-label"
-            labelStyle="width:231px;background:#E9F3FD;text-align:center;font-weight:700;color:#000"
-            contentStyle="font-weight:400;background:rgba(249,252,255,1) "
-            content-class-name="my-content"
-            >{{ yearTableData.machineVolume ? yearTableData.machineVolume + "kWp" : "" }}
-          </el-descriptions-item>
-          <el-descriptions-item
-            label="用电类型"
-            label-class-name="my-label"
-            labelStyle="width:231px;background:#E9F3FD;text-align:center;font-weight:700;color:#000"
-            content-class-name="my-content"
-            contentStyle="font-weight:400;background:rgba(249,252,255,1) "
-            >{{ yearTableData.powerType }}</el-descriptions-item
-          >
-          <el-descriptions-item
-            label="结算类型"
-            label-class-name="my-label"
-            labelStyle="width:231px;background:#E9F3FD;text-align:center;font-weight:700;color:#000"
-            contentStyle="font-weight:400"
-            content-class-name="my-content"
-            >{{ yearTableData.settlementType }}</el-descriptions-item
-          >
-          <el-descriptions-item
-            label="费率"
-            label-class-name="my-label"
-            labelStyle="width:231px;background:#E9F3FD;text-align:center;font-weight:700;color:#000"
-            content-class-name="my-content"
-            contentStyle="font-weight:400"
-            >{{ yearTableData.discountRate ? yearTableData.discountRate + "折" : "" }}</el-descriptions-item
-          >
-        </el-descriptions>
-        <el-table
-          :data="yearTableData.propertyList"
-          border
-          style="width: 100%"
-          :stripe="true"
-          :header-cell-style="{
-            background: '#E9F3FD',
-            height: '50px',
-            color: '#000000',
-            padding: 0,
-          }"
-          show-summary
-          :cell-style="{ fontWeight: 700 }"
-        >
-          <el-table-column align="center" prop="date" label="年份" width="231"> </el-table-column>
-          <el-table-column sortable align="center" :render-header="renderheader" prop="powerOutput" label="发电量|(kWh)"> </el-table-column>
-          <el-table-column sortable align="center" :render-header="renderheader" prop="powerOngrid" label="上网电量|(kWh)"> </el-table-column>
-          <el-table-column sortable align="center" :render-header="renderheader" prop="powerSelfuse" label="自发自用电量|(kWh)"> </el-table-column>
-          <el-table-column sortable align="center" :render-header="renderheader" prop="feesSelfuse" label="自发自用电费|(元)"> </el-table-column>
-        </el-table>
-      </el-tab-pane>
-    </el-tabs>
+      </div>
+      <div class="export" @click="exportExcel()">
+        <img src="../pluginTemp/images/export.png" alt="" />
+      </div>
+    </div>
+    <el-descriptions title="" :column="1" style="margin-top: 30px" border>
+      <el-descriptions-item
+        label="发电单元名称"
+        label-class-name="my-label"
+        labelStyle="width:231px;height:40px;background:#E9F3FD;text-align:center;font-weight:700;color:#000"
+        contentStyle="font-weight:400"
+        content-class-name="my-content"
+        >{{ monthTableData.powerCellName }}</el-descriptions-item
+      >
+    </el-descriptions>
+    <el-descriptions title="" :column="2" border>
+      <el-descriptions-item
+        label="装机容量"
+        label-class-name="my-label"
+        labelStyle="width:231px;background:#E9F3FD;text-align:center;font-weight:700;color:#000"
+        contentStyle="font-weight:400;background:rgba(249,252,255,1) "
+        content-class-name="my-content"
+        >{{ monthTableData.machineVolume ? Number(monthTableData.machineVolume).toFixed(2) + "kWp" : "" }}
+      </el-descriptions-item>
+      <el-descriptions-item
+        label="用电类型"
+        label-class-name="my-label"
+        labelStyle="width:231px;background:#E9F3FD;text-align:center;font-weight:700;color:#000"
+        content-class-name="my-content"
+        contentStyle="font-weight:400;background:rgba(249,252,255,1) "
+        >{{ monthTableData.powerType }}</el-descriptions-item
+      >
+      <el-descriptions-item
+        label="结算类型"
+        label-class-name="my-label"
+        labelStyle="width:231px;background:#E9F3FD;text-align:center;font-weight:700;color:#000"
+        contentStyle="font-weight:400"
+        content-class-name="my-content"
+        >{{ monthTableData.settlementType }}</el-descriptions-item
+      >
+      <el-descriptions-item
+        label="费率"
+        label-class-name="my-label"
+        labelStyle="width:231px;background:#E9F3FD;text-align:center;font-weight:700;color:#000"
+        content-class-name="my-content"
+        contentStyle="font-weight:400"
+        >{{ monthTableData.discountRate ? monthTableData.discountRate + "折" : "" }}</el-descriptions-item
+      >
+    </el-descriptions>
+    <el-table
+      :data="monthTableData.propertyList"
+      border
+      style="width: 100%"
+      :stripe="true"
+      :header-cell-style="{
+        background: '#E9F3FD',
+        height: '49px',
+        color: '#000000',
+        padding: 0,
+      }"
+      show-summary
+      :cell-style="{ fontWeight: 700 }"
+    >
+      <el-table-column align="center" prop="date" :label="stateR == 'month' ? '月份' : '年份'" width="231"> </el-table-column>
+      <el-table-column sortable align="center" :render-header="renderheader" prop="powerOutput" :label="stateR == 'month' ? '发电量|(kWh)' : '发电量|(万kWh)'">
+        <template slot-scope="scope">
+          <span>{{ Number(scope.row.powerOutput).toFixed(2) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column sortable align="center" :render-header="renderheader" prop="powerOngrid" :label="stateR == 'month' ? '上网电量|(kWh)' : '上网电量|(万kWh)'">
+        <template slot-scope="scope">
+          <span>{{ Number(scope.row.powerOngrid).toFixed(2) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column sortable align="center" :render-header="renderheader" prop="powerSelfuse" :label="stateR == 'month' ? '自发自用电量|(kWh)' : '自发自用电量|(万kWh)'">
+        <template slot-scope="scope">
+          <span>{{ Number(scope.row.powerSelfuse).toFixed(2) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column sortable align="center" :render-header="renderheader" prop="feesSelfuse" :label="stateR == 'month' ? ' 自发自用电费|(元)' : ' 自发自用电费|(万元)'">
+        <template slot-scope="scope">
+          <span>{{ Number(scope.row.feesSelfuse).toFixed(2) }}</span>
+        </template>
+      </el-table-column>
+    </el-table>
   </div>
 </template>
 
@@ -238,6 +198,9 @@ export default {
           return this.monthPickerStart ? time.getTime() < this.monthPickerStart.getTime() : false;
         },
       },
+      stateR: "month",
+      stateM: true,
+      stationId: "",
       // startDatePicker: this.beginDate(),
       // endDatePicker: this.processDate(),
     };
@@ -249,9 +212,23 @@ export default {
     let { buttons, id } = this.customConfig;
     let componentName = this.$vnode.tag.split("-").pop().toLowerCase();
     this.identification = id ? `secondary_${componentName}_${id}` : `secondary_${componentName}_${utils.generateUUID()}`;
+    this.$nextTick(() => {
+      let style = `#${this.identification} .el-radio-button__inner:hover{
+                      color:${this.theme.themeColor};
+                      }
+                     #${this.identification} .el-radio-button.is-active .el-radio-button__inner:hover{
+                      color: #FFF;
+                      }
+                      `;
+      if (this.$refs[this.identification]) {
+        this.styleEle = document.createElement("style");
+        document.head.appendChild(this.styleEle);
+        this.styleEle.innerText = style;
+      }
+    });
     //用于定义接收用户输入
-    this.buttons = JSON.parse(buttons).data;
-    this.defaultValue = JSON.parse(buttons).defaultValue;
+    // this.buttons = JSON.parse(buttons).data;
+    // this.defaultValue = JSON.parse(buttons).defaultValue;
     //业务代码
     if (this.defaultValue) {
       this.selected = this.defaultValue;
@@ -274,6 +251,30 @@ export default {
         });
       }
     },
+    reportClick(value) {
+      this.stateR = value;
+      if (value == "month") {
+        this.stateM = true;
+        let messageMonth = {
+          type: "month",
+          date: [this.monthPickerStart.getFullYear() + "-01", this.monthPickerStart.getFullYear() + "-12"],
+          powerCellId: this.stationId,
+        };
+        powerCellQuery(messageMonth).then((res) => {
+          this.monthTableData = res.data;
+        });
+      } else {
+        this.stateM = false;
+        let messageMonth = {
+          type: "year",
+          date: [],
+          powerCellId: this.stationId,
+        };
+        powerCellQuery(messageMonth).then((res) => {
+          this.monthTableData = res.data;
+        });
+      }
+    },
     changeTimeFormat(time) {
       var date = new Date(time);
       var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
@@ -283,17 +284,17 @@ export default {
       return date.getFullYear() + "-" + month;
       //返回格式：yyyy-MM-dd hh:mm
     },
-    exportExcel(type) {
+    exportExcel() {
       let message = {};
-      if (type == "month") {
+      if (this.stateR == "month") {
         message = {
-          type: type,
+          type: this.stateR,
           date: [this.changeTimeFormat(this.monthPickerStart.getTime()), this.changeTimeFormat(this.monthPickerEnd.getTime())],
           powerCellId: this.stationId,
         };
       } else {
         message = {
-          type: type,
+          type: this.stateR,
           date: [],
           powerCellId: this.stationId,
         };
@@ -318,7 +319,7 @@ export default {
           window.URL.revokeObjectURL(href); //释放掉blob对象
         })
         .catch((res) => {
-          alert("导出失败");
+          // alert("导出失败");
         });
     },
     handleClick(tab, event) {
@@ -346,7 +347,6 @@ export default {
           uzipStr += chr;
         }
       }
-
       return uzipStr;
     },
     // table表头换行
@@ -369,6 +369,7 @@ export default {
     },
     //与msgCompConfig.js文件actions相对应，组件动作，依据定义加上do_message前缀
     do_EventCenter_searchCompany(value) {
+      console.log(value, "--------value");
       this.stationId = value.charcoalId;
       let messageMonth = {
         type: "month",
@@ -376,16 +377,16 @@ export default {
         powerCellId: this.stationId,
       };
       powerCellQuery(messageMonth).then((res) => {
-        this.yearTableData = res.data;
+        this.monthTableData = res.data;
       });
-      let messageYear = {
-        type: "year",
-        date: [],
-        powerCellId: this.stationId,
-      };
-      powerCellQuery(messageYear).then((res) => {
-        this.yearTableData = res.data;
-      });
+      // let messageYear = {
+      //   type: "year",
+      //   date: [],
+      //   powerCellId: this.stationId,
+      // };
+      // powerCellQuery(messageYear).then((res) => {
+      //   this.yearTableData = res.data;
+      // });
     },
     setValue(value) {
       this.selected = value;
@@ -400,6 +401,24 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.p_Report {
+  width: 125.52px;
+  height: 32px;
+  border-radius: 2px;
+  opacity: 1;
+  font-size: 16px;
+  font-weight: 400;
+  color: #000000;
+  font-family: "Alibaba PuHuiTi";
+  border: 1px solid rgba(222, 222, 222, 1);
+  background: rgba(255, 255, 255, 1);
+  margin-bottom: 15px;
+  cursor: pointer;
+}
+
+/deep/.el-input__inner {
+  border-radius: 2px;
+}
 .topOption {
   display: flex;
   justify-content: space-between;
@@ -409,13 +428,10 @@ export default {
 }
 .export {
   height: 32px;
-  width: 90px;
   color: #ffffff;
-  font-size: 18px;
   margin-top: 15px;
   cursor: pointer;
   border-radius: 2px;
-  background: #0285fd;
 }
 .iconBox {
   height: 32px;
@@ -447,33 +463,17 @@ export default {
     }
   }
 }
-
-/deep/.el-tabs__header {
-  border-bottom: 0px;
-}
-/deep/.el-tabs--card > .el-tabs__header .el-tabs__item {
-  border-bottom: 1px solid #e4e7ed;
-}
-/deep/ .el-tabs__item {
-  box-sizing: border-box;
-  width: 100px !important;
-  height: 30px !important;
-  line-height: 30px;
-  padding: 0px;
-  text-align: center;
-  font-weight: 400;
-}
-/deep/.is-active {
-  border: 1px solid #409eff !important;
-  font-weight: 700;
-  color: #409eff;
-}
 /deep/.el-input__prefix {
   display: none;
 }
 .el-date-editor.el-input,
 .el-date-editor.el-input__inner {
   width: 139px;
+}
+.active {
+  font-weight: 700;
+  border-color: rgba(27, 133, 255, 1);
+  color: #1b85ff;
 }
 /deep/.el-input--prefix .el-input__inner {
   height: 32px;
@@ -528,9 +528,17 @@ export default {
   background: #ffffff;
 }
 /deep/ .el-table .caret-wrapper {
-  position: absolute;
-  left: unset;
-  right: 30%;
-  top: 10px;
+  // position: absolute;
+  // left: unset;
+  // right: 32.5%;
+  top: 8px;
+}
+/deep/.el-table th.el-table__cell > .cell {
+  display: flex;
+  justify-content: center;
+}
+/deep/.el-icon-error {
+  cursor: pointer;
+  font-size: 16px;
 }
 </style>

@@ -1,5 +1,5 @@
 .PNDL_head {
-  height: 60px;
+  height: 73px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -14,23 +14,32 @@
     .title {
       font-weight: 900;
       font-size: 20px;
-      line-height: 60px;
+      line-height: 73px;
       color: #fff;
     }
   }
   .PNDL_head_content {
-    padding-left: 30px;
+    padding-left: 22px;
     display: flex;
     justify-content: space-between;
     flex-direction: row;
     align-items: center;
-    height: 60px;
-    border: 2px solid rgba(215, 215, 215, 1);
+    height: 73px;
+    border: 2px solid rgba(231, 231, 231, 1);
+    border-left: 0;
     flex: 1;
+    .ant-breadcrumb {
+      line-height: 20px !important;
+      font-weight: 700;
+      font-size: 16px;  
+      span {
+        color: #0084ff !important;
+      }
+    }
     .left {
       display: flex;
-      flex-direction: row;
-      align-items: center;
+      // flex-direction: row;
+      // align-items: center;
 
       .inputText {
         margin-left: 40px;
@@ -144,5 +153,11 @@
   .ant-table-column-title {
     flex: initial !important;
     margin-right: 5px !important;
+  }
+  .ant-btn-primary{
+    width: 52px !important;
+    height: 28px !important;
+    line-height: 28px !important;
+    padding: 0;
   }
 }

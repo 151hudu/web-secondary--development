@@ -3,28 +3,28 @@
   <div :id="identification" style="width: 100%; height: 100%; background-color: #fff" :ref="identification">
     <div class="settlement-details">
       <div class="button-line">
-        <el-button v-if="mainEdit == 0" type="primary" size="small" @click="exportExcel">导出</el-button>
+        <img src="../pluginTemp/images/export.png" style="cursor: pointer" v-if="mainEdit == 0" @click="exportExcel" alt="" />
       </div>
       <div class="top_Title">光伏电费结算明细单</div>
       <div class="top_Info">
-        <div style="width: 130px; color: #000" class="info-label">发电单位</div>
-        <div style="width: 280px; color: #000">{{ this.excelAllData.generating_unit }}</div>
+        <div style="width: 120px; color: #000" class="info-label">发电单位</div>
+        <div style="width: 270px; color: #000">{{ this.excelAllData.generating_unit }}</div>
         <div style="width: 210px; color: #000" class="info-label">电站名称</div>
         <div style="width: 450px; color: #000">{{ this.excelAllData.station_name }}</div>
         <div style="width: 300px; color: #000" class="info-label">结算方式</div>
-        <div style="width: calc(100% - 1370px); color: #000" class="div_Right">
+        <div style="width: calc(100% - 1350px); color: #000" class="div_Right">
           {{ this.excelAllData.settlement_type }}
         </div>
       </div>
       <div class="top_Info2">
-        <div style="width: 130px; color: #000" class="info-label">用电单位</div>
-        <div style="width: 280px; color: #000">{{ this.excelAllData.electricity_user }}</div>
+        <div style="width: 120px; color: #000" class="info-label">用电单位</div>
+        <div style="width: 270px; color: #000">{{ this.excelAllData.electricity_user }}</div>
         <div style="width: 210px; color: #000" class="info-label">用电类型</div>
         <div style="width: 450px; color: #000">{{ this.excelAllData.power_type }}</div>
         <div style="width: 300px; color: #000" class="info-label">
           {{ this.excelAllData.settlement_type === "分时电价" ? "折扣率" : "电价" }}
         </div>
-        <div style="width: calc(100% - 1370px); color: #000" class="div_Right">
+        <div style="width: calc(100% - 1350px); color: #000" class="div_Right">
           {{
             this.excelAllData.settlement_type === "分时电价"
               ? this.excelAllData.discount_rate
@@ -38,8 +38,8 @@
       </div>
       <div class="topTable">
         <el-table :data="tableDataTop" border show-summary :summary-method="getTopSummaries" :header-cell-style="headerCellStyle" :cell-style="cellStyle">
-          <el-table-column prop="dnbmc" label="电能表名称" width="130" />
-          <el-table-column prop="jjlx" label="计量类型" width="90" />
+          <el-table-column prop="dnbmc" label="电能表名称" width="120" />
+          <el-table-column prop="jjlx" label="计量类型" width="80" />
           <el-table-column prop="dnbbl" label="电能表倍率" width="95" />
           <el-table-column prop="user_code" label="客户编号" width="95" />
           <el-table-column prop="bjzc_no" label="表计资产号" width="210" />
@@ -123,8 +123,8 @@
       </div>
       <div class="bottomTable">
         <el-table :data="tableDataBottom" border class="bottomTable" show-summary :summary-method="getBottomSummaries" :header-cell-style="headerCellStyle" :cell-style="cellStyle">
-          <el-table-column prop="jl_name" label="计量点" width="130" />
-          <el-table-column prop="price_avg" :render-header="renderHeader" :formatter="myfixedPrice_avg" label="平均电价|(元/kWh)" width="90">
+          <el-table-column prop="jl_name" label="计量点" width="120" />
+          <el-table-column prop="price_avg" :render-header="renderHeader" :formatter="myfixedPrice_avg" label="平均电价|(元/kWh)" width="80">
             <!-- <template slot-scope="scope">
               <span style="display: none">{{ (scope.row.price_avg = (Number(scope.row.fees_all) / Number(scope.row.poweruse_all)).toFixed(9)) }}</span>
               <span style="display: none">{{ (scope.row.price_avg = myFixed(Number(scope.row.fees_all) / Number(scope.row.poweruse_all), 9)) }}</span>
@@ -264,8 +264,11 @@
         </el-table>
       </div>
       <div class="button-line">
-        <el-button v-if="mainEdit == 0" size="small" @click="queryDataDetailFunc">重置</el-button>
-        <el-button v-if="mainEdit == 0" type="primary" size="small" @click="saveTable">保存</el-button>
+        <div v-if="mainEdit == 0" @click="queryDataDetailFunc" style="width: 85px; height: 32px;cursor: pointer; border-radius: 2px; margin-right: 10px; background-color: #0084ff">
+          <img src="../pluginTemp/images/重置.png" style="margin-top: 5px; margin-left: 8px" alt="" />
+          <span style="color: #fff; font-size: 16px; vertical-align: top; margin-top: 5px; margin-left: 15px; display: inline-block">重置</span>
+        </div>
+        <img src="../pluginTemp/images/save.png" style="cursor: pointer" v-if="mainEdit == 0" @click="saveTable" alt="" />
       </div>
     </div>
   </div>
@@ -365,6 +368,9 @@ export default {
       this.triggerEvent("valueChange", {
         value: this.defaultValue,
       });
+    }
+    if (document.querySelectorAll(".application-add")[0]) {
+      document.querySelectorAll(".application-add")[0].style.minHeight = "100%";
     }
   },
   methods: {
@@ -846,5 +852,8 @@ input::-webkit-inner-spin-button {
 
 input[type="number"] {
   -moz-appearance: textfield;
+}
+.application-add {
+  min-height: 100% !important;
 }
 </style>

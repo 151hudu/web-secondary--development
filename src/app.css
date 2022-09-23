@@ -115,9 +115,6 @@
   border: 1px solid #d0dae4;
   border-bottom: 0;
 }
-.allContent .tableContent .ant-table.ant-table-bordered > .ant-table-title .title {
-  color: #000000 !important;
-}
 .allContent .tableContent .ant-table-thead > tr > th {
   background: #ebf5ff;
   border-bottom: 1px solid #d0dae4;
@@ -152,7 +149,6 @@
 .allContent .tableContent .ant-table-thead > tr > th {
   padding: 6px 16px;
   font-weight: bold;
-  color: #000000 !important;
 }
 .allContent .tableContent .ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table,
 .allContent .tableContent .ant-table.ant-table-bordered > .ant-table-container > .ant-table-header > table {
@@ -191,7 +187,7 @@
 .allContent .ant-radio-button-wrapper-checked {
   font-weight: 700 !important;
   border: 1px solid #1b85ff !important;
-  color: #1b85ff !important;
+  color: #1B85FF !important;
 }
 .allContent .ant-picker {
   border: 1px solid #d9d9d9 !important;

@@ -4,6 +4,9 @@
   flex-direction: row;
   align-items: center;
 }
+.PNDL_head .ant-breadcrumb li:last-child .ant-breadcrumb-separator {
+  display: none;
+}
 .PNDL_head .logo {
   background: #131926;
   height: 100%;
@@ -29,6 +32,7 @@
   border: 2px solid #e7e7e7;
   border-left: 0;
   flex: 1;
+  background-color: #fff !important;
 }
 .PNDL_head .PNDL_head_content .ant-breadcrumb {
   line-height: 20px !important;

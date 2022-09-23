@@ -1,7 +1,7 @@
 {
-  "id": "f460dab8-6635-48ff-96b7-b248b7960567",
+  "id": "689b1d0a-9baf-4514-8eea-81bce2096c57",
   "type": "analyzers",
-  "main": "app.0f0d0060.js",
+  "main": "app.9465936d.js",
   "version": "2",
   "props": {
     "img": "custom_table.png",
@@ -42,7 +42,9 @@
       "遮罩体颜色",
       "图例图形宽",
       "图例图形高",
-      "柱宽"
+      "柱宽",
+      "是否开启百分号",
+      "图例之间的间距"
     ]
   }
 }

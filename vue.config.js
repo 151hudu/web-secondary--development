@@ -3,7 +3,7 @@ module.exports = {
     disableHostCheck: true,
     proxy: {
       "/api": {
-        target: "http://121.36.134.217:18080",
+        target: "http://221.226.83.186:20008",
         changeOrigin: true,
         pathRewrite: {
           "/api": "",
@@ -37,15 +37,11 @@ module.exports = {
       .rule("images")
       .use("url-loader")
       .loader("url-loader")
-      .tap(options =>
-        Object.assign(options, { limit: 10 * 100 * 1024 * 1024 })
-      );
+      .tap(options => Object.assign(options, { limit: 10 * 100 * 1024 * 1024 }));
     config.module
       .rule("fonts")
       .use("url-loader")
       .loader("url-loader")
-      .tap(options =>
-        Object.assign(options, { limit: 10 * 100 * 1024 * 1024 })
-      );
+      .tap(options => Object.assign(options, { limit: 10 * 100 * 1024 * 1024 }));
   },
 };

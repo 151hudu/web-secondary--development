@@ -1,7 +1,7 @@
 {
-  "id": "dde7fa77-934c-496e-871f-6700dca1028c",
+  "id": "e8c1c8ab-0718-4a83-9a67-5ac26987f421",
   "type": "app",
-  "main": "app.6bd76ed8.js",
+  "main": "app.caceeaa1.js",
   "version": "2",
   "props": {
     "type": "customize",
@@ -10,9 +10,6 @@
     "loadStyle": 0,
     "lib": [],
     "css_script": [],
-    "customconf": [
-      "id",
-      "buttons"
-    ]
+    "customconf": []
   }
 }

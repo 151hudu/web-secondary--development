@@ -48,7 +48,7 @@ const App = (props) => {
   const [collapsed, setCollapsed] = useState(false);
   const [key, setKey] = useState("453601f6-b5ea-a393-a5e0-e0e243cdb62b");
   const [menuData, setMenuData] = useState([]);
-  const [breadCrumbs, setBreadCrumbs] = useState([]);
+  const [breadCrumbs, setBreadCrumbs] = useState(['12312321','213211321321']);
   const [visible, setVisible] = useState(false);
   const [value, setValue] = useState(undefined);
   const [options, setOptions] = useState([]);
@@ -125,7 +125,7 @@ const App = (props) => {
     try {
       let userid = window?.currentUser ? window?.currentUser.id : "1234567890";
       // let url = `ws://${window.location.host}/sdata/webSocket/` + userid;
-      let url = `ws://${window.location.host}/sdata/webSocket/` + userid;
+      let url = `ws://10.15.110.22:18580/sdata/webSocket/` + userid;
       console.log("-----前端开始连接websocket-----", url);
       websocket = new WebSocket(url);
       websocket.onerror = function (e) {
@@ -329,7 +329,6 @@ const App = (props) => {
       render: (_, record) => (pagination.current - 1) * pagination.pageSize + parseInt(record.key) + 1,
       align: "center", //头部单元格和列内容水平居中
       className: "blueThead",
-      showSorterTooltip: false,
     },
     {
       title: "动作时间",
@@ -338,7 +337,6 @@ const App = (props) => {
       sorter: (a, b) => Date.parse(new Date(a.actionTime)) - Date.parse(new Date(b.actionTime)),
       width: "188px",
       align: "center", //头部单元格和列内容水平居中
-      showSorterTooltip: false,
     },
     {
       title: "电站名称",
@@ -347,7 +345,6 @@ const App = (props) => {
       width: "158px",
       sorter: (a, b) => a.dianzhanName.localeCompare(b.dianzhanName, "zh"),
       align: "center", //头部单元格和列内容水平居中
-      showSorterTooltip: false,
     },
     {
       title: "设备名称",
@@ -355,7 +352,6 @@ const App = (props) => {
       dataIndex: "shebeiName",
       sorter: (a, b) => a.shebeiName.localeCompare(b.shebeiName, "zh"),
       align: "center", //头部单元格和列内容水平居中
-      showSorterTooltip: false,
       width: "113px",
     },
     {
@@ -366,14 +362,12 @@ const App = (props) => {
       align: "center", //头部单元格和列内容水平居中
       width: "323px",
       render: (text) => <span style={{ marginLeft: "15px" }}>{text}</span>,
-      showSorterTooltip: false,
     },
     {
       title: "操作",
       key: "action",
       align: "center", //头部单元格和列内容水平居中
       width: "95px",
-      showSorterTooltip: false,
       render: (_, record) => (
         <Button
           type="primary"
@@ -420,7 +414,7 @@ const App = (props) => {
           <span className="title">分布式光伏服务平台</span>
         </div>
       )}
-      <div className="PNDL_head_content" style={{ backgroundColor: "#fff" }}>
+      <div className="PNDL_head_content" style={{ backgroundColor: '#fff' }}>
         <div className="left">
           <div onClick={() => toggleCollapsed()}>
             {
@@ -437,7 +431,7 @@ const App = (props) => {
           <Breadcrumb style={{ marginLeft: 16 }}>
             {breadCrumbs?.map((item, index) => (
               // <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: index == 0 ? 700 : 400, color: "#0084FF" }}>{item}</Breadcrumb.Item>
-              <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: index == 0 ? 700 : 400, color: "#0084FF" }}>{index == breadCrumbs.length - 1 ? item : item}</Breadcrumb.Item>
+              <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: index == 0 ? 700 : 400, color: "#0084FF" }}>{index==breadCrumbs.length-1?item:item}</Breadcrumb.Item>
             ))}
           </Breadcrumb>
           {/* <div className="inputText" onClick={() => setVisible(true)}>

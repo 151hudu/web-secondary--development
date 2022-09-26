@@ -153,6 +153,10 @@ const App = (props) => {
         console.log(e);
         console.log("WebSocket连接关闭");
         timer = null;
+        if (e.code * 1 === 1000 || e.code * 1 === 1006) {
+          console.log("尝试重连")
+          websocket = new WebSocket(url);
+        }
       };
       function closeWebSocket() {
         websocket.close();

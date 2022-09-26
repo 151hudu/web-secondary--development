@@ -29,7 +29,6 @@ const sortBy = (field) => {
   };
 };
 let websocket;
-let timer;
 // 平级树形数据
 const flatArr = (menuData, initArr = []) => {
   menuData.forEach((item) => {
@@ -134,11 +133,6 @@ const App = (props) => {
       };
       websocket.onopen = function () {
         console.log("连接成功");
-        timer = setInterval(() => {
-            console.log('心跳');
-            let ping = { type: "ping" };
-            websocket.send(JSON.stringify(ping));
-        }, 5000);
       };
       websocket.onmessage = function (event) {
         if (!infoModalVisible) setInfoModalVisible(true);
@@ -152,7 +146,6 @@ const App = (props) => {
         console.log("websocket 断开: " + e.code + " " + e.reason + " " + e.wasClean);
         console.log(e);
         console.log("WebSocket连接关闭");
-        timer = null;
       };
       function closeWebSocket() {
         websocket.close();
@@ -194,9 +187,6 @@ const App = (props) => {
 
     // 获取保存的密码
     localStorage.getItem("externalPassword");
-    return () => {
-      timer = null;
-    }
   }, []);
 
   const toggleCollapsed = () => {

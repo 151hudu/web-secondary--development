@@ -115,18 +115,12 @@ const App = (props) => {
     });
     return res;
   }
-  useEffect(() => {
-    // ReportingService.setCookie(Cookie);
-    // ReportingService.isLogin();
-    getInfoData().then((res) => {
-      setInitLoading(false);
-      console.log("res.results: ", res.results);
-      setList(res.results);
-    });
+
+  const connectWS = () => {
     try {
       let userid = window?.currentUser ? window?.currentUser.id : "1234567890";
       // let url = `ws://${window.location.host}/sdata/webSocket/` + userid;
-      let url = `ws://${window.location.host}/sdata/webSocket/` + userid;
+      let url = `ws://${window.location.host}/sdata/webSocket/` + userid + `@${Math.floor(Math.random() * 1000000)}`;
       console.log("-----前端开始连接websocket-----", url);
       websocket = new WebSocket(url);
       websocket.onerror = function (e) {
@@ -141,6 +135,7 @@ const App = (props) => {
         }, 5000);
       };
       websocket.onmessage = function (event) {
+        console.log(event);
         if (!infoModalVisible) setInfoModalVisible(true);
         getInfoData();
       };
@@ -150,12 +145,10 @@ const App = (props) => {
       websocket.onclose = function (e) {
         console.log("连接关闭");
         console.log("websocket 断开: " + e.code + " " + e.reason + " " + e.wasClean);
-        console.log(e);
-        console.log("WebSocket连接关闭");
         timer = null;
         if (e.code * 1 === 1000 || e.code * 1 === 1006) {
           console.log("尝试重连")
-          websocket = new WebSocket(url);
+          connectWS();
         }
       };
       function closeWebSocket() {
@@ -165,6 +158,18 @@ const App = (props) => {
     } catch (error) {
       console.log("e", error);
     }
+  }
+
+  useEffect(() => {
+    // ReportingService.setCookie(Cookie);
+    // ReportingService.isLogin();
+    getInfoData().then((res) => {
+      setInitLoading(false);
+      console.log("res.results: ", res.results);
+      setList(res.results);
+    });
+    
+    connectWS();
   }, []);
   const [form] = Form.useForm();
 

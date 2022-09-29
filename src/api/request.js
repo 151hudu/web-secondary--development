@@ -10,7 +10,7 @@ if (process.env.NODE_ENV === "development") {
   apiContextPath = "/api";
 }
 const instance = axios.create({
-  baseURL: `${window.apiContextPathPrefix || process.env.REACT_APP_API}/sdata/rest`,
+  baseURL: `${process.env.REACT_APP_API}/sdata/rest`,
   timeout: 60000,
   validateStatus: function (status) {
     return status >= 200 && status < 300; // default

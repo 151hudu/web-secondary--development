@@ -120,7 +120,7 @@ const App = (props) => {
     try {
       let userid = window?.currentUser ? window?.currentUser.id : "1234567890";
       // let url = `ws://${window.location.host}/sdata/webSocket/` + userid;
-      let url = `ws://${window.location.host}/sdata/webSocket/` + userid + `@${Math.floor(Math.random() * 1000000)}`;
+      let url = `ws://${window.location.hostname}:18180/sdata/webSocket/` + userid + `@${Math.floor(Math.random() * 1000000)}`;
       console.log("-----前端开始连接websocket-----", url);
       websocket = new WebSocket(url);
       websocket.onerror = function (e) {

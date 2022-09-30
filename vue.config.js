@@ -37,11 +37,15 @@ module.exports = {
       .rule("images")
       .use("url-loader")
       .loader("url-loader")
-      .tap(options => Object.assign(options, { limit: 10 * 100 * 1024 * 1024 }));
+      .tap(options =>
+        Object.assign(options, { limit: 10 * 100 * 1024 * 1024 })
+      );
     config.module
       .rule("fonts")
       .use("url-loader")
       .loader("url-loader")
-      .tap(options => Object.assign(options, { limit: 10 * 100 * 1024 * 1024 }));
+      .tap(options =>
+        Object.assign(options, { limit: 10 * 100 * 1024 * 1024 })
+      );
   },
 };

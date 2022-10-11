@@ -50,7 +50,7 @@
                 <template v-if="mainEdit == 0">
                   <template v-if="scope.row.jjlx == '发电并网表'">
                     <input type="number" @input="InputChange" style="width: 80%" v-if="scope.row.poweroutput_last == null" v-model="scope.row.poweroutput_last" />
-                    <span v-if="scope.row.poweroutput_last">
+                    <span v-if=" typeof(scope.row.poweroutput_last) == 'number'">
                       {{ scope.row.poweroutput_last }}
                     </span>
                   </template>
@@ -86,7 +86,7 @@
                 <template v-if="mainEdit == 0">
                   <template v-if="scope.row.jjlx == '上网关口表（反向）'">
                     <input v-if="scope.row.swdl_last == null" v-model="scope.row.swdl_last" style="width: 80%" type="number" @input="InputChange" />
-                    <span v-if="scope.row.swdl_last">
+                    <span v-if="typeof(scope.row.swdl_last) == 'number'">
                       {{ scope.row.swdl_last }}
                     </span>
                   </template>

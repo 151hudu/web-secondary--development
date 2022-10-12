@@ -50,7 +50,7 @@
                 <template v-if="mainEdit == 0">
                   <template v-if="scope.row.jjlx == '发电并网表'">
                     <input type="number" @input="InputChange" style="width: 80%" v-if="scope.row.poweroutput_last == null" v-model="scope.row.poweroutput_last" />
-                    <span v-if=" typeof(scope.row.poweroutput_last) == 'number'">
+                    <span v-if="typeof scope.row.poweroutput_last == 'number'">
                       {{ scope.row.poweroutput_last }}
                     </span>
                   </template>
@@ -85,8 +85,8 @@
               <template slot-scope="scope">
                 <template v-if="mainEdit == 0">
                   <template v-if="scope.row.jjlx == '上网关口表（反向）'">
-                    <input v-if="scope.row.swdl_last == null" v-model="scope.row.swdl_last" style="width: 80%" type="number" @input="InputChange" />
-                    <span v-if="typeof(scope.row.swdl_last) == 'number'">
+                    <input v-if="scope.row.swdl_last_edit" v-model="scope.row.swdl_last" style="width: 80%" type="number" @input="InputChange" />
+                    <span v-if="!scope.row.swdl_last_edit">
                       {{ scope.row.swdl_last }}
                     </span>
                   </template>
@@ -148,8 +148,8 @@
           <el-table-column label="尖">
             <el-table-column prop="lastnum_j" :render-header="renderHeader" label="上期|结存数" width="70">
               <template slot-scope="scope">
-                <input v-if="mainEdit == 0 && scope.row.lastnum_j == null" v-model="scope.row.lastnum_j" style="width: 80%" type="number" @input="InputChange" />
-                <span v-else>{{ scope.row.lastnum_j }}</span>
+                <input v-if="scope.row.lastnum_j_edit" v-model="scope.row.lastnum_j" style="width: 80%" type="number" @input="InputChange" />
+                <span v-if="!scope.row.lastnum_j_edit">{{ scope.row.lastnum_j }}</span>
               </template>
             </el-table-column>
             <el-table-column prop="nownum_j" :render-header="renderHeader" label="本期|结存数" width="70">
@@ -177,8 +177,8 @@
           <el-table-column label="峰">
             <el-table-column prop="lastnum_f" :render-header="renderHeader" label="上期|结存数" width="80">
               <template slot-scope="scope">
-                <input v-if="mainEdit == 0 && scope.row.lastnum_f == null" v-model="scope.row.lastnum_f" style="width: 80%" type="number" @input="InputChange" />
-                <span v-else>{{ scope.row.lastnum_f }}</span>
+                <input v-if="scope.row.lastnum_f_edit" v-model="scope.row.lastnum_f" style="width: 80%" type="number" @input="InputChange" />
+                <span v-if="!scope.row.lastnum_f_edit">{{ scope.row.lastnum_f }}</span>
               </template>
             </el-table-column>
             <el-table-column prop="nownum_f" :render-header="renderHeader" label="本期|结存数" width="80">
@@ -206,8 +206,8 @@
           <el-table-column label="平">
             <el-table-column prop="lastnum_p" :render-header="renderHeader" label="上期|结存数" width="70">
               <template slot-scope="scope">
-                <input v-if="mainEdit == 0 && scope.row.lastnum_p == null" v-model="scope.row.lastnum_p" style="width: 80%" type="number" @input="InputChange" />
-                <span v-else>{{ scope.row.lastnum_p }}</span>
+                <input v-if="scope.row.lastnum_p_edit" v-model="scope.row.lastnum_p" style="width: 80%" type="number" @input="InputChange" />
+                <span v-if="!scope.row.lastnum_p_edit">{{ scope.row.lastnum_p }}</span>
               </template>
             </el-table-column>
             <el-table-column prop="nownum_p" :render-header="renderHeader" label="本期|结存数" width="70">
@@ -235,8 +235,8 @@
           <el-table-column label="谷">
             <el-table-column prop="lastnum_g" :render-header="renderHeader" label="上期|结存数" width="70">
               <template slot-scope="scope">
-                <input v-if="mainEdit == 0 && scope.row.lastnum_g == null" v-model="scope.row.lastnum_g" style="width: 80%" type="number" @input="InputChange" />
-                <span v-else>{{ scope.row.lastnum_g }}</span>
+                <input v-if="scope.row.lastnum_g_edit" v-model="scope.row.lastnum_g" style="width: 80%" type="number" @input="InputChange" />
+                <span v-if="!scope.row.lastnum_g_edit">{{ scope.row.lastnum_g }}</span>
               </template>
             </el-table-column>
             <el-table-column prop="nownum_g" :render-header="renderHeader" label="本期|结存数" width="70">
@@ -352,6 +352,11 @@ export default {
         textAlign: "center",
         color: "black",
       },
+      swdl_last_edit: false,
+      lastnum_j_edit: false,
+      lastnum_f_edit: false,
+      lastnum_p_edit: false,
+      lastnum_g_edit: false,
     };
   },
   mounted() {
@@ -406,22 +411,22 @@ export default {
           "poweruse_all",
           "price_all",
           "fees_all",
-          "lastnum_j",
+          // "lastnum_j",
           "nownum_j",
           "poweruse_j",
           "price_j",
           "fees_j",
-          "lastnum_f",
+          // "lastnum_f",
           "nownum_f",
           "poweruse_f",
           "price_f",
           "fees_f",
-          "lastnum_p",
+          // "lastnum_p",
           "nownum_p",
           "poweruse_p",
           "price_p",
           "fees_p",
-          "lastnum_g",
+          // "lastnum_g",
           "nownum_g",
           "poweruse_g",
           "price_g",
@@ -429,7 +434,7 @@ export default {
           "poweroutput_last",
           "poweroutput_now",
           "poweroutput_all",
-          "swdl_last",
+          // "swdl_last",
           "swdl_now",
           "swdl_all",
           "zfzydl_all",
@@ -437,6 +442,36 @@ export default {
         ];
         this.tableData.forEach((item) => {
           keyArr.forEach((key) => (item[key] = item[key] || 0));
+          if (item["swdl_last"]) {
+            item["swdl_last"] = item["swdl_last"];
+          } else {
+            item.swdl_last_edit = true;
+            item["swdl_last"] = null;
+          }
+          if (item["lastnum_j"]) {
+            item["lastnum_j"] = item["lastnum_j"];
+          } else {
+            item.lastnum_j_edit = true;
+            item["lastnum_j"] = null;
+          }
+          if (item["lastnum_f"]) {
+            item["lastnum_f"] = item["lastnum_f"];
+          } else {
+            item.lastnum_f_edit = true;
+            item["lastnum_f"] = null;
+          }
+          if (item["lastnum_p"]) {
+            item["lastnum_p"] = item["lastnum_p"];
+          } else {
+            item.lastnum_p_edit = true;
+            item["lastnum_p"] = null;
+          }
+          if (item["lastnum_g"]) {
+            item["lastnum_g"] = item["lastnum_g"];
+          } else {
+            item.lastnum_g_edit = true;
+            item["lastnum_g"] = null;
+          }
         });
         this.tableData = this.tableData.sort((a, b) => {
           return a.show_rank - b.show_rank;
@@ -542,6 +577,7 @@ export default {
           "fees_g",
         ];
         this.tableDataTop.forEach((item) => {
+          delete
           this.tableDataBottom.forEach((itemSon) => {
             if (item.data_id === itemSon.data_id) {
               keyArray.forEach((key) => (item[key] = JSON.parse(JSON.stringify(itemSon[key]))));
@@ -550,6 +586,13 @@ export default {
         });
         for (const k in this.excelAllData.childData[0]) {
           this.excelAllData.childData[0][k] = this.tableDataTop;
+          this.excelAllData.childData[0][k] .forEach((item,index)=>{
+            delete item.swdl_last_edit
+            delete item.lastnum_j_edit
+            delete item.lastnum_f_edit
+            delete item.lastnum_p_edit
+            delete item.lastnum_g_edit
+          })
         }
         this.excelAllData.display_flag = "1";
         const message = {

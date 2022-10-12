@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === "development") {
   document.cookie = "windowOnline=true";
   apiContextPath = "/api";
 }
-const prefix = window.apiContextPathPrefix ? (window.apiContextPathPrefix) : ""
+const prefix = window.apiContextPathPrefix ? (window.apiContextPathPrefix) : "/dtyq/pngf"
 const instance = axios.create({
   
   baseURL: `${prefix}${apiContextPath}/sdata/rest`,

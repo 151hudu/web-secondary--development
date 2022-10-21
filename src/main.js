@@ -1,11 +1,13 @@
 import Vue from "vue";
 import App from "./App.vue";
 import { sysVariables, appVariables, customConfig, themeInfo } from "@/components/mockData.js";
-import { Input, Tree } from "element-ui";
+import { Input, Tree,Loading  } from "element-ui";
+import 'element-ui/lib/theme-chalk/index.css';
 import Mint from "mint-ui";
 Vue.use(Input);
 Vue.use(Mint);
 Vue.use(Tree);
+Vue.use(Loading );
 if (process.env.NODE_ENV !== "production") {
   window.eventCenter = {
     triggerEvent(componentId, eventName) {

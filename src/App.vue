@@ -5,13 +5,13 @@
       <div class="top_tabs_Fi" :class="{ select: tabsShowFlag }" @click="tabsChange('所有人员')">所有人员</div>
       <div class="top_tabs_Se" :class="{ select: !tabsShowFlag }" @click="tabsChange('按部门')">按部门</div>
     </div>
-    <div class="search_Fi" v-if="tabsShowFlag">
+    <div class="search_Fi" v-show="tabsShowFlag">
       <el-input v-model="inputFi" placeholder="搜索人员"> <i slot="prefix" class="el-input__icon el-icon-search"></i></el-input>
     </div>
-    <div class="search_Se" v-if="!tabsShowFlag">
+    <div class="search_Se" v-show="!tabsShowFlag">
       <el-input v-model="inputSe" placeholder="搜索人员"> <i slot="prefix" class="el-input__icon el-icon-search"></i></el-input>
     </div>
-    <mt-index-list v-if="tabsShowFlag && search_Fi_List && search_Fi_List.length == 0">
+    <mt-index-list v-show="tabsShowFlag && search_Fi_List && search_Fi_List.length == 0">
       <mt-index-section v-for="(item, index) in nameAllShowdata" :key="index" :index="item.initial">
         <mt-cell v-for="(s, index) in item.data" :key="index">
           <div class="value_Box" @click="callPhone(s)">
@@ -42,7 +42,7 @@
         </mt-cell>
       </mt-index-section>
     </mt-index-list>
-    <div class="search_Fi_List" v-if="search_Fi_List.length !== 0 && tabsShowFlag">
+    <div class="search_Fi_List" v-show="search_Fi_List.length !== 0 && tabsShowFlag">
       <div v-for="(item, index) in search_Fi_List" :key="index">
         <div class="value_Box search_Fi_Item" @click="callPhone(item)">
           <div class="name_Box">
@@ -71,26 +71,21 @@
         </div>
       </div>
     </div>
-    <div v-if="!tabsShowFlag && search_Se_List && search_Se_List.length == 0">
-      <div class="showOpen">
-        <span v-if="!openall" v-loading.fullscreen.lock="fullscreenLoading" @click="openallChange">展开</span>
-        <span @click="openallChange" v-loading.fullscreen.lock="fullscreenLoading" v-if="openall">收起</span>
-      </div>
+    <div v-show="!tabsShowFlag && search_Se_List && search_Se_List.length == 0">
+      <div class="showOpen"><span v-show="!openall" @click="openallChange">展开</span> <span @click="openallChange" v-show="openall">收起</span></div>
       <el-tree
         :default-expand-all="openall"
         :expand-on-click-node="false"
         :data="depAlldata"
-        :key="treeKey"
         show-checkbox
-        :check-strictly="false"
-        node-key="id"
+        node-key="name"
         :default-expanded-keys="path"
         @check="checkedExpand"
         ref="tree"
       >
         <span class="custom-tree-node" slot-scope="{ data }" @click="callPhone(data)">
           <div style="display: flex">
-            <div class="name_Radius" v-if="!data.children" style="background: #f9ae18">
+            <div class="name_Radius" v-show="!data.children" style="background: #f9ae18">
               {{ data.name.substring(data.name.length - 2) }}
             </div>
             <p v-if="data.children">{{ data.name }}</p>
@@ -106,7 +101,7 @@
         </span>
       </el-tree>
     </div>
-    <div class="search_Se_List" v-if="search_Se_List.length !== 0 && !tabsShowFlag">
+    <div class="search_Se_List" v-show="search_Se_List.length !== 0 && !tabsShowFlag">
       <div v-for="(item, index) in search_Se_List" :key="index">
         <div class="value_Box search_Fi_Item" @click="callPhone(item)">
           <div class="name_Box">
@@ -141,7 +136,7 @@
 <script>
 import eventActionDefine from "./components/msgCompConfig";
 import { RadioButton, RadioGroup } from "element-ui";
-import { queryUserByOffice, queryUser, queryStaffByOfficeId } from "./api/asset";
+import { queryUserByOffice, queryUser } from "./api/asset";
 import vPinyin from "./components/vue-py";
 import Vue from "vue";
 import { Toast } from "mint-ui";
@@ -237,7 +232,6 @@ export default {
       defaultProps: {
         children: "children",
         label: "name",
-        isLeaf: "isLeaf",
       },
       depAlldata: [],
       nameAllShowdata: [],
@@ -245,8 +239,6 @@ export default {
       path: [],
       toastInstanse: null,
       openall: false,
-      fullscreenLoading: false,
-      treeKey: 0,
     };
   },
   mounted() {
@@ -318,6 +310,24 @@ export default {
       this.nameAllShowdata = res.segs;
       console.log(this.nameAllShowdata);
     });
+    queryUserByOffice().then((res) => {
+      for (let k in res.data) {
+        let message = {
+          name: k,
+          children: [],
+        };
+        res.data[k].forEach((item, index) => {
+          let message2 = {
+            name: item.office.name,
+            children: item.office.children,
+          };
+          message.children.push(message2);
+        });
+        this.cleanChild(message);
+        this.depAlldata.push(message);
+      }
+      console.log(this.depAlldata);
+    });
     //用于注册事件定义，不可删除
     let { componentId } = this.customConfig || {};
     componentId && window.componentCenter?.register(componentId, "comp", this, eventActionDefine);
@@ -336,36 +346,6 @@ export default {
     }
   },
   methods: {
-    queryUserByOffice(info) {
-      queryUserByOffice(info).then(async (res) => {
-        // for (var item of res.data) {
-        //   await this.searhAllPeople(item.office, "in");
-        // }
-        for (let k = 0; k < res.data.length; k++) {
-          await this.searhAllPeople(res.data[k].office, "in");
-        }
-      });
-    },
-    async searhAllPeople(item, type) {
-      let message = {
-        OfficeId: item.id,
-      };
-      let message2 = {
-        pageNum: 1,
-        pageSize: 100000,
-      };
-      await queryStaffByOfficeId(message, message2).then(async (res) => {
-        if (res.status == 200) {
-          for (var item2 of item.children) {
-            await this.searhAllPeople(item2, "out");
-          }
-          item.children = item.children.concat(res.data.userItemList);
-          if (type == "in") {
-            this.depAlldata.push(item);
-          }
-        }
-      });
-    },
     cleanChild(item) {
       if (item.children && item.children.length > 0) {
         for (let k = 0; k < item.children.length; k++) {
@@ -380,33 +360,23 @@ export default {
     },
     openallChange() {
       this.openall = !this.openall;
-      //定义
-      this.treeKey = +new Date();
-      // this.fullscreenLoading = true;
-      // let message = this.$refs.tree.store._getAllNodes();
-      // for (let k = 0; k < message.length; k++) {
-      //   if (message[k].data.children && message[k].data.children.length > 0) {
-      //     message[k].expanded = this.openall;
-      //   }
-      // }
-      // this.fullscreenLoading = false;
-      // for (var i in this.$refs.tree.store.nodesMap) {
-      //     this.$refs.tree.store.nodesMap[i].expanded = this.openall ;
-      //   }
+      for (let i = 0; i < this.$refs.tree.store._getAllNodes().length; i++) {
+        this.$refs.tree.store._getAllNodes()[i].expanded = this.openall;
+      }
     },
     checkedExpand(items) {
-      let message = this.$refs.tree.store.getNode(items);
-      this.openOffNode(message, message.expanded);
+      this.openOffNode(this.$refs.tree.store.getNode(items), this.$refs.tree.store.getNode(items).expanded);
     },
     openOffNode(item, tf) {
+      item.expanded = !tf;
       if (item.childNodes && item.childNodes.length > 0) {
-        item.expanded = !tf;
         item.childNodes.forEach((items, index) => {
           this.openOffNode(items);
         });
       }
     },
     callPhone(item) {
+      console.log(item);
       if (!item.children) {
         if (item.mobile) {
           window.location.href = "tel:" + item.mobile;
@@ -427,13 +397,6 @@ export default {
     },
     tabsChange(type) {
       this.tabsShowFlag = !this.tabsShowFlag;
-      if (type == "按部门") {
-        this.depAlldata = [];
-        let info = {
-          OfficeId: 123456789,
-        };
-        this.queryUserByOffice(info);
-      }
     },
     handleClick(tab, event) {
       console.log(tab, event);
@@ -580,8 +543,6 @@ export default {
 /deep/.el-tree-node__content > label.el-checkbox {
   z-index: 100;
   opacity: 0;
-  width: 50px;
-  height: 75px;
   margin-right: 15px;
 }
 /deep/.el-tree-node__content {
@@ -592,9 +553,6 @@ export default {
     line-height: 52px;
     margin: 0;
   }
-}
-/deep/.collapse-transition {
-        transition: none; //权重稍微高一点覆盖掉组件本身的动画效果
 }
 // /deep/.el-tree-node__expand-icon {
 //   position:absolute;

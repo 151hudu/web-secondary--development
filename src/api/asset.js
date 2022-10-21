@@ -10,8 +10,7 @@ export const queryAssetById = (id) => request.post(`/asset/getAssetData?asset_id
  * 无鉴权查询资产
  * @param id 资产ID
  */
-export const queryUserByOffice = (params) => request.get(`/system/office/queryCountByOfficeId?OfficeId=${params.OfficeId}`);
-export const queryStaffByOfficeId = (params,data) => request.post(`/system/office/queryStaffByOfficeId?OfficeId=${params.OfficeId}`,data);
+export const queryUserByOffice = (params) => request.get(`/lxcfAddressList/queryUserByOfficeNew`);
 export const queryUser = (params) => request.get(`/lxcfAddressList/queryUser`);
 // if (val === "") {
 //   this.search_Fi_List = [];

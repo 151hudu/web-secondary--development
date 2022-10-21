@@ -25,15 +25,7 @@
           {{ this.excelAllData.settlement_type === "分时电价" ? "折扣率" : "电价" }}
         </div>
         <div style="width: calc(100% - 1460px); color: #000" class="div_Right">
-          {{
-            this.excelAllData.settlement_type === "分时电价"
-              ? this.excelAllData.discount_rate
-                ? this.excelAllData.discount_rate + "%"
-                : ""
-              : this.excelAllData.fixed_tariff
-              ? this.excelAllData.fixed_tariff + "元/kWh"
-              : ""
-          }}
+          {{ this.excelAllData.settlement_type === "分时电价" ? this.excelAllData.discount_rate + "%" : this.excelAllData.fixed_tariff + "元/kWh" }}
         </div>
       </div>
       <div class="topTable">
@@ -442,31 +434,31 @@ export default {
         ];
         this.tableData.forEach((item) => {
           keyArr.forEach((key) => (item[key] = item[key] || 0));
-          if (item["swdl_last"]) {
+          if (typeof item.swdl_last == "number") {
             item["swdl_last"] = item["swdl_last"];
           } else {
             item.swdl_last_edit = true;
             item["swdl_last"] = null;
           }
-          if (item["lastnum_j"]) {
+          if (typeof item.lastnum_j == "number") {
             item["lastnum_j"] = item["lastnum_j"];
           } else {
             item.lastnum_j_edit = true;
             item["lastnum_j"] = null;
           }
-          if (item["lastnum_f"]) {
+          if (typeof item.lastnum_f == "number") {
             item["lastnum_f"] = item["lastnum_f"];
           } else {
             item.lastnum_f_edit = true;
             item["lastnum_f"] = null;
           }
-          if (item["lastnum_p"]) {
+          if (typeof item.lastnum_p == "number") {
             item["lastnum_p"] = item["lastnum_p"];
           } else {
             item.lastnum_p_edit = true;
             item["lastnum_p"] = null;
           }
-          if (item["lastnum_g"]) {
+          if (typeof item.lastnum_g == "number") {
             item["lastnum_g"] = item["lastnum_g"];
           } else {
             item.lastnum_g_edit = true;
@@ -577,8 +569,7 @@ export default {
           "fees_g",
         ];
         this.tableDataTop.forEach((item) => {
-          delete
-          this.tableDataBottom.forEach((itemSon) => {
+          delete this.tableDataBottom.forEach((itemSon) => {
             if (item.data_id === itemSon.data_id) {
               keyArray.forEach((key) => (item[key] = JSON.parse(JSON.stringify(itemSon[key]))));
             }
@@ -586,13 +577,13 @@ export default {
         });
         for (const k in this.excelAllData.childData[0]) {
           this.excelAllData.childData[0][k] = this.tableDataTop;
-          this.excelAllData.childData[0][k] .forEach((item,index)=>{
-            delete item.swdl_last_edit
-            delete item.lastnum_j_edit
-            delete item.lastnum_f_edit
-            delete item.lastnum_p_edit
-            delete item.lastnum_g_edit
-          })
+          this.excelAllData.childData[0][k].forEach((item, index) => {
+            delete item.swdl_last_edit;
+            delete item.lastnum_j_edit;
+            delete item.lastnum_f_edit;
+            delete item.lastnum_p_edit;
+            delete item.lastnum_g_edit;
+          });
         }
         this.excelAllData.display_flag = "1";
         const message = {

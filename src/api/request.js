@@ -4,14 +4,14 @@ import qs from "querystringify";
 let apiContextPath = "";
 if (process.env.NODE_ENV === "development") {
   document.cookie =
-    "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY2NTQ1MzMzMDA4OCwidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.X6MHHGOpuTVK84A4MJSS0ND7cZuYsuRe5aWy85BiG_o";
+    "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY2NjMzOTc1NDIzNywidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.o7I5jjyUqD0Bbh3gD9rDXCj6ezRvBtYfKalGHOfg7kw; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY2NjMzOTc1NDIzOH0.6owQD-YeQU6Qu9lY8vSNgLRM_SDhd5DyHSIqlPzu0Ng";
   document.cookie =
     "refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY0NjcyMjI2ODY4Nn0.TEVE_nopHNZlvSQM_RUZrLcCzkaERiHo8nz0q-ksL3E";
   document.cookie = "username=admin";
   document.cookie = "windowOnline=true";
   apiContextPath = "/api";
 }
-const prefix = window.apiContextPathPrefix ? (window.apiContextPathPrefix) : "/dtyq/pngf"
+const prefix = window.apiContextPathPrefix ? (window.apiContextPathPrefix) : ""
 const instance = axios.create({
   
   baseURL: `${prefix}${apiContextPath}/sdata/rest`,

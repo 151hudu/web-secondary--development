@@ -310,31 +310,30 @@ export default class PeerView extends React.Component {
           </div>
 
           <div className={classnames("peer", { "is-me": isMe })}>
-            {/* <Choose>
-							<When condition={isMe}>
-								<EditableInput
-									value={peer.displayName}
-									propName='displayName'
-									className='display-name editable'
-									classLoading='loading'
-									classInvalid='invalid'
-									shouldBlockWhileLoading
-									editProps={{
-										maxLength   : 20,
-										autoCorrect : 'false',
-										spellCheck  : 'false'
-									}}
-									onChange={({ displayName }) => onChangeDisplayName(displayName)}
-								/>
-							</When>
-
-							<Otherwise>
-								<span className='display-name'>
-									{peer.displayName}
-								</span>
-							</Otherwise>
-						</Choose> */}
-            <span className="display-name">{this.state.username}</span>
+            <Choose>
+              <When condition={isMe}>
+                <span className="display-name">
+                  {this.state.username}
+                </span>
+                {/* <EditableInput
+                  value={peer.displayName}
+                  propName="displayName"
+                  className="display-name editable"
+                  classLoading="loading"
+                  classInvalid="invalid"
+                  shouldBlockWhileLoading
+                  editProps={{
+                    maxLength: 20,
+                    autoCorrect: "false",
+                    spellCheck: "false",
+                  }}
+                  onChange={({ displayName }) => onChangeDisplayName(displayName)}
+                /> */}
+              </When>
+              <Otherwise>
+                <span className="display-name">{peer.displayName}</span>
+              </Otherwise>
+            </Choose>
             <div className="row">
               <span className={classnames("device-icon", peer.device.flag)} />
               <span className="device-version">
@@ -388,12 +387,13 @@ export default class PeerView extends React.Component {
   }
   componentDidMount() {
     const { audioTrack, videoTrack } = this.props;
-	console.log(this.GetQueryString("username"));
+    console.log(this.GetQueryString("username"));
     let message = decodeURIComponent(escape(window.atob(this.GetQueryString("username"))));
-	console.log(message);
+    console.log(message);
     this.setState({
       username: message,
     });
+    this.props.onChangeDisplayName(message);
     this._setTracks(audioTrack, videoTrack);
   }
 

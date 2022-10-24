@@ -50,12 +50,6 @@ export default class PeerView extends React.Component {
     // requestAnimationFrame for face detection.
     this._faceDetectionRequestAnimationFrame = null;
   }
-  componentDidMount() {
-    let message = decodeURIComponent(escape(window.atob(this.GetQueryString("username"))));
-    this.setState({
-      username: message,
-    });
-  }
   GetQueryString(name) {
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
     var r = window.location.search.substr(1).match(reg); //获取url中"?"符后的字符串并正则匹配
@@ -394,7 +388,10 @@ export default class PeerView extends React.Component {
 
   componentDidMount() {
     const { audioTrack, videoTrack } = this.props;
-
+    let message = decodeURIComponent(escape(window.atob(this.GetQueryString("username"))));
+    this.setState({
+      username: message,
+    });
     this._setTracks(audioTrack, videoTrack);
   }
 

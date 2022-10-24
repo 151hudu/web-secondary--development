@@ -386,14 +386,14 @@ export default class PeerView extends React.Component {
     return context == null || context == "" || context == "undefined" ? "" : context;
   }
   componentDidMount() {
-    const { audioTrack, videoTrack,onChangeDisplayName } = this.props;
+    const { audioTrack, videoTrack,onChangeDisplayName ,isMe} = this.props;
     console.log(this.GetQueryString("username"));
     let message = decodeURIComponent(escape(window.atob(this.GetQueryString("username"))));
     console.log(message);
     this.setState({
       username: message,
     });
-	onChangeDisplayName&&onChangeDisplayName(message);
+    isMe&&onChangeDisplayName(message);
     this._setTracks(audioTrack, videoTrack);
   }
 

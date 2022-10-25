@@ -1,7 +1,7 @@
 {
-  "id": "b403d103-0df9-474b-ad6d-6f5dcb9fdd91",
+  "id": "6f32e9b3-bf83-40dc-a6ec-7a6d7f45874d",
   "type": "app",
-  "main": "app.84892ce9.js",
+  "main": "app.afbb76c9.js",
   "version": "2",
   "props": {
     "type": "customize",
@@ -11,8 +11,7 @@
     "lib": [],
     "css_script": [],
     "customconf": [
-      "文章对应资产",
-      "分享跳转链接"
+      "分享名称"
     ]
   }
 }

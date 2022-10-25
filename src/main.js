@@ -24,16 +24,8 @@ Vue.prototype.$message = Message;
 if (process.env.NODE_ENV !== "production") {
   // 添加 customConfig 进行测试
   let customConfig = {
-    文章对应资产: "2222",
+    分享名称: "2222",
     // 文章对应资产:'4a7b4ede-b55c-4b70-a97e-c00e2e17330f',
-    文章标题字段: "title",
-    文章时间字段: "time",
-    文章来源字段: "souce",
-    文章正文字段: "content",
-    文章视频字段: "videoSrc",
-    文章pdf字段: "pdfSrc",
-    文章图片字段: "imgSrc",
-    分享跳转链接: "shareSrc",
   };
 
   new Vue({

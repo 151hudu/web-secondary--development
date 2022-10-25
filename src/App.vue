@@ -19,7 +19,7 @@
         <span class="news_Content" v-html="this.articleData.content"> </span>
       </div>
       <!-- 编辑评论区 -->
-      <div class="comment">
+      <div class="comment" v-if="commentShow==1">
         <span class="comment_Nums"> 共24个评论 </span>
         <div class="comment_Input_Area">
           <el-input type="textarea" placeholder="写下你的评论" :autosize="{ maxRows: 4 }" v-model="commentValue" resize="none" class="comment_Input"> </el-input>
@@ -30,7 +30,7 @@
         </div>
         <el-divider></el-divider>
         <!-- 评论区 -->
-        <div class="comment_Content">
+        <div class="comment_Content" v-if="commentShow==1">
           <div class="comment_Content_Item" v-for="(item, index) in commentData" :key="index" ref="comment_Content_Item">
             <div class="comment_Content_Item_Top">
               <el-avatar :size="30" :src="circleUrl"></el-avatar>
@@ -53,7 +53,7 @@
                 </span>
               </span>
             </div>
-            <div v-show="item.replyShow">
+            <div v-show="item.replyShow && commentShow==1">
               <div class="comment_Input_Area" style="width: 90%">
                 <el-input type="textarea" placeholder="写下你的评论" :autosize="{ maxRows: 4 }" v-model="item.replyInput" resize="none" class="comment_Input"> </el-input>
                 <span class="comment_Button">
@@ -64,7 +64,7 @@
             </div>
             <div>
               <div class="comment_Content_Item_Other" v-for="(sonItem, sonIndex) in item.children" :key="sonIndex">
-                <div v-show="item.commentShow">
+                <div v-show="item.commentShow==1">
                   <el-avatar :size="30" :src="circleUrl"></el-avatar>
                   <span class="comment_Content_Item_Name">{{ sonItem.name }}</span>
                   <span class="comment_Content_Item_Other_Content">回复: {{ sonItem.content }}</span>
@@ -84,18 +84,18 @@
           <span class="clickDown">点击下载</span>
         </span>
       </div>
-      <div class="my_Operation">
+      <div class="my_Operation" v-if="collectionShow==1 || shareShow==1">
         <span :style="{ fontWeight: 700, color: theme.themeColor }">丨</span>
         <span> 我的操作</span>
         <el-divider></el-divider>
         <div class="my_Operation_Button">
-          <div class="my_Operation_Collection">
+          <div class="my_Operation_Collection" v-if="collectionShow==1">
             <i class="el-icon-star-on" :style="{ color: theme.themeColor }" @click="collect('delete')" v-show="articleData.collect == 1"></i>
             <i class="el-icon-star-off" :style="{ color: theme.themeColor }" @click="collect('add')" v-show="articleData.collect !== 1"></i>
             <span>收藏</span>
           </div>
-          <el-divider class="operationDivider" direction="vertical"></el-divider>
-          <div class="my_Operation_Share">
+          <el-divider v-if="collectionShow==1&&shareShow==1" class="operationDivider" direction="vertical"></el-divider>
+          <div class="my_Operation_Share" v-if="shareShow==1">
             <i class="el-icon-share" :style="{ color: theme.themeColor }" @click="sendVisible = true"></i>
             <span>分享</span>
           </div>
@@ -141,11 +141,11 @@
         <el-divider></el-divider>
         <el-carousel @change="about_VideoChange" height="150px" arrow="always">
           <el-carousel-item v-for="item in 4" :key="item">
-            <img style="width: 100%; height: 100%" src="http://10.15.111.12:12202/storage_area/files/datasource/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20220624161205.jpg" alt="" />
+            <img style="width: 100%; height: 100%" :src="imgSrc" alt="" />
             <i @click="showAboutVideo(item)" class="el-icon-video-play"></i>
           </el-carousel-item>
         </el-carousel>
-        <span class="about_Video_Title"> 练习两年半练习两年半练习两年半练习两年半练习两年半练习两年半 </span>
+        <span class="about_Video_Title"> 外交部回应美参议员率团窜访台湾 </span>
       </div>
     </div>
     <el-dialog title="练习两年半" :visible.sync="dialogVisible" width="55%" :show-close="true">
@@ -229,7 +229,7 @@ export default {
       commentValue: "",
       text: '<h1>富强、民主、文明、和谐</h1><br/><h2><font color="red">自由、平等、公正、法治</font></h2><br/><h3><font color="blue">爱国、敬业、诚信、友善</font></h3>',
       activeName: "first",
-      circleUrl: "http://10.15.111.12:12202/storage_area/files/datasource/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20220624161205.jpg",
+      circleUrl: window.location.origin + "storage_area/files/datasouce/123.jpg",
       src: require("../../小黑子.mp4"),
       showOrHidden: "showOrHidden",
       articleData: "",
@@ -245,19 +245,28 @@ export default {
       // articlePdfSrc: "",
       // articleImgSrc: "",
       // articleShareSrc: "",
+      commentShow: 1,
+      collectionShow: 1,
+      shareShow: 1,
       props: {
         label: "office_name",
         children: "office_children",
         isLeaf: "leaf",
       },
+      imgSrc: window.location.origin + "/storage_area/files/datasouce/123.jpg",
     };
   },
   mounted() {
+    console.log(this.GetQueryString("dataId"));
     let { componentId } = this.customConfig || {};
     componentId && window.componentCenter?.register(componentId, "comp", this, eventActionDefine);
-    queryAssetById(this.customConfig.文章对应资产).then((res) => {
+    queryAssetById(this.GetQueryString("dataId")).then((res) => {
       res.data.createTime = moment(new Date(res.data.createTime)).format("YYYY年MM月DD日 HH:mm:ss");
       this.articleData = res.data;
+      this.commentShow = res.data.comment;
+      this.collectionShow = res.data.collection;
+      this.shareShow = res.data.share;
+      this.articleData.collect ? (this.articleData.collect = this.articleData.collect) : (this.articleData.collect = 0);
       this.loadPdf();
     });
     this.queryComments();
@@ -278,7 +287,8 @@ export default {
     sendMessge() {
       let message = {
         userIdList: [],
-        url: this.customConfig.分享跳转链接,
+        url: window.location.href,
+        infoUrlTitle: this.customConfig.分享名称 ? this.customConfig.分享名称 : this.articleData.title,
       };
       this.selectData.forEach((item, index) => {
         item.users.forEach((userItem, userIndex) => {
@@ -339,7 +349,7 @@ export default {
       }
     },
     queryComments() {
-      queryComments(this.customConfig.文章对应资产).then((res) => {
+      queryComments(this.GetQueryString("dataId")).then((res) => {
         res.data.sort(this.handle("createTime"));
         res.data.forEach((item, index) => {
           item.commentShow = false;
@@ -357,17 +367,28 @@ export default {
         console.log(this.commentData);
       });
     },
+    GetQueryString(name) {
+      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+      var r = window.location.search.substr(1).match(reg); //获取url中"?"符后的字符串并正则匹配
+      var context = "";
+      if (r != null) context = r[2];
+      reg = null;
+      r = null;
+      return context == null || context == "" || context == "undefined" ? "" : context;
+    },
     collect(type) {
       if (type == "delete") {
         deleteNewsCollect({ objcetId: this.articleData.dataId }).then((res) => {
           if (res.status == 200) {
             this.articleData.collect = 0;
+            this.$forceUpdate();
           }
         });
       } else {
         addNewsCollect({ objcetId: this.articleData.dataId }).then((res) => {
           if (res.status == 200) {
             this.articleData.collect = 1;
+            this.$forceUpdate();
           }
         });
       }
@@ -406,7 +427,7 @@ export default {
       console.log(tab, event);
     },
     showAboutVideo(item) {
-      this.dialogVisible = true;
+      // this.dialogVisible = true;
     },
     commentArticleSon(item) {
       let message = {

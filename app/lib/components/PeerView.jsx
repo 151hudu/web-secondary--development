@@ -93,7 +93,7 @@ export default class PeerView extends React.Component {
             <div className={classnames("icon", "stats")} onClick={() => onStatsClick(peer.id)} />
           </div>
 
-          <div className={classnames("box", { visible: showInfo })}>
+          {/* <div className={classnames("box", { visible: showInfo })}>
             <If condition={audioProducerId || audioConsumerId}>
               <h1>audio</h1>
 
@@ -307,14 +307,12 @@ export default class PeerView extends React.Component {
 
               <If condition={videoConsumerId && videoScore}>{this._printConsumerScore(videoConsumerId, videoScore)}</If>
             </If>
-          </div>
+          </div> */}
 
           <div className={classnames("peer", { "is-me": isMe })}>
             <Choose>
               <When condition={isMe}>
-                <span className="display-name">
-                  {this.state.username}
-                </span>
+                <span className="display-name">{this.state.username}</span>
                 {/* <EditableInput
                   value={peer.displayName}
                   propName="displayName"
@@ -386,14 +384,14 @@ export default class PeerView extends React.Component {
     return context == null || context == "" || context == "undefined" ? "" : context;
   }
   componentDidMount() {
-    const { audioTrack, videoTrack,onChangeDisplayName ,isMe} = this.props;
+    const { audioTrack, videoTrack, onChangeDisplayName, isMe } = this.props;
     console.log(this.GetQueryString("username"));
-    let message = decodeURIComponent(this.GetQueryString("username"));
+    let message = window.atob(decodeURIComponent(this.GetQueryString("username")));
     console.log(message);
     this.setState({
       username: message,
     });
-    isMe&&onChangeDisplayName(message);
+    isMe && onChangeDisplayName(message);
     this._setTracks(audioTrack, videoTrack);
   }
 

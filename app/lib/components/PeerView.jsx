@@ -88,7 +88,7 @@ export default class PeerView extends React.Component {
       <div data-component="PeerView">
         <div className="info">
           <div className="icons">
-            <div className={classnames("icon", "info", { on: showInfo })} onClick={() => this.setState({ showInfo: !showInfo })} />
+            {/* <div className={classnames("icon", "info", { on: showInfo })} onClick={() => this.setState({ showInfo: !showInfo })} /> */}
 
             <div className={classnames("icon", "stats")} onClick={() => onStatsClick(peer.id)} />
           </div>
@@ -388,7 +388,7 @@ export default class PeerView extends React.Component {
   componentDidMount() {
     const { audioTrack, videoTrack,onChangeDisplayName ,isMe} = this.props;
     console.log(this.GetQueryString("username"));
-    let message = decodeURIComponent(escape(window.atob(this.GetQueryString("username"))));
+    let message = decodeURIComponent(this.GetQueryString("username"));
     console.log(message);
     this.setState({
       username: message,

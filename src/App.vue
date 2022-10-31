@@ -11,6 +11,24 @@
     <div class="search_Se" v-if="!tabsShowFlag">
       <el-input v-model="inputSe" placeholder="搜索人员"> <i slot="prefix" class="el-input__icon el-icon-search"></i></el-input>
     </div>
+    <el-tree v-if="tabsShowFlag" :data="leaderData" :props="defaultProps" class="otherTree">
+      <span class="custom-tree-node" slot-scope="{ data }" @click="callPhone(data)">
+        <div style="display: flex">
+          <div class="name_Radius" v-if="!data.children" style="background: #f9ae18">
+            {{ data.name.substring(data.name.length - 2) }}
+          </div>
+          <p v-if="data.children">{{ data.name }}</p>
+          <span v-else>{{ data.name }}</span>
+        </div>
+        <svg v-if="!data.children" t="1665556325855" class="icon" viewBox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4526" width="20" height="20">
+          <path
+            d="M507.918859 650.527512c-49.503789-40.346806-106.623387-94.611243-156.090335-155.822216-34.713235-42.89496-65.404683-87.94306-33.707276-119.633303L95.656089 153.242337C63.221866 193.655661-8.620745 386.103763 299.338585 701.174388c324.458887 332.036833 533.74323 261.005742 569.766359 223.573453L652.205814 708.149578C621.886867 738.400983 582.842793 711.503113 507.918859 650.527512zM947.385483 798.906865l0-0.201601c0 0-169.23738-168.702166-169.343809-168.769707-13.381394-13.347623-34.814547-13.078481-48.127376 0.067541l-61.340939 61.375733 217.469138 217.203066c0 0 61.409504-61.176179 61.342986-61.245767l0.165784-0.132013C961.605005 833.148333 960.162074 811.75202 947.385483 798.906865zM396.298428 297.126091l0-0.168854c14.051691-14.083415 12.74589-35.45005 0-48.196964l0-0.234348c0 0-174.132089-173.597897-174.200654-173.597897-13.452005-13.484753-34.884135-13.148069-48.163193 0l-61.342986 61.441228 222.299375 221.961668C334.888924 358.335017 396.298428 297.225356 396.298428 297.126091z"
+            p-id="4527"
+            fill="#3295F7"
+          ></path>
+        </svg>
+      </span>
+    </el-tree>
     <mt-index-list v-if="tabsShowFlag && search_Fi_List && search_Fi_List.length == 0">
       <mt-index-section v-for="(item, index) in nameAllShowdata" :key="index" :index="item.initial">
         <mt-cell v-for="(s, index) in item.data" :key="index">
@@ -239,6 +257,7 @@ export default {
         label: "name",
         isLeaf: "isLeaf",
       },
+      leaderData: [],
       depAlldata: [],
       nameAllShowdata: [],
       nameAlldata: [],
@@ -250,6 +269,10 @@ export default {
     };
   },
   mounted() {
+    let info = {
+      OfficeId: 123456789,
+    };
+    this.queryUserByOffice(info);
     queryUser().then((res) => {
       this.nameAlldata = res.data;
       for (let k = 0; k < this.nameAlldata.length; k++) {
@@ -360,6 +383,16 @@ export default {
             await this.searhAllPeople(item2, "out");
           }
           item.children = item.children.concat(res.data.userItemList);
+          if (item.name == "集团领导") {
+            if (!this.leaderData[0]) {
+              this.leaderData.push(item);
+            }
+          }
+          item.children.map((itemchi, index) => {
+            if (itemchi.name == "集团领导") {
+              item.children.unshift(item.children.splice(index, 1)[0]);
+            }
+          });
           if (type == "in") {
             this.depAlldata.push(item);
           }
@@ -427,13 +460,13 @@ export default {
     },
     tabsChange(type) {
       this.tabsShowFlag = !this.tabsShowFlag;
-      if (type == "按部门") {
-        this.depAlldata = [];
-        let info = {
-          OfficeId: 123456789,
-        };
-        this.queryUserByOffice(info);
-      }
+      // if (type == "按部门") {
+      //   this.depAlldata = [];
+      //   let info = {
+      //     OfficeId: 123456789,
+      //   };
+      //   this.queryUserByOffice(info);
+      // }
     },
     handleClick(tab, event) {
       console.log(tab, event);
@@ -593,8 +626,18 @@ export default {
     margin: 0;
   }
 }
+.otherTree {
+  /deep/.el-tree-node__content {
+    flex-direction: row;
+    background: #f7f7f7;
+  }
+  /deep/.el-tree__empty-block{
+    background: #f7f7f7;
+  }
+}
+
 /deep/.collapse-transition {
-        transition: none; //权重稍微高一点覆盖掉组件本身的动画效果
+  transition: none; //权重稍微高一点覆盖掉组件本身的动画效果
 }
 // /deep/.el-tree-node__expand-icon {
 //   position:absolute;

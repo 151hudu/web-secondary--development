@@ -21,3 +21,5 @@ export const addNewsComments = (data) => request.post(`news/addNewsComments`, da
 export const share = (data) => request.post(`news/share`, data);
 // 查询组织架构
 export const queryOfficeUser = (data) => request.post(`system/office/queryOfficeUser`, {});
+// 查询右侧信息
+export const queryRightSideDetail = (data) => request.post(`secondary-rightside/queryRightSideDetail`, data);

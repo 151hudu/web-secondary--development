@@ -19,7 +19,7 @@
         <span class="news_Content" v-html="this.articleData.content"> </span>
       </div>
       <!-- 编辑评论区 -->
-      <div class="comment" v-if="commentShow==1">
+      <div class="comment" v-if="commentShow == 1">
         <span class="comment_Nums"> 共24个评论 </span>
         <div class="comment_Input_Area">
           <el-input type="textarea" placeholder="写下你的评论" :autosize="{ maxRows: 4 }" v-model="commentValue" resize="none" class="comment_Input"> </el-input>
@@ -30,7 +30,7 @@
         </div>
         <el-divider></el-divider>
         <!-- 评论区 -->
-        <div class="comment_Content" v-if="commentShow==1">
+        <div class="comment_Content" v-if="commentShow == 1">
           <div class="comment_Content_Item" v-for="(item, index) in commentData" :key="index" ref="comment_Content_Item">
             <div class="comment_Content_Item_Top">
               <el-avatar :size="30" :src="circleUrl"></el-avatar>
@@ -53,7 +53,7 @@
                 </span>
               </span>
             </div>
-            <div v-show="item.replyShow && commentShow==1">
+            <div v-show="item.replyShow && commentShow == 1">
               <div class="comment_Input_Area" style="width: 90%">
                 <el-input type="textarea" placeholder="写下你的评论" :autosize="{ maxRows: 4 }" v-model="item.replyInput" resize="none" class="comment_Input"> </el-input>
                 <span class="comment_Button">
@@ -64,7 +64,7 @@
             </div>
             <div>
               <div class="comment_Content_Item_Other" v-for="(sonItem, sonIndex) in item.children" :key="sonIndex">
-                <div v-show="item.commentShow==1">
+                <div v-show="item.commentShow == 1">
                   <el-avatar :size="30" :src="circleUrl"></el-avatar>
                   <span class="comment_Content_Item_Name">{{ sonItem.name }}</span>
                   <span class="comment_Content_Item_Other_Content">回复: {{ sonItem.content }}</span>
@@ -84,18 +84,18 @@
           <span class="clickDown">点击下载</span>
         </span>
       </div>
-      <div class="my_Operation" v-if="collectionShow==1 || shareShow==1">
+      <div class="my_Operation" v-if="collectionShow == 1 || shareShow == 1">
         <span :style="{ fontWeight: 700, color: theme.themeColor }">丨</span>
         <span> 我的操作</span>
         <el-divider></el-divider>
         <div class="my_Operation_Button">
-          <div class="my_Operation_Collection" v-if="collectionShow==1">
+          <div class="my_Operation_Collection" v-if="collectionShow == 1">
             <i class="el-icon-star-on" :style="{ color: theme.themeColor }" @click="collect('delete')" v-show="articleData.collect == 1"></i>
             <i class="el-icon-star-off" :style="{ color: theme.themeColor }" @click="collect('add')" v-show="articleData.collect !== 1"></i>
             <span>收藏</span>
           </div>
-          <el-divider v-if="collectionShow==1&&shareShow==1" class="operationDivider" direction="vertical"></el-divider>
-          <div class="my_Operation_Share" v-if="shareShow==1">
+          <el-divider v-if="collectionShow == 1 && shareShow == 1" class="operationDivider" direction="vertical"></el-divider>
+          <div class="my_Operation_Share" v-if="shareShow == 1">
             <i class="el-icon-share" :style="{ color: theme.themeColor }" @click="sendVisible = true"></i>
             <span>分享</span>
           </div>
@@ -106,37 +106,30 @@
           </div> -->
         </div>
       </div>
-      <div class="about_News">
+      <div class="about_News" :style="{ height: this.aboutHeight }">
         <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="相关军情动态" name="first">
+          <el-tab-pane label="相关推荐" name="first">
             <ul style="padding: 0">
-              <li class="about_News_First">
+              <li class="about_News_First" v-for="(item, index) in aboutList" :key="index">
                 <pennant theme="filled" size="18" :fill="theme.themeColor" />
-                <span>外交部回应美参议员率团窜访台湾</span>
-              </li>
-              <li class="about_News_First">
-                <pennant theme="filled" size="18" :fill="theme.themeColor" />
-                <span>外交部回应美参议员率团窜访台湾</span>
-              </li>
-              <li class="about_News_First">
-                <pennant theme="filled" size="18" :fill="theme.themeColor" />
-                <span>外交部回应美参议员率团窜访台湾</span>
-              </li>
-              <li class="about_News_First">
-                <pennant theme="filled" size="18" :fill="theme.themeColor" />
-                <span>外交部回应美参议员率团窜访台湾</span>
-              </li>
-              <li class="about_News_First">
-                <pennant theme="filled" size="18" :fill="theme.themeColor" />
-                <span>外交部回应美参议员率团窜访台湾</span>
+                <span>{{ item.title }}</span>
               </li>
             </ul>
           </el-tab-pane>
-          <el-tab-pane label="相关军情报告" name="second">相关军情报告</el-tab-pane>
         </el-tabs>
       </div>
-      <div class="about_Video">
-        <span :style="{ fontWeight: 700, color: theme.themeColor }">丨</span>
+      <div class="about_News2" :style="{ height: this.ran2Height }">
+        <el-tabs v-model="activeName" @tab-click="handleClick">
+          <el-tab-pane label="热点排行" name="first">
+            <ul style="padding: 0">
+              <li class="about_News_First" v-for="(item, index) in rankList" :key="index">
+                <span :style="{color:theme.themeColor}">{{index +1}}</span>&nbsp;&nbsp;&nbsp;
+                <span>{{item.title}}</span>
+              </li>
+            </ul>
+          </el-tab-pane>
+        </el-tabs>
+        <!-- <span :style="{ fontWeight: 700, color: theme.themeColor }">丨</span>
         <span> 相关视频</span>
         <el-divider></el-divider>
         <el-carousel @change="about_VideoChange" height="150px" arrow="always">
@@ -145,12 +138,12 @@
             <i @click="showAboutVideo(item)" class="el-icon-video-play"></i>
           </el-carousel-item>
         </el-carousel>
-        <span class="about_Video_Title"> 外交部回应美参议员率团窜访台湾 </span>
+        <span class="about_Video_Title"> 外交部回应美参议员率团窜访台湾 </span> -->
       </div>
     </div>
-    <el-dialog title="练习两年半" :visible.sync="dialogVisible" width="55%" :show-close="true">
+    <!-- <el-dialog title="练习两年半" :visible.sync="dialogVisible" width="55%" :show-close="true">
       <video style="width: 100%; height: 100%" autoplay controls="controls" :src="src"></video>
-    </el-dialog>
+    </el-dialog> -->
     <el-dialog title="发送站内信" :visible.sync="sendVisible" width="40%" :show-close="true">
       <el-tree :props="props" :data="organization" show-checkbox @check="handleCheckChange"> </el-tree>
       <div>
@@ -173,7 +166,7 @@
 import eventActionDefine from "./components/msgCompConfig";
 import "./index.css";
 import pdf from "vue-pdf";
-import { queryAssetById, queryComments, addLike, addNewsCollect, addNewsComments, deleteNewsCollect, deleteLike, queryOfficeUser, share } from "./api/asset";
+import { queryRightSideDetail, queryAssetById, queryComments, addLike, addNewsCollect, addNewsComments, deleteNewsCollect, deleteLike, queryOfficeUser, share } from "./api/asset";
 import moment from "moment";
 import { ThumbsUp, GoodTwo, Comment, Save, Pennant } from "@icon-park/vue";
 export default {
@@ -254,10 +247,35 @@ export default {
         isLeaf: "leaf",
       },
       imgSrc: window.location.origin + "/storage_area/files/datasouce/123.jpg",
+      aboutHeight: "290px",
+      aboutNum: 5,
+      rankHeight: "290px",
+      rankNum: 5,
+      aboutID: "",
+      rankID: "",
+      aboutList: [],
+      rankList: [],
     };
   },
   mounted() {
     console.log(this.GetQueryString("dataId"));
+    this.aboutHeight = this.customConfig.相关推荐高度 ? this.customConfig.相关推荐高度 + 'px' : "290px";
+    this.aboutNum = this.customConfig.相关推荐条数 ? this.customConfig.相关推荐条数 : 5;
+    this.rankHeight = this.customConfig.热点排行高度 ? this.customConfig.热点排行高度 + 'px' : "290px";
+    this.rankNum = this.customConfig.热点排行条数 ? this.customConfig.热点排行条数 : 5;
+    this.aboutID = this.customConfig.查询相关推荐资产ID ? this.customConfig.查询相关推荐资产ID : "";
+    this.rankID = this.customConfig.查询热点排行资产ID ? this.customConfig.查询热点排行资产ID : "";
+    let message = {
+      newsAssetId: this.aboutID,
+      rankingAssetId: this.rankID,
+      recommandNum: this.aboutNum,
+      hotspotNum: this.rankNum,
+      currentNewsId: this.GetQueryString("dataId"),
+    };
+    queryRightSideDetail(message).then((res) => {
+      this.aboutList = res.data.recommandNews;
+      this.rankList = res.data.rankNews;
+    });
     let { componentId } = this.customConfig || {};
     componentId && window.componentCenter?.register(componentId, "comp", this, eventActionDefine);
     queryAssetById(this.GetQueryString("dataId")).then((res) => {
@@ -480,7 +498,7 @@ export default {
 <style lang="less" scoped>
 .main {
   background: #f5f6fa;
-  width: calc(100% - 80px);
+  width: 100%;
   display: flex;
   justify-content: space-between;
 }
@@ -637,13 +655,13 @@ export default {
 }
 // 右侧
 .content_Right {
-  width: 330px;
+  min-width: 330px;
   display: flex;
   flex-direction: column;
   margin-left: 20px;
   .download {
     height: 80px;
-    width: 330px;
+    min-width: 330px;
     border-radius: 7px;
     background: #2dbed1;
     display: flex;
@@ -701,13 +719,62 @@ export default {
       }
     }
   }
-  .about_News {
-    height: 290px;
+  .about_News2 {
+    margin-bottom: 20px;
+  }
+  .about_News,
+  .about_News2 {
+    height: 280px;
+    width: 330px;
+    overflow: hidden;
+    background: #ffffff;
+    margin-top: 30px;
+    padding: 20px;
+
+    /deep/.el-tab-pane,
+    /deep/.el-tabs {
+      height: 100%;
+    }
+    /deep/.el-tabs__content {
+      height: calc(100% - 60px);
+    }
+    ul {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+    }
+    .about_News_First {
+      list-style: none;
+      margin-bottom: 20px;
+      cursor: pointer;
+      &:hover {
+        color: #4980ed;
+      }
+      .i-icon-pennant {
+        margin-right: 10px;
+      }
+    }
+    /deep/.el-tabs__active-bar {
+      width: 120px !important;
+      background-color: rgba(24, 144, 255, 1);
+    }
+    /deep/.is-active {
+      color: #000000;
+      font-size: 22px;
+      font-weight: 700;
+    }
+    /deep/.el-tabs__item:hover {
+      color: #000000;
+    }
+  }
+  .about_Video {
+    height: 310px;
     width: 330px;
     background: #ffffff;
     margin-top: 30px;
     padding: 20px;
-    .about_News_First {
+    .about_Video_First {
       list-style: none;
       margin-bottom: 20px;
       cursor: pointer;
@@ -728,38 +795,6 @@ export default {
     }
     /deep/.el-tabs__item:hover {
       color: #000000;
-    }
-  }
-  .about_Video {
-    height: 310px;
-    width: 330px;
-    background: #ffffff;
-    margin-top: 30px;
-    padding: 20px;
-    /deep/.el-carousel {
-      position: relative;
-      .el-icon-video-play {
-        position: absolute;
-        color: #ffffff;
-        font-size: 40px;
-        right: calc(50% - 25px);
-        top: calc(50% - 21px);
-        cursor: pointer;
-        &:hover {
-          font-size: 45px;
-          top: calc(50% - 23px);
-          right: calc(50% - 27px);
-        }
-      }
-    }
-    .about_Video_Title {
-      margin-top: 15px;
-      display: block;
-      cursor: pointer;
-      overflow: hidden;
-      &:hover {
-        color: #4980ed;
-      }
     }
   }
 }

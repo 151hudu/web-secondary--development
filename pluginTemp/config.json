@@ -1,7 +1,7 @@
 {
-  "id": "6f32e9b3-bf83-40dc-a6ec-7a6d7f45874d",
+  "id": "d7b97486-95b0-410e-97e0-a7bb77b3098a",
   "type": "app",
-  "main": "app.afbb76c9.js",
+  "main": "app.ca563d0e.js",
   "version": "2",
   "props": {
     "type": "customize",
@@ -11,7 +11,13 @@
     "lib": [],
     "css_script": [],
     "customconf": [
-      "分享名称"
+      "分享名称",
+      "相关推荐高度",
+      "相关推荐条数",
+      "热点排行高度",
+      "热点排行条数",
+      "查询相关推荐资产ID",
+      "查询热点排行资产ID"
     ]
   }
 }

@@ -1,13 +1,20 @@
 {
-  "code": "97dffe29-22f6-4ec3-95e0-6e2a439ca083",
+  "code": "97dffe29-22f6-4ec3-95e0-6e2a439ca070",
   "type": "customize",
   "img": "APP_0001.png",
   "name": "dome",
   "lib": [],
   "css_script": [],
-  "js_script": "app.1e97582f.js",
+  "js_script": "app.b6bf1a70.js",
   "loadStyle": 0,
-  "customconf": [],
-  "main": "app.1e97582f.js",
-  "id": "de48a57b-d68c-4b86-a3a2-7c03140d8fcd"
+  "customconf": [
+    "社会组织服务",
+    "工会项目",
+    "职工需求",
+    "工作动态",
+    "社会组织服务",
+    "社会组织服务"
+  ],
+  "main": "app.b6bf1a70.js",
+  "id": "6f43de68-29a9-48de-84eb-8b507e621147"
 }

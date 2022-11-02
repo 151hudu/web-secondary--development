@@ -201,7 +201,7 @@ export default {
     goIframe(item, type) {
       if (type == "shzzfw") {
         this.src =
-          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/form/detail?goback=1&appid=ba344e81-9094-dba3-c2f5-dc8c82e4a174&menuId=34088679-7901-386c-3d16-81f62310f4bc%233&type=view&breadcrumb=145b91dec3bd5b0adaf017f602dc0562&view_id=37305912e16c4fc2810d9b89992000b4&form_id=3c2f316e0a66454a94a7ed6205a62930&id=" +
+          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/form/detail?goback=1&appid=a8b741b5-772b-8723-e009-3613866f0977&menuId=b6bfa6bb-401d-b781-b7aa-5c356cfb5ad5%233&type=view&breadcrumb=145b91dec3bd5b0adaf017f602dc0562&view_id=37305912e16c4fc2810d9b89992000b4&form_id=3c2f316e0a66454a94a7ed6205a62930&id=" +
           item.data_id +
           "&related=1";
       } else if (type == "ghxm") {
@@ -210,33 +210,33 @@ export default {
           item.data_id;
       } else if (type == "zgxq") {
         this.src =
-          "https://tyzy.jsghfw.com/jss_zgh_gxpt/form/application/detail?view_id=dc7f2e4d94b542918aa122bb171d0464&form_id=6446d0d4fcec44a094eea78ce0b6a137&type=1&related=0&id=" +
+          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/form/detail?goback=1&appid=a8b741b5-772b-8723-e009-3613866f0977&menuId=6a6f3627-819f-e5c9-ac36-36a41c5512dc%233&type=view&breadcrumb=fe07ad795a194ebdae7f5991a5f80f3f&view_id=dc7f2e4d94b542918aa122bb171d0464&form_id=6446d0d4fcec44a094eea78ce0b6a137&id=" +
           item.data_id;
       } else if (type == "zcfg") {
         this.src =
-          "https://tyzy.jsghfw.com/jss_zgh_gxpt/form/application/detail?view_id=93eaf737ff5948d49fe0670d893d0c7e&form_id=a21abbd92f954689b65dbdd12668ac36&related=1&id=" +
+          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/form/detail?goback=1&appid=a8b741b5-772b-8723-e009-3613866f0977&menuId=55389dae-2ef7-cb4d-b88c-afe217a4c2ba%233&type=view&breadcrumb=874e0bee7c23c17670824c15b98fa7b7&view_id=93eaf737ff5948d49fe0670d893d0c7e&form_id=a21abbd92f954689b65dbdd12668ac36&id=" +
           item.data_id;
       }
     },
     goMore(type) {
       if (type == "shzzfw") {
         this.src =
-          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=ba344e81-9094-dba3-c2f5-dc8c82e4a174&type=view&menuId=34088679-7901-386c-3d16-81f62310f4bc%233";
+          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=b6bfa6bb-401d-b781-b7aa-5c356cfb5ad5%233";
       } else if (type == "ghxm") {
         this.src =
-          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=ba344e81-9094-dba3-c2f5-dc8c82e4a174&type=view&menuId=ff0404b4-83e7-558f-0a1d-ea8131a68d35%233";
+          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=497932c8-60d0-a6ba-404f-781a15a0e441%233";
       } else if (type == "zgxq") {
         this.src =
-          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=ba344e81-9094-dba3-c2f5-dc8c82e4a174&type=view&menuId=4bac81d5-c6fa-03e1-bb41-78a4e82ede5c%233";
+          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=6a6f3627-819f-e5c9-ac36-36a41c5512dc%233";
       } else if (type == "zcfg") {
         this.src =
-          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=ba344e81-9094-dba3-c2f5-dc8c82e4a174&type=view&menuId=9a5b54fb-d7fb-d8b0-db6c-d758f96a2985%233";
+          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=55389dae-2ef7-cb4d-b88c-afe217a4c2ba%233";
       } else if (type == "gzdt") {
         this.src =
-          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=ba344e81-9094-dba3-c2f5-dc8c82e4a174&type=view&menuId=dc53d9ed-5a2b-024d-7ab1-94008ba73fc2%233";
+          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=2120d80c-ba64-0ff0-34a2-84569de8fcc0%233";
       } else if (type == "ggtz") {
         this.src =
-          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=ba344e81-9094-dba3-c2f5-dc8c82e4a174&type=view&menuId=0d467a8b-4324-5cc9-4fa7-5195b0aa1038%233";
+          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=d89beef4-6649-ef57-6cb3-b541693968b7%233";
       }
     },
     translatePlatformDataToJsonArray(originTableData) {

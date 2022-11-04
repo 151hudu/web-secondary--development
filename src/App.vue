@@ -40,20 +40,6 @@ export default {
     },
   },
   mounted() {
-    this.$nextTick(() => {
-      if (document.getElementsByClassName("application-block")) {
-        document.getElementsByClassName("application-block").forEach((item, index) => {
-          item.style.height = "100%";
-        });
-      }
-    });
-    this.$nextTick(() => {
-      if (document.getElementsByClassName("ant-layout-header")) {
-        document.getElementsByClassName("ant-layout-header").forEach((item, index) => {
-          item.style.height = "unset";
-        });
-      }
-    });
     this.homeview = window.location.href;
     user().then((res) => {
       if (res.status == 200) {
@@ -69,7 +55,8 @@ export default {
         "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=ba344e81-9094-dba3-c2f5-dc8c82e4a174&type=view&menuId=00334ed9-3023-7b71-82bc-3da3f9ae5516%233";
     },
     goHome() {
-      window.location.href = this.homeview;
+      window.location.href =
+        "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=b83085cc-253f-6f9c-9b01-ff9d17406d45&type=view&menuId=0de69b7f-89fa-a5a7-393b-632b0ba8222e%233";
     },
     triggerEvent() {
       let { componentId, appId } = this.customConfig || {};
@@ -144,7 +131,7 @@ export default {
 @media (max-width: 500px) {
   .work {
   }
-  .banner{
+  .banner {
     height: 150px;
     width: 100%;
   }
@@ -176,5 +163,20 @@ export default {
 <style>
 .ant-layout-header {
   height: unset !important;
+}
+.application-block {
+  height: 100% !important;
+}
+.application-route {
+  overflow: auto !important;
+}
+.application-content-route{
+  height: unset !important;
+  overflow: hidden !important;
+}
+.application-content-view {
+  overflow: auto !important;
+  height: unset !important;
+  min-height: unset !important;
 }
 </style>

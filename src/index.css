@@ -10,6 +10,21 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-.ant-layout-header{
+.ant-layout-header {
   height: unset !important;
+}
+.application-block {
+  height: 100% !important;
+}
+.application-route {
+  overflow: auto !important;
+}
+.application-content-route{
+  height: unset !important;
+  overflow: hidden !important;
+}
+.application-content-view {
+  overflow: auto !important;
+  height: unset !important;
+  min-height: unset !important;
 }

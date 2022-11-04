@@ -31,17 +31,18 @@ if (process.env.NODE_ENV !== "production") {
   let wrapDiv = document.getElementsByClassName(wrapId)[0];
   let dataOption = window._appData?.detail;
   let customConfig = dataOption?.customizeDetail || {};
+  console.log(customConfig);
   // console.log(wrapId, customConfig, 'customConfig')
   if (wrapDiv) {
     new Vue({
       render: h => {
-        return <App {...customConfig} />;
+        return <App customConfig={customConfig} key={new Date().getTime()} />;
       },
     }).$mount(wrapDiv);;
   } else {
     new Vue({
       render: h => {
-        return <App {...customConfig} />;
+        return <App customConfig={customConfig} key={new Date().getTime()}/>;
       },
     }).$mount('#app');;
   }

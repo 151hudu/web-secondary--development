@@ -29,7 +29,7 @@
           <div class="news">
             <div class="preview">
               <template v-for="(item, index) in ghxmData">
-                <span class="previewTitle" v-if="index < 6" @click="goIframe(item, 'ghxm')">{{ item.title }}</span>
+                <span class="previewTitle" v-if="index < 6" @click="goIframe(item, 'ghxm')">{{ item.project_name }}</span>
               </template>
             </div>
           </div>
@@ -78,7 +78,7 @@
       </div>
       <div class="tabsContent">
         <div class="tabsContentMain">
-          <div class="tabsContentLeft" v-show="tabshow" >
+          <div class="tabsContentLeft" v-show="tabshow">
             <ul>
               <template v-for="(item, index) in zcfgData">
                 <li :key="index" v-if="index < 4 && item.title">
@@ -87,16 +87,16 @@
               </template>
             </ul>
           </div>
-          <div class="tabsContentRight" v-show="tabshow" >
+          <div class="tabsContentRight" v-show="tabshow">
             <ul>
               <template v-for="(item, index) in zcfgData">
-                <li :key="index" v-if="index > 3&&index<7 && item.title">
+                <li :key="index" v-if="index > 3 && index < 7 && item.title">
                   <span @click="goIframe(item, 'zcfg')">{{ item.title }}</span>
                 </li>
               </template>
             </ul>
           </div>
-          <div class="tabsContentLeft" v-show="!tabshow" >
+          <div class="tabsContentLeft" v-show="!tabshow">
             <ul>
               <template v-for="(item, index) in ggtzData">
                 <li :key="index" v-if="index < 4 && item.title">
@@ -105,10 +105,10 @@
               </template>
             </ul>
           </div>
-          <div class="tabsContentRight" v-show="!tabshow" >
+          <div class="tabsContentRight" v-show="!tabshow">
             <ul>
               <template v-for="(item, index) in ggtzData">
-                <li :key="index" v-if="index > 3&&index<7 && item.title">
+                <li :key="index" v-if="index > 3 && index < 7 && item.title">
                   <span @click="goIframe(item, 'ggtz')">{{ item.title }}</span>
                 </li>
               </template>
@@ -162,13 +162,18 @@ export default {
     },
   },
   mounted() {
+    console.log(this.customConfig);
     let message = "58e9f58f-91b6-6098-7ed5-98cd9b11bcd1";
     queryAssetById(message).then((res) => {
       this.shzzfwData = this.translatePlatformDataToJsonArray(res);
     });
-    let message2 = "63f7bf0b-c946-07fc-4817-19e98ad9eeb0";
+    let message2 = "267f0955-53d7-8d6e-7226-c40791ab19d0";
     queryAssetById(message2).then((res) => {
-      this.ghxmData = this.translatePlatformDataToJsonArray(res);
+      this.translatePlatformDataToJsonArray(res).forEach((item, index) => {
+        if (item.release_status == "已发布") {
+          this.ghxmData.push(item);
+        }
+      });
     });
     let message3 = "fbd3b45f-ba9d-8b0a-c0cc-e835f9d51112";
     queryAssetById(message3).then((res) => {
@@ -200,43 +205,63 @@ export default {
     },
     goIframe(item, type) {
       if (type == "shzzfw") {
-        this.src =
-          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/form/detail?goback=1&appid=a8b741b5-772b-8723-e009-3613866f0977&menuId=b6bfa6bb-401d-b781-b7aa-5c356cfb5ad5%233&type=view&breadcrumb=145b91dec3bd5b0adaf017f602dc0562&view_id=37305912e16c4fc2810d9b89992000b4&form_id=3c2f316e0a66454a94a7ed6205a62930&id=" +
-          item.data_id +
-          "&related=1";
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=6bb9a511-64f4-9ca6-9801-69044bdac3e6%233&goback=1&data_id=${item.data_id}`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/form/detail?goback=1&appid=a8b741b5-772b-8723-e009-3613866f0977&menuId=b6bfa6bb-401d-b781-b7aa-5c356cfb5ad5%233&type=view&breadcrumb=145b91dec3bd5b0adaf017f602dc0562&view_id=37305912e16c4fc2810d9b89992000b4&form_id=3c2f316e0a66454a94a7ed6205a62930&id=" +
+        //   item.data_id +
+        //   "&related=1";
       } else if (type == "ghxm") {
-        this.src =
-          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=ba344e81-9094-dba3-c2f5-dc8c82e4a174&type=view&menuId=16e974bb-8fda-d37f-4cc2-5a5011557811%233%C2%A4tOpen=true&data_id=" +
-          item.data_id;
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=c7fbc7b9-a2be-a146-54bc-f5987caa6425%233&goback=1&data_id=${item.data_id}&create_time=${item.create_time}&project_name=${item.project_name}`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=ba344e81-9094-dba3-c2f5-dc8c82e4a174&type=view&menuId=16e974bb-8fda-d37f-4cc2-5a5011557811%233%C2%A4tOpen=true&data_id=" +
+        //   item.data_id;
       } else if (type == "zgxq") {
-        this.src =
-          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/form/detail?goback=1&appid=a8b741b5-772b-8723-e009-3613866f0977&menuId=6a6f3627-819f-e5c9-ac36-36a41c5512dc%233&type=view&breadcrumb=fe07ad795a194ebdae7f5991a5f80f3f&view_id=dc7f2e4d94b542918aa122bb171d0464&form_id=6446d0d4fcec44a094eea78ce0b6a137&id=" +
-          item.data_id;
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=28296a7e-e9f6-c74e-97c0-9b562192bcd3%233&goback=1&data_id=${item.data_id}`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/form/detail?goback=1&appid=a8b741b5-772b-8723-e009-3613866f0977&menuId=6a6f3627-819f-e5c9-ac36-36a41c5512dc%233&type=view&breadcrumb=fe07ad795a194ebdae7f5991a5f80f3f&view_id=dc7f2e4d94b542918aa122bb171d0464&form_id=6446d0d4fcec44a094eea78ce0b6a137&id=" +
+        //   item.data_id;
       } else if (type == "zcfg") {
-        this.src =
-          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/form/detail?goback=1&appid=a8b741b5-772b-8723-e009-3613866f0977&menuId=55389dae-2ef7-cb4d-b88c-afe217a4c2ba%233&type=view&breadcrumb=874e0bee7c23c17670824c15b98fa7b7&view_id=93eaf737ff5948d49fe0670d893d0c7e&form_id=a21abbd92f954689b65dbdd12668ac36&id=" +
-          item.data_id;
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=17efb817-4241-38fb-1c74-3b7417246402%233&goback=1&data_id=${item.data_id}`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/form/detail?goback=1&appid=a8b741b5-772b-8723-e009-3613866f0977&menuId=55389dae-2ef7-cb4d-b88c-afe217a4c2ba%233&type=view&breadcrumb=874e0bee7c23c17670824c15b98fa7b7&view_id=93eaf737ff5948d49fe0670d893d0c7e&form_id=a21abbd92f954689b65dbdd12668ac36&id=" +
+        //   item.data_id;
+      } else if (type == "gzdt") {
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=99d5fff6-13f0-7f2b-2219-e54d3f354826%233&goback=1&data_id=${item.data_id}`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/form/detail?goback=1&appid=a8b741b5-772b-8723-e009-3613866f0977&menuId=55389dae-2ef7-cb4d-b88c-afe217a4c2ba%233&type=view&breadcrumb=874e0bee7c23c17670824c15b98fa7b7&view_id=93eaf737ff5948d49fe0670d893d0c7e&form_id=a21abbd92f954689b65dbdd12668ac36&id=" +
+        //   item.data_id;
+      } else if (type == "ggtz") {
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=3ab98180-2cf1-54ad-f3a9-ddf8078422fc&goback=1&data_id= ${item.data_id}`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/form/detail?goback=1&appid=a8b741b5-772b-8723-e009-3613866f0977&menuId=55389dae-2ef7-cb4d-b88c-afe217a4c2ba%233&type=view&breadcrumb=874e0bee7c23c17670824c15b98fa7b7&view_id=93eaf737ff5948d49fe0670d893d0c7e&form_id=a21abbd92f954689b65dbdd12668ac36&id=" +
+        //   item.data_id;
       }
     },
     goMore(type) {
       if (type == "shzzfw") {
-        this.src =
-          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=b6bfa6bb-401d-b781-b7aa-5c356cfb5ad5%233";
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=b6bfa6bb-401d-b781-b7aa-5c356cfb5ad5%233`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=b6bfa6bb-401d-b781-b7aa-5c356cfb5ad5%233";
       } else if (type == "ghxm") {
-        this.src =
-          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=497932c8-60d0-a6ba-404f-781a15a0e441%233";
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=497932c8-60d0-a6ba-404f-781a15a0e441%233`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=497932c8-60d0-a6ba-404f-781a15a0e441%233";
       } else if (type == "zgxq") {
-        this.src =
-          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=6a6f3627-819f-e5c9-ac36-36a41c5512dc%233";
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=6a6f3627-819f-e5c9-ac36-36a41c5512dc%233`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=6a6f3627-819f-e5c9-ac36-36a41c5512dc%233";
       } else if (type == "zcfg") {
-        this.src =
-          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=55389dae-2ef7-cb4d-b88c-afe217a4c2ba%233";
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=55389dae-2ef7-cb4d-b88c-afe217a4c2ba%233`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=55389dae-2ef7-cb4d-b88c-afe217a4c2ba%233";
       } else if (type == "gzdt") {
-        this.src =
-          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=2120d80c-ba64-0ff0-34a2-84569de8fcc0%233";
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=2120d80c-ba64-0ff0-34a2-84569de8fcc0%233`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=2120d80c-ba64-0ff0-34a2-84569de8fcc0%233";
       } else if (type == "ggtz") {
-        this.src =
-          "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=d89beef4-6649-ef57-6cb3-b541693968b7%233";
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=d89beef4-6649-ef57-6cb3-b541693968b7%233`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=d89beef4-6649-ef57-6cb3-b541693968b7%233";
       }
     },
     translatePlatformDataToJsonArray(originTableData) {

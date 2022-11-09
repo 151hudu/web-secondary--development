@@ -150,49 +150,55 @@
           :key="index"
           :style="{ position: 'absolute', border: '2px solid #113164', background: '#7d7d7d', width: item.w, height: item.h, top: item.y, left: item.x }"
         >
-          <div
-            class="dropDiv"
-            draggable="true"
-            @drop="drop(item, nowCenterScreen.screen_num, index)"
-            @dragstart="dragstart($event, item, index, 'center')"
-            @dblclick="singleVideoShowCli(item, index, 'top')"
-            style="width: 100%; height: calc(100% - 70px); position: absolute; background: transparent"
-          ></div>
-          <iframe
-            width="100%"
-            v-if="centerShowVideo[index] && centerShowVideo[index].iFrameUrl"
-            height="100%"
-            frameborder="0"
-            allowfullscreen
-            :src="centerShowVideo[index].iFrameUrl"
-          ></iframe>
-          <el-select
-            class="agreement"
-            v-show="index < centerShowVideo.length"
-            v-model="videoSouce[index]"
-            :placeholder="item.ipv == 0 ? 'IPV4' : 'IPV6'"
-            @change="videoLineChange($event, centerShowVideo[index])"
+          <draggable
+            style="width: 100%; height: 100%"
+            :value="centerShowVideo"
+            :group="{ name: 'piece', put: true }"
+            @start="drastartTop(item, index, 'top')"
+            @add="drop(item, nowCenterScreen.screen_num, index)"
+            :options="{ animation: 500 }"
           >
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-          </el-select>
-          <div style="color: #ffffff; position: absolute; top: 0; left: 0" v-if="centerShowVideo[index] && index < centerShowVideo.length">
-            {{ centerShowVideo[index].name }}
-          </div>
-          <img
-            class="micIcon"
-            style="right: 2.8px"
-            @click="imgShowChange('open', item, index)"
-            v-show="index < centerShowVideo.length && centerShowVideo[index].mic_status == 'on'"
-            src="../pluginTemp/images/openMIC.png"
-            alt=""
-          />
-          <img
-            class="micIcon"
-            @click="imgShowChange('off', item, index)"
-            v-show="index < centerShowVideo.length && centerShowVideo[index].mic_status == 'off'"
-            src="../pluginTemp/images/offMIC.png"
-            alt=""
-          />
+            <div
+              class="dropDiv"
+              @dblclick="singleVideoShowCli(item, index, 'top')"
+              style="width: 100%; height: calc(100% - 70px); position: absolute; background: transparent"
+            ></div>
+            <iframe
+              width="100%"
+              v-if="centerShowVideo[index] && centerShowVideo[index].iFrameUrl"
+              height="100%"
+              frameborder="0"
+              allowfullscreen
+              :src="centerShowVideo[index].iFrameUrl"
+            ></iframe>
+            <el-select
+              class="agreement"
+              v-show="index < centerShowVideo.length"
+              v-model="videoSouce[index]"
+              :placeholder="item.ipv == 0 ? 'IPV4' : 'IPV6'"
+              @change="videoLineChange($event, centerShowVideo[index])"
+            >
+              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+            </el-select>
+            <div style="color: #ffffff; position: absolute; top: 0; left: 0" v-if="centerShowVideo[index] && index < centerShowVideo.length">
+              {{ centerShowVideo[index].name }}
+            </div>
+            <img
+              class="micIcon"
+              style="right: 2.8px"
+              @click="imgShowChange('open', item, index)"
+              v-show="index < centerShowVideo.length && centerShowVideo[index].mic_status == 'on'"
+              src="../pluginTemp/images/openMIC.png"
+              alt=""
+            />
+            <img
+              class="micIcon"
+              @click="imgShowChange('off', item, index)"
+              v-show="index < centerShowVideo.length && centerShowVideo[index].mic_status == 'off'"
+              src="../pluginTemp/images/offMIC.png"
+              alt=""
+            />
+          </draggable>
         </div>
       </div>
       <div class="topRight">
@@ -213,68 +219,80 @@
     <div class="mainBottom">
       <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
         <el-tab-pane label="终端资源" name="zhongduan" class="tabPane">
-          <el-carousel ref="cardShow" :autoplay="false" interval="0" indicator-position="none" :loop="false" arrow="never">
-            <el-carousel-item>
-              <div v-for="(item, index) in buttomTabList.terminalList" :key="index" class="carouselItem">
-                <div
-                  draggable="true"
-                  @dragstart="dragstart($event, item, index, 'bottom')"
-                  @dblclick="singleVideoShowCli(item, index, 'bottom')"
-                  style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"
-                ></div>
-                <div class="closeBox" v-show="item" @click="closeButtom(item, index, 'terminalList')">x</div>
-                <iframe width="100%" v-if="item.iFrameUrl" height="100%" frameborder="0" allowfullscreen :src="item.iFrameUrl"></iframe>
-              </div>
-            </el-carousel-item>
-          </el-carousel>
+          <draggable
+            :group="{ name: 'piece' }"
+            :value="buttomTabList2.terminalList"
+            :sort="false"
+            @start="
+              (val) => {
+                dragstart(val, 'bottom', 'terminalList');
+              }
+            "
+            class="bottomDarg"
+          >
+            <div v-for="(item, index) in buttomTabList.terminalList" :key="index" class="carouselItem">
+              <div style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"></div>
+              <div class="closeBox" v-show="item" @click="closeButtom(item, index, 'terminalList')">x</div>
+              <iframe width="100%" v-if="item.iFrameUrl" height="100%" frameborder="0" allowfullscreen :src="item.iFrameUrl"></iframe>
+            </div>
+          </draggable>
         </el-tab-pane>
         <el-tab-pane label="本地设备" name="bendi" class="tabPane">
-          <el-carousel ref="cardShow3" :autoplay="false" interval="0" indicator-position="none" :loop="false" arrow="never">
-            <el-carousel-item>
-              <div draggable="true" v-for="(item, index) in buttomTabList.localList" :key="index" class="carouselItem">
-                <div
-                  draggable="true"
-                  @dblclick="singleVideoShowCli(item, index, 'bottom')"
-                  @dragstart="dragstart($event, item, index, 'bottom')"
-                  style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"
-                ></div>
-                <div class="closeBox" v-show="item" @click="closeButtom(item, index, 'localList')">x</div>
-                <iframe width="100%" v-if="item.iFrameUrl" height="100%" frameborder="0" allowfullscreen :src="item.iFrameUrl"></iframe>
-              </div>
-            </el-carousel-item>
-          </el-carousel>
+          <draggable
+            :group="{ name: 'piece' }"
+            :value="buttomTabList2.localList"
+            :sort="false"
+            @start="
+              (val) => {
+                dragstart(val, 'bottom', 'localList');
+              }
+            "
+            class="bottomDarg"
+          >
+            <div v-for="(item, index) in buttomTabList.localList" :key="index" class="carouselItem">
+              <div style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"></div>
+              <div class="closeBox" v-show="item" @click="closeButtom(item, index, 'localList')">x</div>
+              <iframe width="100%" v-if="item.iFrameUrl" height="100%" frameborder="0" allowfullscreen :src="item.iFrameUrl"></iframe>
+            </div>
+          </draggable>
         </el-tab-pane>
         <el-tab-pane label="融合通讯" name="ronghe" class="tabPane">
-          <el-carousel ref="cardShow1" :autoplay="false" interval="0" indicator-position="none" :loop="false" arrow="never">
-            <el-carousel-item>
-              <div draggable="true" v-for="(item, index) in buttomTabList.fuseList" :key="index" class="carouselItem">
-                <div
-                  draggable="true"
-                  @dragstart="dragstart($event, item, index, 'bottom')"
-                  @dblclick="singleVideoShowCli(item, index, 'bottom')"
-                  style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"
-                ></div>
-                <div class="closeBox" v-show="item" @click="closeButtom(item, index, 'fuseList')">x</div>
-                <iframe width="100%" v-if="item.iFrameUrl" height="100%" frameborder="0" allowfullscreen :src="item.iFrameUrl"></iframe>
-              </div>
-            </el-carousel-item>
-          </el-carousel>
+          <draggable
+            :group="{ name: 'piece' }"
+            :value="buttomTabList2.fuseList"
+            :sort="false"
+            @start="
+              (val) => {
+                dragstart(val, 'bottom', 'fuseList');
+              }
+            "
+            class="bottomDarg"
+          >
+            <div v-for="(item, index) in buttomTabList.fuseList" :key="index" class="carouselItem">
+              <div style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"></div>
+              <div class="closeBox" v-show="item" @click="closeButtom(item, index, 'fuseList')">x</div>
+              <iframe width="100%" v-if="item.iFrameUrl" height="100%" frameborder="0" allowfullscreen :src="item.iFrameUrl"></iframe>
+            </div>
+          </draggable>
         </el-tab-pane>
         <el-tab-pane label="监控资源" name="jiankong" class="tabPane">
-          <el-carousel ref="cardShow2" :autoplay="false" interval="0" indicator-position="none" :loop="false" arrow="never">
-            <el-carousel-item>
-              <div draggable="true" v-for="(item, index) in buttomTabList.monitorList" :key="index" class="carouselItem">
-                <div
-                  draggable="true"
-                  @dblclick="singleVideoShowCli(item, index, 'bottom')"
-                  @dragstart="dragstart($event, item, index, 'bottom')"
-                  style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"
-                ></div>
-                <div class="closeBox" v-show="item" @click="closeButtom(item, index, 'monitorList')">x</div>
-                <iframe width="100%" v-if="item.iFrameUrl" height="100%" frameborder="0" allowfullscreen :src="item.iFrameUrl"></iframe>
-              </div>
-            </el-carousel-item>
-          </el-carousel>
+          <draggable
+            :group="{ name: 'piece' }"
+            :value="buttomTabList2.monitorList"
+            :sort="false"
+            @start="
+              (val) => {
+                dragstart(val, 'bottom', 'monitorList');
+              }
+            "
+            class="bottomDarg"
+          >
+            <div v-for="(item, index) in buttomTabList.monitorList" :key="index" class="carouselItem">
+              <div style="width: 100%; height: calc(100% - 50px); position: absolute; background: transparent"></div>
+              <div class="closeBox" v-show="item" @click="closeButtom(item, index, 'monitorList')">x</div>
+              <iframe width="100%" v-if="item.iFrameUrl" height="100%" frameborder="0" allowfullscreen :src="item.iFrameUrl"></iframe>
+            </div>
+          </draggable>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -473,6 +491,7 @@
 // import appService from "@njsdata/app-sdk";
 
 import eventActionDefine from "./components/msgCompConfig";
+import draggable from "vuedraggable";
 import {
   queryAssetById,
   add_resources,
@@ -505,6 +524,7 @@ export default {
   },
   components: {
     Five,
+    draggable,
     People,
     PhoneCall,
     Refresh,
@@ -592,6 +612,12 @@ export default {
         fuseList: [],
         monitorList: [],
       },
+      buttomTabList2: {
+        terminalList: [],
+        localList: [],
+        fuseList: [],
+        monitorList: [],
+      },
       centerShowVideo: [], //中间屏幕展示的
       terminalCheckList: [], //终端值
       localCheckList: [], //本地值
@@ -608,6 +634,35 @@ export default {
       movingInfoType: "",
       nowLocal_venue_name: "",
       nowLocal_venue_num: "",
+      colors: [
+        {
+          text: "Aquamarine",
+        },
+        {
+          text: "Hotpink",
+        },
+        {
+          text: "Gold",
+        },
+        {
+          text: "Crimson",
+        },
+        {
+          text: "Blueviolet",
+        },
+        {
+          text: "Lightblue",
+        },
+        {
+          text: "Cornflowerblue",
+        },
+        {
+          text: "Skyblue",
+        },
+        {
+          text: "Burlywood",
+        },
+      ],
     };
   },
   computed: {},
@@ -617,6 +672,19 @@ export default {
     this.data_id = this.GetQueryString("data_id");
     this.creatMeeting(dataid);
     componentId && window.componentCenter?.register(componentId, "comp", this, eventActionDefine);
+    this.$nextTick(() => {
+      let elements = document.querySelectorAll(".dropDiv");
+      Array.prototype.forEach.call(elements, function (element) {
+        element.addEventListener("dragover", function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        });
+        element.addEventListener("dragEnter", function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        });
+      });
+    });
   },
   methods: {
     // 创建会议
@@ -742,6 +810,10 @@ export default {
         external: "",
         type: 1,
       };
+      this.terminalCheckList = []
+      this.localCheckList = []
+      this.fuseCheckList = []
+      this.monitorCheckList = []
       video_list(message).then((res) => {
         // this.video_listData = res.data;
         this.videoList = res.data.terminal_list;
@@ -922,10 +994,10 @@ export default {
                 this.buttomTabList.localList = res.data;
                 this.buttomTabList.localList.forEach((item, index) => {
                   this.$nextTick(() => {
-                    console.log(document.getElementsByClassName("carouselItem")[0]).offsetHeight;
-                    let h = document.getElementsByClassName("carouselItem")[0].offsetHeight;
-                    let w = document.getElementsByClassName("carouselItem")[0].offsetWidth;
+                    let h = document.getElementsByClassName("bottomDarg")[1].offsetHeight;
+                    let w = document.getElementsByClassName("bottomDarg")[1].offsetWidth / 5;
                     item.video_size = `${w - 8}x${h - 10}`;
+                    console.log(item.video_size);
                     item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
                     this.$forceUpdate();
                   });
@@ -936,8 +1008,8 @@ export default {
                 this.buttomTabList.fuseList = res.data;
                 this.buttomTabList.fuseList.forEach((item, index) => {
                   this.$nextTick(() => {
-                    let h = document.getElementsByClassName("carouselItem")[0].offsetHeight;
-                    let w = document.getElementsByClassName("carouselItem")[0].offsetWidth;
+                    let h = document.getElementsByClassName("bottomDarg")[2].offsetHeight;
+                    let w = document.getElementsByClassName("bottomDarg")[2].offsetWidth / 5;
                     item.video_size = `${w - 8}x${h - 10}`;
                     item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
                     this.$forceUpdate();
@@ -949,8 +1021,8 @@ export default {
                 this.buttomTabList.monitorList = res.data;
                 this.buttomTabList.monitorList.forEach((item, index) => {
                   this.$nextTick(() => {
-                    let h = document.getElementsByClassName("carouselItem")[0].offsetHeight;
-                    let w = document.getElementsByClassName("carouselItem")[0].offsetWidth;
+                    let h = document.getElementsByClassName("bottomDarg")[3].offsetHeight;
+                    let w = document.getElementsByClassName("bottomDarg")[3].offsetWidth / 5;
                     item.video_size = `${w - 8}x${h - 10}`;
                     item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
                     this.$forceUpdate();
@@ -977,15 +1049,22 @@ export default {
       this.buttomTabList[type].splice(index, 1);
     },
     // 拖动拖动源
-    dragstart(event, item, index, type) {
-      this.movingInfo = JSON.parse(JSON.stringify(item));
+    dragstart(event, type, shunxu) {
+      let index = event.oldIndex;
+      this.movingInfo = JSON.parse(JSON.stringify(this.buttomTabList[shunxu][index]));
       this.movingInfoIndex = index;
       this.movingInfoType = type;
-      console.log(type, "拖动源信息");
+      console.log(event, type, shunxu, "拖动源信息");
+    },
+    drastartTop(item, index) {
+      console.log(item, index);
+      this.movingInfo = JSON.parse(JSON.stringify(this.centerShowVideo[index]));
+      this.movingInfoIndex = index;
+      this.movingInfoType = "top"
     },
     // 拖动接收源
     drop(item, num, index) {
-      console.log(item, num, index, "接收源信息");
+      console.log(item, num, index);
       let message = {
         conference_id: this.conference_id,
         terminal_id: this.centerShowVideo[index].id,
@@ -1091,6 +1170,19 @@ export default {
                 this.$forceUpdate();
               });
             });
+            this.$nextTick(() => {
+              let elements = document.getElementsByClassName("dropDiv");
+              Array.prototype.forEach.call(elements, function (element) {
+                element.addEventListener("dragover", function (event) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                });
+                element.addEventListener("dragEnter", function (event) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                });
+              });
+            });
             this.handleRedData();
           });
         }
@@ -1107,6 +1199,19 @@ export default {
           item.ipv == 0 ? (this.videoSouce[index] = "IPV4") : "IPV6";
           item.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(item.video_url)}&r=${window.btoa(item.video_size)}`;
           this.$forceUpdate();
+        });
+      });
+      this.$nextTick(() => {
+        let elements = document.getElementsByClassName("dropDiv");
+        Array.prototype.forEach.call(elements, function (element) {
+          element.addEventListener("dragover", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+          });
+          element.addEventListener("dragEnter", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+          });
         });
       });
     },
@@ -1370,6 +1475,25 @@ export default {
             let message2 = false;
             let message3 = false;
             let data = JSON.parse(JSON.stringify(row));
+            let cssIndex = "";
+            switch (this.nowLocaltion) {
+              case "终端":
+              case "终端资源":
+                cssIndex = 0;
+                break;
+              case "本地":
+              case "本地设备":
+                cssIndex = 1;
+                break;
+              case "融合":
+              case "融合通讯":
+                cssIndex = 2;
+                break;
+              case "监控":
+              case "监控资源":
+                cssIndex = 3;
+                break;
+            }
             switch (row.type) {
               case 0:
                 this.buttomTabList.terminalList.forEach((item, index) => {
@@ -1379,8 +1503,8 @@ export default {
                 });
                 if (!message0) {
                   this.$nextTick(() => {
-                    let w = +document.getElementsByClassName("el-carousel__item")[0].offsetWidth / 5;
-                    let h = document.getElementsByClassName("el-carousel__item")[0].offsetHeight;
+                    let w = +document.getElementsByClassName("bottomDarg")[cssIndex].offsetWidth / 5;
+                    let h = document.getElementsByClassName("bottomDarg")[cssIndex].offsetHeight;
                     data.video_size = `${w - 8}x${h - 10}`;
                     data.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(data.video_url)}&r=${window.btoa(data.video_size)}`;
                     this.buttomTabList.terminalList.push(data);
@@ -1396,8 +1520,8 @@ export default {
                 });
                 if (!message1) {
                   this.$nextTick(() => {
-                    let w = +document.getElementsByClassName("el-carousel__item")[1].offsetWidth / 5;
-                    let h = document.getElementsByClassName("el-carousel__item")[1].offsetHeight;
+                    let w = +document.getElementsByClassName("bottomDarg")[cssIndex].offsetWidth / 5;
+                    let h = document.getElementsByClassName("bottomDarg")[cssIndex].offsetHeight;
                     data.video_size = `${w - 8}x${h - 10}`;
                     data.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(data.video_url)}&r=${window.btoa(data.video_size)}`;
                     this.buttomTabList.localList.push(data);
@@ -1413,8 +1537,8 @@ export default {
                 });
                 if (!message2) {
                   this.$nextTick(() => {
-                    let w = +document.getElementsByClassName("el-carousel__item")[2].offsetWidth / 5;
-                    let h = document.getElementsByClassName("el-carousel__item")[2].offsetHeight;
+                    let w = +document.getElementsByClassName("bottomDarg")[cssIndex].offsetWidth / 5;
+                    let h = document.getElementsByClassName("bottomDarg")[cssIndex].offsetHeight;
                     data.video_size = `${w - 8}x${h - 10}`;
                     data.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(data.video_url)}&r=${window.btoa(data.video_size)}`;
                     this.buttomTabList.fuseList.push(data);
@@ -1430,8 +1554,8 @@ export default {
                 });
                 if (!message3) {
                   this.$nextTick(() => {
-                    let w = +document.getElementsByClassName("el-carousel__item")[3].offsetWidth / 5;
-                    let h = document.getElementsByClassName("el-carousel__item")[3].offsetHeight;
+                    let w = +document.getElementsByClassName("bottomDarg")[cssIndex].offsetWidth / 5;
+                    let h = document.getElementsByClassName("bottomDarg")[cssIndex].offsetHeight;
                     data.video_size = `${w - 8}x${h - 10}`;
                     data.iFrameUrl = `${this.page_server}/embed?s=${window.btoa(data.video_url)}&r=${window.btoa(data.video_size)}`;
                     this.buttomTabList.monitorList.push(data);
@@ -1562,19 +1686,19 @@ export default {
         switch (this.nowLocaltion) {
           case "终端":
           case "终端资源":
-          this.singleVideoInfo = JSON.parse(JSON.stringify(this.buttomTabList.terminalList[index]));
+            this.singleVideoInfo = JSON.parse(JSON.stringify(this.buttomTabList.terminalList[index]));
             break;
           case "本地":
           case "本地设备":
-          this.singleVideoInfo = JSON.parse(JSON.stringify(this.buttomTabList.localList[index]));
+            this.singleVideoInfo = JSON.parse(JSON.stringify(this.buttomTabList.localList[index]));
             break;
           case "融合":
           case "融合通讯":
-          this.singleVideoInfo = JSON.parse(JSON.stringify(this.buttomTabList.fuseList[index]));
+            this.singleVideoInfo = JSON.parse(JSON.stringify(this.buttomTabList.fuseList[index]));
             break;
           case "监控":
           case "监控资源":
-          this.singleVideoInfo = JSON.parse(JSON.stringify(this.buttomTabList.monitorList[index]));
+            this.singleVideoInfo = JSON.parse(JSON.stringify(this.buttomTabList.monitorList[index]));
             break;
         }
       }
@@ -2044,6 +2168,8 @@ export default {
   }
   .tabPane {
     display: flex;
+    background-color: #7d7d7d !important;
+    width: 100%;
   }
 }
 
@@ -2386,5 +2512,9 @@ export default {
   cursor: pointer;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+.bottomDarg {
+  width: 100%;
+  display: flex;
 }
 </style>

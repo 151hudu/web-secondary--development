@@ -6,6 +6,8 @@ import "videojs-flash"; // 要播放rtmp流, 就必须引入videojs-flash
 import SWF_URL from "videojs-swf/dist/video-js.swf";
 // Video.options.flash.swf = SWF_URL;
 Vue.prototype.$video = Video;
+import VueDND from 'awe-dnd'
+Vue.use(VueDND)
 console.log(Video.options);
 // Video.addLanguage('zh-CN', video_zhCN)
 // 按需引入组件，引入方式见https://element.eleme.cn/#/zh-CN/component/quickstart#an-xu-yin-ru

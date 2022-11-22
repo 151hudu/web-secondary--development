@@ -11,6 +11,7 @@ export const queryAssetById = (id) => request.post(`/asset/getAssetData?asset_id
  * @param id 资产ID
  */
 export const queryUserByOffice = (params) => request.get(`/system/office/queryCountByOfficeId?OfficeId=${params.OfficeId}`);
+export const queryUserByOfficeAll = (params) => request.get(`/lxcfAddressList/queryUserByOffice`);
 export const queryStaffByOfficeId = (params,data) => request.post(`/system/office/queryStaffByOfficeId?OfficeId=${params.OfficeId}`,data);
 export const queryUser = (params) => request.get(`/lxcfAddressList/queryUser`);
 // if (val === "") {

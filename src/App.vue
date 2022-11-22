@@ -5,22 +5,32 @@
       <div class="top_tabs_Fi" :class="{ select: tabsShowFlag }" @click="tabsChange('所有人员')">所有人员</div>
       <div class="top_tabs_Se" :class="{ select: !tabsShowFlag }" @click="tabsChange('按部门')">按部门</div>
     </div>
-    <div class="search_Fi" v-if="tabsShowFlag">
-      <el-input v-model="inputFi" placeholder="搜索人员"> <i slot="prefix" class="el-input__icon el-icon-search"></i></el-input>
+    <div class="search_Fi" v-show="tabsShowFlag">
+      <el-input v-model="inputFi" @input="inputFiChange" placeholder="搜索人员" clearable> <i slot="prefix" class="el-input__icon el-icon-search"></i></el-input>
     </div>
-    <div class="search_Se" v-if="!tabsShowFlag">
-      <el-input v-model="inputSe" placeholder="搜索人员"> <i slot="prefix" class="el-input__icon el-icon-search"></i></el-input>
+    <div class="search_Se" v-show="!tabsShowFlag">
+      <el-input v-model="inputSe" @input="inputSeChange" placeholder="搜索人员" clearable> <i slot="prefix" class="el-input__icon el-icon-search"></i></el-input>
     </div>
-    <el-tree v-if="tabsShowFlag" :data="leaderData" :props="defaultProps" class="otherTree">
+    <el-tree v-show="tabsShowFlag" :data="leaderData" :props="defaultProps" class="otherTree">
       <span class="custom-tree-node" slot-scope="{ data }" @click="callPhone(data)">
         <div style="display: flex">
-          <div class="name_Radius" v-if="!data.children" style="background: #f9ae18">
-            {{ data.name.substring(data.name.length - 2) }}
+          <div class="name_Radius" v-if="!data.office_children" style="background: #f9ae18">
+            {{ data.office_name.substring(data.office_name.length - 2) }}
           </div>
-          <p v-if="data.children">{{ data.name }}</p>
-          <span v-else>{{ data.name }}</span>
+          <p v-if="data.office_children">{{ data.office_name }}</p>
+          <span v-else>{{ data.office_name }}</span>
         </div>
-        <svg v-if="!data.children" t="1665556325855" class="icon" viewBox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4526" width="20" height="20">
+        <svg
+          v-if="!data.office_children"
+          t="1665556325855"
+          class="icon"
+          viewBox="0 0 1025 1024"
+          version="1.1"
+          xmlns="http://www.w3.org/2000/svg"
+          p-id="4526"
+          width="20"
+          height="20"
+        >
           <path
             d="M507.918859 650.527512c-49.503789-40.346806-106.623387-94.611243-156.090335-155.822216-34.713235-42.89496-65.404683-87.94306-33.707276-119.633303L95.656089 153.242337C63.221866 193.655661-8.620745 386.103763 299.338585 701.174388c324.458887 332.036833 533.74323 261.005742 569.766359 223.573453L652.205814 708.149578C621.886867 738.400983 582.842793 711.503113 507.918859 650.527512zM947.385483 798.906865l0-0.201601c0 0-169.23738-168.702166-169.343809-168.769707-13.381394-13.347623-34.814547-13.078481-48.127376 0.067541l-61.340939 61.375733 217.469138 217.203066c0 0 61.409504-61.176179 61.342986-61.245767l0.165784-0.132013C961.605005 833.148333 960.162074 811.75202 947.385483 798.906865zM396.298428 297.126091l0-0.168854c14.051691-14.083415 12.74589-35.45005 0-48.196964l0-0.234348c0 0-174.132089-173.597897-174.200654-173.597897-13.452005-13.484753-34.884135-13.148069-48.163193 0l-61.342986 61.441228 222.299375 221.961668C334.888924 358.335017 396.298428 297.225356 396.298428 297.126091z"
             p-id="4527"
@@ -29,7 +39,7 @@
         </svg>
       </span>
     </el-tree>
-    <mt-index-list v-if="tabsShowFlag && search_Fi_List && search_Fi_List.length == 0">
+    <mt-index-list v-show="tabsShowFlag && search_Fi_List && !inputFi">
       <mt-index-section v-for="(item, index) in nameAllShowdata" :key="index" :index="item.initial">
         <mt-cell v-for="(s, index) in item.data" :key="index">
           <div class="value_Box" @click="callPhone(s)">
@@ -60,8 +70,9 @@
         </mt-cell>
       </mt-index-section>
     </mt-index-list>
-    <div class="search_Fi_List" v-if="search_Fi_List.length !== 0 && tabsShowFlag">
-      <div v-for="(item, index) in search_Fi_List" :key="index">
+    <div class="search_Fi_List" v-show="inputFi && tabsShowFlag">
+      <div style="text-align: center" v-if="search_Fi_List.length == 0">暂无查询用户数据</div>
+      <div v-for="(item, index) in search_Fi_List" :key="index" v-else>
         <div class="value_Box search_Fi_Item" @click="callPhone(item)">
           <div class="name_Box">
             <div class="name_Radius" style="background: #f9ae18">
@@ -89,32 +100,43 @@
         </div>
       </div>
     </div>
-    <div v-if="!tabsShowFlag && search_Se_List && search_Se_List.length == 0">
+    <div v-show="!tabsShowFlag && search_Se_List && !inputSe">
       <div class="showOpen">
-        <span v-if="!openall" v-loading.fullscreen.lock="fullscreenLoading" @click="openallChange">展开</span>
-        <span @click="openallChange" v-loading.fullscreen.lock="fullscreenLoading" v-if="openall">收起</span>
+        <span v-show="!openall" v-loading.fullscreen.lock="fullscreenLoading" @click="openallChange">展开</span>
+        <span @click="openallChange" v-loading.fullscreen.lock="fullscreenLoading" v-show="openall">收起</span>
       </div>
       <el-tree
+        v-loading="loading"
         :default-expand-all="openall"
         :expand-on-click-node="false"
         :data="depAlldata"
-        :key="treeKey"
         show-checkbox
+        :key="treeKey"
         :check-strictly="false"
         node-key="id"
-        :default-expanded-keys="path"
         @check="checkedExpand"
         ref="tree"
+        :props="defaultProps"
       >
         <span class="custom-tree-node" slot-scope="{ data }" @click="callPhone(data)">
           <div style="display: flex">
-            <div class="name_Radius" v-if="!data.children" style="background: #f9ae18">
-              {{ data.name.substring(data.name.length - 2) }}
+            <div class="name_Radius" v-if="!data.office_children" style="background: #f9ae18">
+              {{ data.office_name.substring(data.office_name.length - 2) }}
             </div>
-            <p v-if="data.children">{{ data.name }}</p>
-            <span v-else>{{ data.name }}</span>
+            <p v-if="data.office_children">{{ data.office_name }}</p>
+            <span v-else>{{ data.office_name }}</span>
           </div>
-          <svg v-if="!data.children" t="1665556325855" class="icon" viewBox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4526" width="20" height="20">
+          <svg
+            v-if="!data.office_children"
+            t="1665556325855"
+            class="icon"
+            viewBox="0 0 1025 1024"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            p-id="4526"
+            width="20"
+            height="20"
+          >
             <path
               d="M507.918859 650.527512c-49.503789-40.346806-106.623387-94.611243-156.090335-155.822216-34.713235-42.89496-65.404683-87.94306-33.707276-119.633303L95.656089 153.242337C63.221866 193.655661-8.620745 386.103763 299.338585 701.174388c324.458887 332.036833 533.74323 261.005742 569.766359 223.573453L652.205814 708.149578C621.886867 738.400983 582.842793 711.503113 507.918859 650.527512zM947.385483 798.906865l0-0.201601c0 0-169.23738-168.702166-169.343809-168.769707-13.381394-13.347623-34.814547-13.078481-48.127376 0.067541l-61.340939 61.375733 217.469138 217.203066c0 0 61.409504-61.176179 61.342986-61.245767l0.165784-0.132013C961.605005 833.148333 960.162074 811.75202 947.385483 798.906865zM396.298428 297.126091l0-0.168854c14.051691-14.083415 12.74589-35.45005 0-48.196964l0-0.234348c0 0-174.132089-173.597897-174.200654-173.597897-13.452005-13.484753-34.884135-13.148069-48.163193 0l-61.342986 61.441228 222.299375 221.961668C334.888924 358.335017 396.298428 297.225356 396.298428 297.126091z"
               p-id="4527"
@@ -124,8 +146,9 @@
         </span>
       </el-tree>
     </div>
-    <div class="search_Se_List" v-if="search_Se_List.length !== 0 && !tabsShowFlag">
-      <div v-for="(item, index) in search_Se_List" :key="index">
+    <div class="search_Se_List" v-show="inputSe && !tabsShowFlag">
+      <div style="text-align: center" v-if="search_Se_List.length == 0">暂无查询用户数据</div>
+      <div v-for="(item, index) in search_Se_List" :key="index" v-else>
         <div class="value_Box search_Fi_Item" @click="callPhone(item)">
           <div class="name_Box">
             <div class="name_Radius" style="background: #f9ae18">
@@ -159,13 +182,16 @@
 <script>
 import eventActionDefine from "./components/msgCompConfig";
 import { RadioButton, RadioGroup } from "element-ui";
-import { queryUserByOffice, queryUser, queryStaffByOfficeId } from "./api/asset";
+import { queryUserByOffice, queryUser, queryStaffByOfficeId, queryUserByOfficeAll } from "./api/asset";
 import vPinyin from "./components/vue-py";
 import Vue from "vue";
 import { Toast } from "mint-ui";
 import utils from "@/utils";
 import $ from "jquery";
 import "./mint.css";
+import { pinyin } from "pinyin-pro";
+let timers = null;
+let timers2 = null;
 export default {
   //这里写组件英文名称，容器dom的id及事件中心命名均用到这个name，请认真填写
   name: "ButtonChange",
@@ -210,37 +236,6 @@ export default {
       };
     },
   },
-  watch: {
-    //搜索的关键词
-    inputFi: {
-      handler(val) {
-        //如果搜索关键词为空，返回所有数据
-        if (val === "") {
-          this.search_Fi_List = [];
-        } else {
-          //返回包含关键词的数据
-          this.search_Fi_List = this.nameAlldata.filter((item) => {
-            let reg = new RegExp(val.toLowerCase());
-            return reg.test(item.name) || reg.test(vPinyin.chineseToPinYin(item.name).toLowerCase());
-          });
-        }
-      },
-    },
-    inputSe: {
-      handler(val) {
-        //如果搜索关键词为空，返回所有数据
-        if (val === "") {
-          this.search_Se_List = [];
-        } else {
-          //返回包含关键词的数据
-          this.search_Se_List = this.nameAlldata.filter((item) => {
-            let reg = new RegExp(val.toLowerCase());
-            return reg.test(item.name) || reg.test(vPinyin.chineseToPinYin(item.name).toLowerCase());
-          });
-        }
-      },
-    },
-  },
   data() {
     return {
       //必需，不可删除
@@ -253,28 +248,37 @@ export default {
       search_Fi_List: [],
       search_Se_List: [],
       defaultProps: {
-        children: "children",
-        label: "name",
+        children: "office_children",
+        label: "office_name",
         isLeaf: "isLeaf",
       },
-      leaderData: [],
+      leaderData: [
+        {
+          office_name: "",
+          id: "",
+          office_children: [],
+        },
+      ],
       depAlldata: [],
-      nameAllShowdata: [],
+      nameAllShowdata: [
+        {
+          name: 2213123,
+        },
+      ],
       nameAlldata: [],
       path: [],
       toastInstanse: null,
       openall: false,
       fullscreenLoading: false,
       treeKey: 0,
+      loading: true,
     };
   },
   mounted() {
-    let info = {
-      OfficeId: 123456789,
-    };
-    this.queryUserByOffice(info);
+    this.loading = true;
+    this.queryUserByOfficeAll();
     queryUser().then((res) => {
-      this.nameAlldata = res.data;
+      this.nameAlldata =res.data
       for (let k = 0; k < this.nameAlldata.length; k++) {
         if (this.nameAlldata[k].name.indexOf("admin") !== -1) {
           this.nameAlldata.splice(k, 1);
@@ -284,14 +288,15 @@ export default {
       if (this.nameAlldata.length == 0) return;
       if (!String.prototype.localeCompare) return null;
       var letters = "*ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-      var zh = "阿八嚓哒妸发旮哈讥咔垃痳拏噢妑七呥扨它穵夕丫帀".split("");
+      var zh = "阿八嚓哒妸发旮哈讥讥咔垃痳拏噢妑七呥扨它穵穵穵夕丫帀".split("");
       var segs = []; // 存放数据
       var res = {};
       let curr;
       var re = /[^\u4e00-\u9fa5]/; //中文正则
-      var pattern = new RegExp("[`\\-_~!@#$^&*()=|{}':;',\\[\\].<>《》/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？12345678990]"); //特殊符号
+      var pattern = new RegExp("[`\\-~!@#$^&*()=|{}':;',\\[\\].<>《》/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？12345678990]"); //特殊符号
 
       letters.filter((items, i) => {
+        console.log(letters[i]);
         curr = {
           initial: "", //字母
           data: [], //数据
@@ -302,23 +307,24 @@ export default {
             if ((!zh[i - 1] || zh[i - 1].localeCompare(v.name) <= 0) && v.name.localeCompare(zh[i]) == -1) {
               curr.data.push(v);
             }
-          }
-          // 判断首个字是否是中文
-          if (re.test(v.name[0])) {
+          } else if (re.test(v.name[0])) {
             // 英文
             if (v.name[0].toUpperCase() == items) {
               curr.data.push(v);
             }
+          } else if (pinyin(v.name, { pattern: "first", type: "array" })[0] == "l" && items == "L") {
+            curr.data.push(v);
           } else {
             // 中文
-            if ((!zh[i - 1] || zh[i - 1].localeCompare(v.name) <= 0) && v.name.localeCompare(zh[i]) == -1) {
+            if ((!zh[i - 1] || zh[i - 1].localeCompare(v.name) <= 0) && v.name.localeCompare(zh[i]) == -1&&pinyin(v.name, { pattern: "first", type: "array" })[0] == "l") {
+              console.log(9999, v.name, letters[i]);
               curr.data.push(v);
             }
           }
         });
         if (curr.data.length) {
           curr.initial = letters[i];
-          segs.push(curr);
+          console.log(letters[i]);
           curr.data.sort((a, b) => {
             return a.name.localeCompare(b.name);
           });
@@ -335,11 +341,11 @@ export default {
               }
             }
           });
+          segs.push(curr);
         }
       });
       res.segs = Array.from(new Set(segs)); //去重
       this.nameAllShowdata = res.segs;
-      console.log(this.nameAllShowdata);
     });
     //用于注册事件定义，不可删除
     let { componentId } = this.customConfig || {};
@@ -359,11 +365,55 @@ export default {
     }
   },
   methods: {
+    inputFiChange(val) {
+      this.search_Fi_List = [];
+      clearTimeout(timers);
+      timers = setTimeout(() => {
+        this.search_Fi_List = this.nameAlldata.filter((item) => {
+          let reg = new RegExp(val.toLowerCase());
+          return reg.test(item.name) || reg.test(vPinyin.chineseToPinYin(item.name).toLowerCase());
+        });
+      }, 300);
+    },
+    inputSeChange(val) {
+      this.search_Se_List = [];
+      clearTimeout(timers2);
+      timers = setTimeout(() => {
+        this.search_Se_List = this.nameAlldata.filter((item) => {
+          let reg = new RegExp(val.toLowerCase());
+          return reg.test(item.name) || reg.test(vPinyin.chineseToPinYin(item.name).toLowerCase());
+        });
+      }, 300);
+    },
+    queryUserByOfficeAll() {
+      queryUserByOfficeAll().then((res) => {
+        res.data.forEach((item, index) => {
+          this.defenItem(item);
+        });
+        this.depAlldata = res.data;
+        this.loading = false;
+      });
+    },
+    defenItem(item) {
+      if (item.office_name == "集团领导") {
+        this.leaderData[0].office_name = "集团领导";
+        this.leaderData[0].id = "集团领导";
+        this.leaderData[0].office_children = item.users;
+      }
+      if (item.users) {
+        item.users.forEach((user) => {
+          user.office_name = user.name;
+        });
+      }
+      if (item.office_children) {
+        item.office_children.forEach((ele) => {
+          this.defenItem(ele);
+        });
+      }
+      item.office_children = item.office_children.concat(item.users);
+    },
     queryUserByOffice(info) {
       queryUserByOffice(info).then(async (res) => {
-        // for (var item of res.data) {
-        //   await this.searhAllPeople(item.office, "in");
-        // }
         for (let k = 0; k < res.data.length; k++) {
           await this.searhAllPeople(res.data[k].office, "in");
         }
@@ -404,7 +454,6 @@ export default {
         for (let k = 0; k < item.children.length; k++) {
           this.cleanChild(item.children[k]);
           if (item.children[k].name.indexOf("admin") !== -1) {
-            console.log(99999);
             item.children.splice(k, 1);
             k--;
           }
@@ -440,7 +489,7 @@ export default {
       }
     },
     callPhone(item) {
-      if (!item.children) {
+      if (!item.office_children) {
         if (item.mobile) {
           window.location.href = "tel:" + item.mobile;
         } else {
@@ -468,9 +517,7 @@ export default {
       //   this.queryUserByOffice(info);
       // }
     },
-    handleClick(tab, event) {
-      console.log(tab, event);
-    },
+    handleClick(tab, event) {},
     handleValueChange(value) {
       this.triggerEvent("valueChange", {
         value,
@@ -631,7 +678,7 @@ export default {
     flex-direction: row;
     background: #f7f7f7;
   }
-  /deep/.el-tree__empty-block{
+  /deep/.el-tree__empty-block {
     background: #f7f7f7;
   }
 }
@@ -650,6 +697,9 @@ export default {
 /deep/.el-tree-node__children,
 /deep/.el-tree-node__content {
   height: unset;
+}
+/deep/.el-input__suffix:focus-visible {
+  outline: unset;
 }
 </style>
 <style lang="less">

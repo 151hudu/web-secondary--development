@@ -26,6 +26,7 @@
     "element-ui": "^2.15.9",
     "jquery": "^3.6.0",
     "mint-ui": "^2.2.13",
+    "pinyin-pro": "^3.11.0",
     "querystringify": "^2.2.0",
     "vue": "^2.7.8"
   },

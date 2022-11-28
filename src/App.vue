@@ -80,13 +80,13 @@
     <div class="content_Right">
       <div class="download" v-if="articleData.resourceType !== 'image'" :style="{ background: theme.themeColor }" @click="downLoad">
         <span>
-          <download theme="outline" size="16" fill="#ffffff" />
-          <span class="clickDown">附件下载</span>
+          <save theme="outline" size="24" fill="#ffffff" />
+          <span class="clickDown">点击下载</span>
         </span>
       </div>
       <div class="my_Operation" v-if="collectionShow == 1 || shareShow == 1">
         <span :style="{ fontWeight: 700, color: theme.themeColor }">丨</span>
-        <span style="font-weight: 700"> 我的操作</span>
+        <span> 我的操作</span>
         <el-divider></el-divider>
         <div class="my_Operation_Button">
           <div class="my_Operation_Collection" v-if="collectionShow == 1">
@@ -106,26 +106,25 @@
           </div> -->
         </div>
       </div>
-      <div class="about_News" :style="{ minHeight: this.aboutHeight }">
+      <div class="about_News" :style="{ height: this.aboutHeight }">
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="相关推荐" name="first">
             <ul style="padding: 0">
               <li class="about_News_First" v-for="(item, index) in aboutList" :key="index">
-                <Flag theme="filled" size="18" :fill="theme.themeColor" />
+                <pennant theme="filled" size="18" :fill="theme.themeColor" />
                 <span>{{ item.title }}</span>
               </li>
             </ul>
           </el-tab-pane>
         </el-tabs>
       </div>
-      <div class="about_News2" :style="{ minHeight: this.ran2Height }">
+      <div class="about_News2" :style="{ height: this.ran2Height }">
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="热点排行" name="first">
             <ul style="padding: 0">
               <li class="about_News_First" v-for="(item, index) in rankList" :key="index">
-                <span class="numSpan" :style="{ color: index + 1 < 4 ? theme.themeColor : '' }">{{ index + 1 }}</span
-                >&nbsp;&nbsp;&nbsp;
-                <span>{{ item.title }}</span>
+                <span :style="{color:theme.themeColor}">{{index +1}}</span>&nbsp;&nbsp;&nbsp;
+                <span>{{item.title}}</span>
               </li>
             </ul>
           </el-tab-pane>
@@ -169,7 +168,7 @@ import "./index.css";
 import pdf from "vue-pdf";
 import { queryRightSideDetail, queryAssetById, queryComments, addLike, addNewsCollect, addNewsComments, deleteNewsCollect, deleteLike, queryOfficeUser, share } from "./api/asset";
 import moment from "moment";
-import { ThumbsUp, GoodTwo, Comment, Download, Pennant, Flag } from "@icon-park/vue";
+import { ThumbsUp, GoodTwo, Comment, Save, Pennant } from "@icon-park/vue";
 export default {
   name: "App",
   props: {
@@ -180,16 +179,15 @@ export default {
     ThumbsUp,
     GoodTwo,
     Comment,
-    Download,
+    Save,
     Pennant,
     pdf,
-    Flag,
   },
   computed: {
     theme() {
       let { theme_global_config } = this.themeInfo || {
         theme_global_config: {
-          "--theme-public-pinPai-color": "#106EB2",
+          "--theme-public-pinPai-color": "rgba(24,144,255,1)",
           "--theme-public-text-color-1": "rgba(12, 13, 14,1)",
         },
       };
@@ -231,6 +229,7 @@ export default {
       commentData: "",
       selectData: "",
       organization: [],
+      commentShow: [],
       // articleTitle: "",
       // articleTime: "",
       // articleSouce: "",
@@ -239,7 +238,7 @@ export default {
       // articlePdfSrc: "",
       // articleImgSrc: "",
       // articleShareSrc: "",
-      commentShow: 2,
+      commentShow: 1,
       collectionShow: 1,
       shareShow: 1,
       props: {
@@ -260,9 +259,9 @@ export default {
   },
   mounted() {
     console.log(this.GetQueryString("dataId"));
-    this.aboutHeight = this.customConfig.相关推荐高度 ? this.customConfig.相关推荐高度 + "px" : "432px";
+    this.aboutHeight = this.customConfig.相关推荐高度 ? this.customConfig.相关推荐高度 + 'px' : "290px";
     this.aboutNum = this.customConfig.相关推荐条数 ? this.customConfig.相关推荐条数 : 5;
-    this.rankHeight = this.customConfig.热点排行高度 ? this.customConfig.热点排行高度 + "px" : "432px";
+    this.rankHeight = this.customConfig.热点排行高度 ? this.customConfig.热点排行高度 + 'px' : "290px";
     this.rankNum = this.customConfig.热点排行条数 ? this.customConfig.热点排行条数 : 5;
     this.aboutID = this.customConfig.查询相关推荐资产ID ? this.customConfig.查询相关推荐资产ID : "";
     this.rankID = this.customConfig.查询热点排行资产ID ? this.customConfig.查询热点排行资产ID : "";
@@ -511,7 +510,7 @@ export default {
   // 新闻内容
   .news {
     min-height: 100px;
-    padding: 24px;
+    padding: 25px;
     background: #ffffff;
     .news_Title {
       color: dodgerblue;
@@ -656,17 +655,15 @@ export default {
 }
 // 右侧
 .content_Right {
-  min-width: 200px;
-  width: 25%;
+  min-width: 330px;
   display: flex;
   flex-direction: column;
   margin-left: 20px;
   .download {
-    height: 56px;
+    height: 80px;
     min-width: 330px;
-    width: 100%;
-    border-radius: 4px;
-    background: #106eb2;
+    border-radius: 7px;
+    background: #2dbed1;
     display: flex;
     margin-bottom: 30px;
     justify-content: center;
@@ -674,19 +671,17 @@ export default {
     cursor: pointer;
     .clickDown {
       margin-left: 10px;
-      vertical-align: 0px;
-      font-size: 16px;
-      margin-top: 5px;
+      vertical-align: 3px;
+      font-size: 20px;
       color: #ffffff;
     }
   }
   .my_Operation {
     height: 180px;
-    width: 100%;
+    width: 330px;
     background: #ffffff;
     padding: 20px;
-    border-radius: 4px;
-    margin-bottom: 16px;
+    border-radius: 7px;
     .my_Operation_Button {
       display: flex;
       .my_Operation_Collection,
@@ -729,13 +724,13 @@ export default {
   }
   .about_News,
   .about_News2 {
-    width: 100%;
-    border-radius: 4px;
+    height: 280px;
+    width: 330px;
     overflow: hidden;
     background: #ffffff;
-    margin-bottom: 16px;
+    margin-top: 30px;
     padding: 20px;
-    height: 42vh;
+
     /deep/.el-tab-pane,
     /deep/.el-tabs {
       height: 100%;
@@ -748,27 +743,15 @@ export default {
       display: flex;
       flex-direction: column;
       justify-content: start;
-      margin: 0 0 0 15px;
-      overflow: hidden;
     }
     .about_News_First {
       list-style: none;
-      height: 42px;
-      line-height: 42px;
+      margin-bottom: 20px;
       cursor: pointer;
-      width: 100%;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      .numSpan {
-        font-family: DIN-BlackItalic !important;
-      }
       &:hover {
-        color: #106eb2;
-        background: #106eb219;
-        border-radius: 4px;
+        color: #4980ed;
       }
-      .i-icon-flag {
+      .i-icon-pennant {
         margin-right: 10px;
       }
     }
@@ -778,7 +761,7 @@ export default {
     }
     /deep/.is-active {
       color: #000000;
-      font-size: 18px;
+      font-size: 22px;
       font-weight: 700;
     }
     /deep/.el-tabs__item:hover {
@@ -787,7 +770,7 @@ export default {
   }
   .about_Video {
     height: 310px;
-    width: 100%;
+    width: 330px;
     background: #ffffff;
     margin-top: 30px;
     padding: 20px;

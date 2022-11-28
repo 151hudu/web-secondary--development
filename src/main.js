@@ -4,8 +4,6 @@ import App from "./App.vue";
 import { Input, Select, Option, Button, Avatar, Dialog, Divider, Tag, Tabs, CarouselItem, TabPane, Carousel, Tree,  MessageBox,
   Message, } from "element-ui";
 import "@icon-park/vue/styles/index.css";
-import '../pluginTemp/font/font.css'
-
 Vue.config.productionTip = false;
 Vue.use(Input);
 Vue.use(Select);
@@ -27,9 +25,9 @@ if (process.env.NODE_ENV !== "production") {
   // 添加 customConfig 进行测试
   let customConfig = {
     分享名称: "2222",
-    相关推荐高度:'432',
+    相关推荐高度:'290',
     相关推荐条数:'15',
-    热点排行高度:'432',
+    热点排行高度:'290',
     热点排行条数:'15',
     查询相关推荐资产ID:'7df581bc-395e-82eb-5c2d-0aff497ef10e',
     查询热点排行资产ID:'98c2418d-9459-112f-ec13-ca240eb887a0',

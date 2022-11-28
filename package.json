@@ -26,6 +26,7 @@
     "querystringify": "^2.2.0",
     "vue": "^2.6.11",
     "vue-pdf": "^4.3.0"
+    
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

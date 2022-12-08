@@ -1,0 +1,22 @@
+{
+  "id": "fa991b25-d2ea-459d-a9bd-5a888f2ccf5b",
+  "type": "bigscreen",
+  "main": "main.cc82c32f.js",
+  "version": "2",
+  "process": true,
+  "props": {
+    "configuration": [
+      "data"
+    ],
+    "configurationComponents": {
+      "data": [
+        "dataSource",
+        "condition"
+      ]
+    },
+    "img": "custom_table.png",
+    "disableimg": "disabled_custom_table.png",
+    "name": "滚动页签",
+    "className": "className-demo"
+  }
+}

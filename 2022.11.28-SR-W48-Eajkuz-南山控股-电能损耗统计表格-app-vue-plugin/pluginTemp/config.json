@@ -1,0 +1,23 @@
+{
+  "id": "243fb40a-abd0-4dc5-b5c0-e5b96465061c",
+  "type": "app",
+  "main": "app.7814d392.js",
+  "version": "2",
+  "props": {
+    "type": "customize",
+    "img": "APP_0001.png",
+    "name": "应用二开_vue",
+    "loadStyle": 0,
+    "lib": [],
+    "css_script": [],
+    "customconf": [
+      "id",
+      "表资产id",
+      "应用变量公司",
+      "应用变量大区",
+      "应用变量园区"
+    ]
+  },
+  "requirement-number": "SR-W48-Eajkuz",
+  "requirement-name": "电能损耗统计表格"
+}

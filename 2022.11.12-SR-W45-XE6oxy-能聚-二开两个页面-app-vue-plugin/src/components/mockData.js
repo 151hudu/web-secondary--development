@@ -175,6 +175,7 @@ export const customConfig = {
   componentId: "123",
   appId: "123",
   是否派发: "已派发",
+  系统表资产ID:'76b8e795-65da-aca4-ccc3-25aa048a8f09',
   buttons: JSON.stringify({
     defaultValue: "战勤部",
     data: [

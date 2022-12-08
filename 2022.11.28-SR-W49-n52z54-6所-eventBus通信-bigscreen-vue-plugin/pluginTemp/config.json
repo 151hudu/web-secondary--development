@@ -1,0 +1,17 @@
+{
+  "id": "7a7d9577-f607-4391-a490-44d316f134b6",
+  "type": "bigscreen",
+  "main": "app.39ba5a28.js",
+  "version": "2",
+  "props": {
+    "img": "APP_0001.png",
+    "disableimg": "disabled_custom_table.png",
+    "name": "Vue版本的演示Demo",
+    "className": "className-demo",
+    "vars": [
+      "id",
+      "资产ID",
+      "监听地址"
+    ]
+  }
+}

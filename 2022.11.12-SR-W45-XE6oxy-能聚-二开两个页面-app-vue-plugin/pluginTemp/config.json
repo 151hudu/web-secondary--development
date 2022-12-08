@@ -1,7 +1,7 @@
 {
-  "id": "61ed97f2-16e0-454b-ae39-732f7a034c1d",
+  "id": "8785540c-891e-4339-8b43-a9f4f6e71499",
   "type": "app",
-  "main": "app.92072392.js",
+  "main": "app.3c91f248.js",
   "version": "2",
   "props": {
     "type": "customize",
@@ -11,7 +11,8 @@
     "lib": [],
     "css_script": [],
     "customconf": [
-      "是否派发"
+      "是否派发",
+      "系统表资产ID"
     ]
   }
 }

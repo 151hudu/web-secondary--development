@@ -1,0 +1,17 @@
+{
+  "id": "dff1ae36-daee-4ae8-9b58-fa5cc7102558",
+  "type": "bigscreen",
+  "main": "app.def73080.js",
+  "version": "2",
+  "props": {
+    "img": "APP_0001.png",
+    "disableimg": "disabled_custom_table.png",
+    "name": "Vue版本的演示Demo",
+    "className": "className-demo",
+    "vars": [
+      "id",
+      "规则AssetID",
+      "固定时间"
+    ]
+  }
+}

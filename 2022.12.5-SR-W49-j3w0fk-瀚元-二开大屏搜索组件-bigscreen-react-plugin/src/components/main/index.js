@@ -233,27 +233,29 @@ export default class Main extends Component {
           });
           let message = [];
           this.state.cityAsset.forEach((item) => {
-            if (item.parentOne == this.state.provinceAsset[0].id && message.length == 0) {
-              this.setState({
-                cityInSelect: {
-                  label: item.name,
-                  value: item.id,
-                },
-              });
+            if (item.parentOne == this.state.provinceAsset[0].id) {
               message.push(item);
             }
           });
+          this.setState({
+            cityOption: message,
+            cityInSelect: {
+              label: message[0]?.name,
+              value: message[0]?.id,
+            },
+          });
           let message2 = [];
           this.state.pointAsset.forEach((item) => {
-            if (item.parentTwo == this.state.provinceAsset[0].id&& message2.length == 0) {
-              this.setState({
-                pointInSelect: {
-                  label: item.name,
-                  value: item.id,
-                },
-              });
+            if (item.parentTwo == this.state.provinceAsset[0].id) {
               message2.push(item);
             }
+          });
+          this.setState({
+            pointOption: message2,
+            pointInSelect: {
+              label: message2[0].name,
+              value: message2[0].id,
+            },
           });
         }
         if (provice && !city && !station) {
@@ -393,7 +395,7 @@ export default class Main extends Component {
                   pointAsset: Utils.translatePlatformDataToJsonArray(res3),
                   pointOption: Utils.translatePlatformDataToJsonArray(res3),
                 });
-                this.setDefault()
+                this.setDefault();
                 this.setState({
                   provinceInSelect: {
                     label: Utils.translatePlatformDataToJsonArray(res)[0].name,
@@ -402,29 +404,31 @@ export default class Main extends Component {
                 });
                 let message = [];
                 Utils.translatePlatformDataToJsonArray(res2).forEach((item) => {
-                  if (item.parentOne == Utils.translatePlatformDataToJsonArray(res)[0].id && message.length == 0) {
-                    this.setState({
-                      cityInSelect: {
-                        label: item.name,
-                        value: item.id,
-                      },
-                    });
+                  if (item.parentOne == Utils.translatePlatformDataToJsonArray(res)[0].id) {
                     message.push(item);
                   }
                 });
+                this.setState({
+                  cityOption: message,
+                  cityInSelect: {
+                    label: message[0]?.name,
+                    value: message[0]?.id,
+                  },
+                });
                 let message2 = [];
                 Utils.translatePlatformDataToJsonArray(res3).forEach((item) => {
-                  if (item.parentTwo == Utils.translatePlatformDataToJsonArray(res3)[0].id&& message2.length == 0) {
-                    this.setState({
-                      pointInSelect: {
-                        label: item.name,
-                        value: item.id,
-                      },
-                    });
+                  if (item.parentTwo == Utils.translatePlatformDataToJsonArray(res3)[0].id && message2.length == 0) {
                     message2.push(item);
                   }
-                  this.search();
                 });
+                this.setState({
+                  pointOption: message2,
+                  pointInSelect: {
+                    label: message2[0].name,
+                    value: message2[0].id,
+                  },
+                });
+                this.search();
               });
             }
           });

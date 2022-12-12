@@ -1,12 +1,12 @@
 {
-  "id": "d957494d-d312-43bf-ae31-b104e605e75d",
+  "id": "63db1f44-d59d-48d1-975f-769170eda9e9",
   "type": "app",
-  "main": "main.7c684ccc.js",
+  "main": "app.bef7b71a.js",
   "version": "2",
   "props": {
     "type": "customize",
     "img": "APP_0001.png",
-    "name": "dsadq",
+    "name": "应用二开_vue",
     "loadStyle": 0,
     "lib": [],
     "css_script": [],

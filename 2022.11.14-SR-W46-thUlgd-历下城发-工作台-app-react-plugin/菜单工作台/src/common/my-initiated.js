@@ -261,7 +261,12 @@ const MyInitiated = (props) => {
 
       let { data } = await queryMoneyData(dataForm);
 
-      return NumFormat(data[0]?.column_data);
+      try {
+         let { data } = await queryMoneyData(dataForm);
+         return NumFormat(data[0]?.column_data);
+      } catch {
+         return "";
+      }
    };
 
    // 流程状态映射
@@ -419,6 +424,16 @@ const MyInitiated = (props) => {
       });
    };
 
+   // 选择器模糊查询
+   const selectFuzzyquery = (input, option) => {
+      let filterOptions = false;
+      if (option.props.children != undefined) {
+         console.log(input, option.props.children);
+         filterOptions = option.props.children.indexOf(input) >= 0;
+      }
+      return filterOptions;
+   };
+
    return (
       <Layout className="table_content">
          {/* 头部区域 */}
@@ -428,7 +443,7 @@ const MyInitiated = (props) => {
                   <Row gutter={20}>
                      <Col span={8}>
                         <Form.Item label="事件类型：" name="flow_constant_id">
-                           <Select showSearch mode="multiple" maxTagCount={1} popupClassName="table_select" placeholder="请选择 事件类型">
+                           <Select showSearch filterOption={selectFuzzyquery} mode="multiple" maxTagCount={1} popupClassName="table_select" placeholder="请选择 事件类型">
                               {flowConstantIdList.map((item) => {
                                  return (
                                     <OptGroup label={item.name} key={item.name}>

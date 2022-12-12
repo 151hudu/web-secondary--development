@@ -274,7 +274,12 @@ const PendingHandle = (props) => {
 
       let { data } = await queryMoneyData(dataForm);
 
-      return NumFormat(data[0]?.column_data);
+      try {
+         let { data } = await queryMoneyData(dataForm);
+         return NumFormat(data[0]?.column_data);
+      } catch {
+         return "";
+      }
    };
 
    // 流程状态映射
@@ -478,6 +483,33 @@ const PendingHandle = (props) => {
       }
    };
 
+   // 选择器模糊查询
+   const selectFuzzyquery = (input, option) => {
+      let filterOptions = false;
+      if (option.props.children != undefined) {
+         console.log(input, option.props.children);
+         filterOptions = option.props.children.indexOf(input) >= 0;
+      }
+      return filterOptions;
+   };
+
+   // 树形控件模糊查询
+   const treeFuzzyquery = (input, node) => {
+      if (typeof node.title === "string") {
+         if (node.title.indexOf(input) !== -1) {
+            return true;
+         } else {
+            return false;
+         }
+      } else {
+         if (node.name.indexOf(input) !== -1) {
+            return true;
+         } else {
+            return false;
+         }
+      }
+   };
+
    return (
       <Layout className="table_content">
          {/* 头部区域 */}
@@ -487,7 +519,7 @@ const PendingHandle = (props) => {
                   <Row gutter={20}>
                      <Col span={8}>
                         <Form.Item label="事件类型：" name="flow_constant_id">
-                           <Select showSearch mode="multiple" maxTagCount={1} popupClassName="table_select" placeholder="请选择 事件类型">
+                           <Select showSearch filterOption={selectFuzzyquery} mode="multiple" maxTagCount={1} popupClassName="table_select" placeholder="请选择 事件类型">
                               {flowConstantIdList.map((item) => {
                                  return (
                                     <OptGroup label={item.name} key={item.name}>
@@ -531,7 +563,14 @@ const PendingHandle = (props) => {
                      </Col>
                      <Col span={12}>
                         <Form.Item label="创建人：" name="flow_inst_create_member">
-                           <TreeSelect treeData={treeData} treeCheckable={true} placeholder="请选择用户" maxTagCount={1} fieldNames={{ label: "name", value: "id", children: "children" }} />
+                           <TreeSelect
+                              filterTreeNode={treeFuzzyquery}
+                              treeData={treeData}
+                              treeCheckable={true}
+                              placeholder="请选择用户"
+                              maxTagCount={1}
+                              fieldNames={{ label: "name", value: "id", children: "children" }}
+                           />
                         </Form.Item>
                      </Col>
                      <Col span={12}>

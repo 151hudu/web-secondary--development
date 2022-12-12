@@ -1,12 +1,15 @@
 import axios from "axios";
 import qs from "querystringify";
 
+let apiContextPath = "";
 if (process.env.NODE_ENV === "development") {
-   document.cookie = "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY3MDU4MDk3NjM1NywidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.IuZUcgkUfBn16vMo8OQRomITObhPNTVJQJhrtBHzOIQ";
+   document.cookie = "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY2OTk1OTk0NjI2MiwidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.AK3adUyBvP9ww3K1fMfDylsX31_Y0yGH7UTIEgJa8RA";
+   apiContextPath = "/api";
 }
 
 const instance = axios.create({
-   baseURL: `${process.env.REACT_APP_API}/sdata/rest`,
+   baseURL: `${apiContextPath}/dtyq/pngf/sdata/rest`,
+   // baseURL: `${apiContextPath}/sdata/rest`,
    timeout: 60000,
    validateStatus: function (status) {
       return status >= 200 && status < 300; // default

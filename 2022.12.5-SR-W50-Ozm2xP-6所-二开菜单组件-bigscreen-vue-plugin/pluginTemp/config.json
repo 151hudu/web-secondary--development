@@ -1,0 +1,23 @@
+{
+  "id": "d3cc2658-9c7e-48ba-b6c5-7c472539205c",
+  "type": "bigscreen",
+  "main": "app.7f3520ca.js",
+  "version": "2",
+  "requirement-number": "SR-W50-Ozm2xP",
+  "requirement-name": "二开菜单组件",
+  "props": {
+    "img": "APP_0001.png",
+    "disableimg": "disabled_custom_table.png",
+    "name": "Vue版本的演示Demo",
+    "className": "className-demo",
+    "configuration": [
+      "style",
+      "data",
+      "other"
+    ],
+    "vars": [
+      "id",
+      "菜单资产ID"
+    ]
+  }
+}

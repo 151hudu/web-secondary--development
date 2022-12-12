@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        try {
+            console.log('尝试SSO跳转');
+            // const paramsAdd = `${getQueryString("accountId")},${window.encodeURIComponent(getQueryString("userName"))}`;
+            let paramsAdd = ''
+            if (getQueryString("userName")) {
+                paramsAdd = `${getQueryString("accountId")},${getQueryString("userName")}`;
+            } else {
+                paramsAdd = `${getQueryString("accountId")},访客`;
+            }
+            // const ssoType = getQueryString("ssoType");
+            if (getQueryString("accountId")) {
+                window.SSO_IS_LOGIN = true;
+                window.location.href = `${window.location.origin}/applicationview/content/view?appid=47f4d3a3-824f-4416-8fce-8148701f1053&type=view&menuId=e607bee1-61f6-a698-c7c5-04219cd92fd3%233&token=${paramsAdd}&ssoType=municipal`;
+            } else {
+                console.log('SSO参数获取出错');
+            }
+        } catch (error) {
+            console.log(error);
+            console.log("SSO登录失败!");
+        }
+        function getQueryString(name) {
+            const reg = new RegExp(name + "=([^&]*)(&|$)", "i");
+            const r = window.location.search.substr(1).match(reg);
+            if (r != null) return r[1];
+            return "";
+        };
+    </script>
+</body>
+
+</html>

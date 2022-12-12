@@ -1,0 +1,40 @@
+.HYtop2 {
+  height: 60px;
+  width: 100%;
+  background: #083653;
+  display: flex;
+  justify-content: space-around;
+  padding-top: 10px;
+}
+.HYtop2 .selectBox {
+  height: 60px;
+}
+.HYtop2 .selectBox span {
+  font-size: 18px;
+  color: #fff;
+}
+.HYtop2 .selectBox .ant-select {
+  width: 160px !important;
+}
+.HYtop2 .selectBox .ant-select-selector {
+  height: 40px !important;
+  border: 1px solid #117dcc !important;
+  background-color: #08334e !important;
+  color: #fff !important;
+  border-radius: 4px !important;
+}
+.HYtop2 .selectBox .ant-select-selector span {
+  font-size: 16px;
+  color: #bfbfbf;
+}
+.HYtop2 .bottomBox .ant-btn {
+  border: 2px solid #27cbdc;
+  height: 40px;
+  width: 100px;
+  margin-left: 15px;
+  background: linear-gradient(180deg, #215a91 0%, #4ebdae 100%);
+}
+.HYtop2 .CheckboxGroupTop .ant-checkbox + span {
+  color: #fff;
+  line-height: 3;
+}

@@ -1,0 +1,30 @@
+{
+  "id": "d522915d-c0e1-4cf5-bbac-c165a05852fb",
+  "type": "analyzer",
+  "main": "main.3153821d.js",
+  "version": "2",
+  "configuration": true,
+  "props": {
+    "img": "custom_table.png",
+    "type": "qoiwud23fo3",
+    "disableimg": "disabled_custom_table.png",
+    "name": "demo",
+    "process": true,
+    "domId": "ex_46fbe360-daa5-42af-8ca0-2ec3066ef216",
+    "lib": [],
+    "cssDep": [],
+    "scriptName": "main.b42fe2f5.js",
+    "vars": [
+      "背景颜色",
+      "左侧字体大小",
+      "top位置",
+      "柱体宽度",
+      "柱体文字大小",
+      "roadShow",
+      "road_posShow"
+    ],
+    "optionModules": []
+  },
+  "requirement-number": "SR-W47-zFmm71",
+  "requirement-name": "排行榜支持显示两列标题并显示排名的升降"
+}

@@ -1,0 +1,23 @@
+{
+  "id": "0533d12e-45ee-4122-acc1-29bdb09753a3",
+  "type": "bigscreen",
+  "main": "app.8de091f3.js",
+  "version": "2",
+  "requirement-number": "SR-W49-3HHv0G",
+  "requirement-name": "接收 BroadCast Channel 信道",
+  "props": {
+    "img": "APP_0001.png",
+    "disableimg": "disabled_custom_table.png",
+    "name": "Vue版本的演示Demo",
+    "className": "className-demo",
+    "configuration": [
+      "style",
+      "data",
+      "other"
+    ],
+    "vars": [
+      "id",
+      "BCname"
+    ]
+  }
+}

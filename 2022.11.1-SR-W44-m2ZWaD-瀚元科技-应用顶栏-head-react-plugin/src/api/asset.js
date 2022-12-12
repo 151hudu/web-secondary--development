@@ -18,3 +18,4 @@ export const externalConfirm = (id, agree) =>
 export const setRead = (id) => request.get(`sysInfo/read?id=${id}`);
 
 export const userQuery = () => request.get(`system/authority/user`);
+export const queryConfigSummary = (params) => request.get(`datapp/queryConfigSummary?datappId=${params.datappId}`);

@@ -1,0 +1,14 @@
+.configuration {
+    height: 100vh;
+}
+
+.analyzer-secondary {
+    height: 100vh;
+}
+
+.ant-carousel .slick-dots.slick-dots-bottom li{
+    background: #0a151f;
+}
+.ant-carousel .slick-dots.slick-dots-bottom li.slick-active button{
+    background: red;
+}

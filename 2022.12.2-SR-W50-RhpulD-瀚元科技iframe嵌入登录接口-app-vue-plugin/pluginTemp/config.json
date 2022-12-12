@@ -1,0 +1,20 @@
+{
+  "id": "47acce40-6e3a-469b-9294-882fe54645cf",
+  "type": "app",
+  "main": "app.fa2113ef.js",
+  "version": "2",
+  "props": {
+    "type": "customize",
+    "img": "APP_0001.png",
+    "name": "应用二开_vue",
+    "loadStyle": 0,
+    "lib": [],
+    "css_script": [],
+    "customconf": [
+      "id"
+    ]
+  },
+  "configuration": true,
+  "requirement-number": "SR-W49-eEq4y8",
+  "requirement-name": "瀚元iframe嵌入页面登录"
+}

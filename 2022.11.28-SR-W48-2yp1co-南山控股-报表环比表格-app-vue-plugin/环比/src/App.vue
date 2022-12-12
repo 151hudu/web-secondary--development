@@ -38,6 +38,8 @@
         :header-row-style="{ height: '30px' }">
         <el-table-column type="index" label="序列" width="55">
         </el-table-column>
+        <el-table-column prop="ammeter_name" label="回路名称" min-width="180">
+        </el-table-column>
         <el-table-column :prop="x.prop" :label="x.label" min-width="180" v-for="(x, i) in columnData" :key="i">
         </el-table-column>
 
@@ -45,7 +47,9 @@
         <el-table-column prop="linkRelativeRatio" label="环比(%)">
 
           <template slot-scope="scope">
-            <div class="huanbi"> <span>{{ scope.row.linkRelativeRatio }}</span> <span
+            <div class="huanbi"> <span>{{ scope.row.linkRelativeRatio + '%' }}</span>
+              <span v-if="scope.row.linkRelativeRatio == 0" class="iconfont"> –</span>
+              <span v-else
                 :class="`iconfont  ${scope.row.linkRelativeRatio > 0 ? 'icon-xiangshangjiantou ' : 'icon-xiangxiajiantou'}`"></span>
             </div>
           </template>
@@ -308,7 +312,7 @@ export default {
           let a = x[cl[this.dateType][0].prop]
           let c = x[cl[this.dateType][1].prop]
           x.increase = a - c
-          x.linkRelativeRatio = c != 0 ? x.increase / c * 100 + '%' : '0%'
+          x.linkRelativeRatio = c != 0 ? x.increase / c * 100 : 0
           temp.push(x)
 
         })
@@ -370,12 +374,21 @@ export default {
       return this.id;
     },
     //与msgCompConfig.js文件actions相对应，组件动作，依据定义加上do_message前缀
+    //与msgCompConfig.js文件actions相对应，组件动作，依据定义加上do_message前缀
     do_EventCenter_setValue({ value }) {
       this.setValue(value)
     },
-    setValue(value) {
+
+    do_EventCenter_secharFn({ value }) {
+      this.sechrFn(value)
+    },
+    sechrFn(value) {
       this.dataIds = value
       this.queryTable(this.dateType)
+    },
+    setValue(value) {
+      this.dataIds = value
+
 
     }
   },
@@ -446,7 +459,7 @@ export default {
 
     .itemButton {
       height: 32px;
-      background-color: transparent;
+      background-color: #fff;
       border: 1px solid #DCDFE6;
       cursor: pointer;
       font-size: 20px;
@@ -606,6 +619,12 @@ export default {
   background-color: #0454F2;
   border-color: #0454F2;
   box-shadow: -1px 0 0 0 #0454F2;
+}
+
+/deep/.two_pagination {
+  .el-pagination__total {
+    display: none;
+  }
 }
 
 /deep/.two_dialog {

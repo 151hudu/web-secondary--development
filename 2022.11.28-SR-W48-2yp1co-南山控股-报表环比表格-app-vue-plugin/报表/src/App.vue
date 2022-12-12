@@ -42,16 +42,16 @@
         @selection-change="handleSelectionChange"
         :header-cell-style="{ padding: 0 + 'px', fontSize: '12px', fontWeight: 400 }"
         :header-row-style="{ height: '30px' }">
-        <el-table-column type="selection" :reserve-selection="true" width="55">
+        <el-table-column type="selection" :reserve-selection="true" width="55" fixed="left">
         </el-table-column>
-        <el-table-column type="index" label="序列" width="55">
+        <el-table-column type="index" label="序列" width="55" fixed="left">
         </el-table-column>
-        <el-table-column prop="ammeter_name" label="回路名称/kWh">
+        <el-table-column prop="ammeter_name" min-width="180" label="回路名称/kWh" fixed="left">
         </el-table-column>
 
 
 
-        <el-table-column :prop="item" :label="item" v-for="item in columnData "
+        <el-table-column :prop="item" :label="item" v-for="item in columnData " min-width="73"
           :render-header="(e, { column, $index }) => { return renderheader(e, { column, $index }, dateType) }"
           :key="item">
         </el-table-column>
@@ -197,7 +197,7 @@ export default {
     }
     this.handleValueChange()
     //业务代码
-    // this.dataIds = ["1a4951bf9eb2410db9c2e275e92f15f9", "369d394991744386a3862c8db1fd67bb"]
+    this.dataIds = ["1a4951bf9eb2410db9c2e275e92f15f9", "369d394991744386a3862c8db1fd67bb"]
     this.queryReportModel()
   },
   methods: {
@@ -352,7 +352,7 @@ export default {
 
 
       this.Gechart = echarts.init(this.$refs.southern_echarts);
-      this.Gechart.setOption(options);
+      this.Gechart.setOption(options, { notMerge: true });
 
 
 
@@ -431,7 +431,7 @@ export default {
     queryTable(type) {
       let timeType = { date: 'YYYY-MM-DD', month: 'YYYY-MM', year: 'YYYY' }
       let time = moment(this.year).format(timeType[type])
-
+      console.log(time, type, '=======d');
       this.queryReportModel(time)
       //接口
     },
@@ -454,6 +454,9 @@ export default {
         let FastLength = a.indexOf(Math.max(...a))
         this.columnData = Object.keys(this.tableData[FastLength])
         this.columnData.splice(this.columnData.indexOf('ammeter_name'), 1)
+        this.columnData.sort(function (a, b) {
+          return a - b
+        })
         this.total = this.dataAll.length
 
       }).catch(err => {
@@ -513,11 +516,21 @@ export default {
     do_EventCenter_setValue({ value }) {
       this.setValue(value)
     },
+
+    do_EventCenter_secharFn({ value }) {
+      this.sechrFn(value)
+    },
+    sechrFn(value) {
+      this.dataIds = value
+      this.queryTable(this.dateType)
+    },
     setValue(value) {
       this.dataIds = value
-      console.log(this.dateType, '=======日期date');
-      this.queryTable(this.dateType)
+
+
     }
+
+
   },
   destroyed() {
     //必需，不可删除
@@ -591,7 +604,7 @@ export default {
 
     .itemButton {
       height: 32px;
-      background-color: transparent;
+      background-color: #fff;
       border: 1px solid #DCDFE6;
       cursor: pointer;
       font-size: 20px;

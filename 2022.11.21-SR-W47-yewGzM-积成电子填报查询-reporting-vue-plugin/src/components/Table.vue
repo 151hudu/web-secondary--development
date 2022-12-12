@@ -16,7 +16,7 @@ export default {
     };
 
   },
-  mounted() {
+  created() {
     this.dateP = moment(new Date(this.dataV)).format('YYYY-MM-DD')
   }
 };

@@ -17,20 +17,36 @@ export const events = [
 export const actions = [
   {
     key: "setValue",
-    name: "更新数据",
+    name: "更新数据(无查询)",
     params: [
       {
         key: "value",
         name: "值",
-        dataType: "array"
-      }
+        dataType: "array",
+      },
+    ],
+
+    // hasReturn为false则不用写returns选项
+
+  },
+  {
+    key: "secharFn",
+    name: "更新数据(查询)",
+    params: [
+      {
+        key: "value",
+        name: "值",
+        dataType: "array",
+      },
     ],
 
     // hasReturn为false则不用写returns选项
 
   }
 
+
 ];
+
 
 export default {
   actions,

@@ -14,7 +14,7 @@ import {
   // LaptopOutlined,
   DownOutlined, MailOutlined, AppstoreOutlined
 } from "@ant-design/icons";
-import { logout, getMenuData, queryAssetById, userQuery } from "./api/asset";
+import { logout, getMenuData, queryAssetById, userQuery, queryConfigSummary } from "./api/asset";
 // import appService from "@njsdata/app-sdk";
 import head from "./assets/headbg.png";
 import user from "./assets/user.png";
@@ -23,6 +23,8 @@ const { Search } = Input;
 // const { SubMenu } = Menu;
 // const { Link } = Anchor;
 const appid = qs.parse(window.location.search).appid;
+// const datappId = qs.parse(window.location.search).appid;
+// const menuId = qs.parse(window.location.search).appid;
 const regionalAssets = []
 // const office_name = window.currentUser?.office_name || '全国'
 const logoutSystem = () => {
@@ -117,8 +119,29 @@ export default class App extends Component {
       );
     let { data } = await this.userHanfler()
     let office_name = data.office_name
-    this.setState({ office_name })
+    let loginName = data.loginName
+    this.setState({ office_name, loginName })
 
+
+    let { datappMenus } = await this.queryMenu()
+    console.log(datappMenus, '====de');
+    datappMenus.forEach((x, i) => {
+      x.className = 'handerMenu2  handMenu' + i
+      x.popupClassName = 'handerMenuChirend' + i
+      x.key = 'menu' + i
+      x.label = x.name
+      if (x.children.length == 0) delete x.children
+      x.children && x.children.forEach((item, inx) => {
+        item.key = x.key + 'item' + inx
+        item.label = item.name
+
+        if (item.children.length == 0) delete item.children
+      })
+      x.onTitleClick = this.onClick
+      x.popupOffset = [-22, 5]
+    })
+
+    // menuAndButton
     menuData = JSON.parse(menuData)
     menuData.forEach((x, i) => {
       x.className = 'handerMenu2  handMenu' + i
@@ -132,7 +155,7 @@ export default class App extends Component {
     })
     let parName = office_name == '全国' ? '中国' : office_name
     this.setState({
-      menuData, regionValue: office_name
+      menuData: datappMenus, regionValue: office_name
     })
     this.metaButton.current?.addEventListener("wheel", this.wrapperWheel.bind(this));
 
@@ -237,6 +260,12 @@ export default class App extends Component {
   do_EventCenter_setValue = ({ value }) => {
     console.log(value, '====设值');
   }
+  //菜单查询
+  async queryMenu() {
+    let { data } = await queryConfigSummary({ datappId: appid })
+    return data.menuAndButton
+  }
+
   //获取最后一级的id
   childHanfler(tree, arr = []) {
 
@@ -359,7 +388,7 @@ export default class App extends Component {
     buttons: [],
     counting: 0,
     current: 'SubMenu', clickStatus: false, officeno: null, statusList: [], office_name: '全国', ctiy: '', substation: '',
-    menuData: [], treeData: [], warningAlter: [], regionValue: '全国', tiemObj: null, regionFiled: '全国', statusListAll: []
+    menuData: [], treeData: [], warningAlter: [], regionValue: '全国', tiemObj: null, regionFiled: '全国', statusListAll: [], loginName: ''
   };
   //将城市结构的数据转成扁平数据
   flatHandler = async (data, office_name) => {
@@ -489,6 +518,8 @@ export default class App extends Component {
     let res = await userQuery()
     return res
   }
+
+
   /*
    * url 目标url
    * arg 需要替换的参数名称
@@ -551,14 +582,14 @@ export default class App extends Component {
         let AppVariables = {}
         let appArr = appVarKey.split('|')
         appArr.forEach(item => {
-          AppVariables[item] = undefined
+          AppVariables[item] = ''
         })
 
         this.setState({ regionValue: '全国', regionFiled: '', statusList: statusListAll, clickStatus: true }, () => {
 
           this.queryAlterFn()
         })
-        document.querySelector('.resetBtn').click()
+        document.querySelector('.resetBtn') && document.querySelector('.resetBtn').click()
 
         changeAppVariables && changeAppVariables(AppVariables)
       } else {
@@ -703,12 +734,13 @@ export default class App extends Component {
 
   itmeOnClick = ({ item, key, keyPath, domEven }) => {
 
-    let pid = item.props.pid
+    let pid = item.props.id
     let address = item.props.url
     let { appId, history } = this.props;
 
     if (pid) {
-      let url = `applicationview/content/view?appid=${appId}&pId=${pid}`
+      let url = `applicationview/content/view?appid=${appId}&type=view&themed=be604992-edae-4002-b362-586742e36d4e&menuId=${pid}`
+      // let url = `applicationview/content/view?appid=${appId}&pId=${pid}`
       history.push(url)
     } else {
       window.location.href = address
@@ -751,13 +783,22 @@ export default class App extends Component {
     this.setState({ counting: 1 })
   }
   warningClick = (type) => {
-    const { alarmUrl, alarmField, history } = this.props
+    const { alarmUrl, alarmField, history, alarmAppKey, changeAppVariables } = this.props
+
+
 
     if (alarmUrl.indexOf('applicationview/content/view') != -1) {
-
-      history.push(`${alarmUrl}${alarmField}=${type}`)
+      let obej = {}
+      obej[alarmAppKey] = type
+      changeAppVariables && changeAppVariables(obej)
+      history.push(`${alarmUrl}`)
+      console.log(obej, '======dataParams');
     } else {
-      window.open(`${alarmUrl}${alarmField}=${type}`)
+      let obej = {}
+      obej[alarmAppKey] = type
+      changeAppVariables && changeAppVariables(obej)
+      window.open(`${alarmUrl}`)
+
     }
   }
   onDropdownChange = (value) => {
@@ -813,7 +854,7 @@ export default class App extends Component {
 
     } = this.props || {};
 
-    const { selectButton, current, menuData, treeData, warningAlter, regionValue } = this.state;
+    const { selectButton, loginName, current, menuData, treeData, warningAlter, regionValue } = this.state;
     if (this.props.isConfig) {
       return <Setting {...this.props} />;
     }
@@ -911,7 +952,7 @@ export default class App extends Component {
                     color: '#fff'
                   }}
                 >
-                  {window?.currentUser?.loginName || "默认"}
+                  {loginName || "默认"}
                   <DownOutlined />
                 </span>
               </Dropdown>

@@ -101,7 +101,10 @@ if (process.env.NODE_ENV !== "production") {
         }).$mount(div);
       }
       eventBus.on((props) => {
-        // console.log("测试11", props);
+        // if (props.type == 'query') {
+        //   console.log("测试11进入组件", props);
+        // }
+
         const component = new Vue({
           render: (h) => <App type={props.type} customConfig={props} />,
         }).$mount();

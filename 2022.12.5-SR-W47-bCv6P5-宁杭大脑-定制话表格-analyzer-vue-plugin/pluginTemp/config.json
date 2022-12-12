@@ -1,0 +1,41 @@
+{
+  "id": "623bf920-de58-4de4-a17e-7f0efa8270cd",
+  "type": "analyzer",
+  "main": "app.79e31ed8.js",
+  "version": "2",
+  "props": {
+    "img": "custom_table.png",
+    "type": "k23dasd547",
+    "disableimg": "disabled_custom_table.png",
+    "name": "vue实现测试",
+    "domId": "ex_custom_table_15",
+    "lib": [],
+    "cssDep": [],
+    "scriptName": "app.a515a2e6.js",
+    "optionModules": [],
+    "vars": [
+      "id",
+      "assetId",
+      "headColor",
+      "headSize",
+      "headfamily",
+      "headHeight",
+      "titleColor",
+      "titleSize",
+      "titlefamily",
+      "titleWidth",
+      "numColor",
+      "numSize",
+      "numfamily",
+      "rateSize",
+      "ratefamily",
+      "rateJustColor",
+      "rateLossColor",
+      "rateDigit",
+      "dataWidth",
+      "dataHeight"
+    ]
+  },
+  "requirement-number": "SR-W47-bCv6P5",
+  "requirement-name": "杭宁科技定制表格"
+}

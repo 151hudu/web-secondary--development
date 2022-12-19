@@ -1,0 +1,29 @@
+{
+  "id": "d522915d-c0e1-4cf5-bbac-c165a05852fc",
+  "type": "analyzer",
+  "main": "main.8db02ca1.js",
+  "version": "2",
+  "configuration": true,
+  "props": {
+    "img": "custom_table.png",
+    "type": "qoiwud23fo3",
+    "disableimg": "disabled_custom_table.png",
+    "name": "demo",
+    "process": true,
+    "domId": "ex_46fbe360-daa5-42af-8ca0-2ec3066ef216",
+    "lib": [],
+    "cssDep": [],
+    "scriptName": "main.b42fe2f5.js",
+    "vars": [
+      "背景颜色",
+      "左侧字体大小",
+      "服务编排名称",
+      "top位置",
+      "柱体宽度",
+      "柱体文字大小"
+    ],
+    "optionModules": []
+  },
+  "requirement-number": "SR-W50-tT6yie",
+  "requirement-name": "定制化排行榜"
+}

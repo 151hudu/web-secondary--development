@@ -4,6 +4,24 @@ const Utils = {
    * @param {Array} originTableData 平台接口查询回来的数据
    * @returns {Array} 返回对象数组 形如[{name:"小红",age:23},{name:"小刚",age:23}]
    */
+  tree(list) {
+    const treeList = [];
+    const map = {};
+    // 遍历list数组，加入一个对象里面，id作为key.数组的item作为value
+    list.forEach((item) => {
+      map[item.id] = item;
+      item.children = [];
+    });
+    // 再次遍历list数组，如果map对象id与pid匹配成功，添加至item.children里面，反之，添加到treeList里面
+    list.forEach((item) => {
+      if (map[item.early_warning_type_id]) {
+        map[item.early_warning_type_id].children.push(item);
+      } else {
+        treeList.push(item);
+      }
+    });
+    return treeList;
+  },
   translatePlatformDataToJsonArray(originTableData) {
     let originTableHeader = originTableData.data[0];
     let tableHeader = [];
@@ -59,7 +77,7 @@ const Utils = {
    */
   generateUUID: () => {
     let d = new Date().getTime();
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
       let r = (d + Math.random() * 16) % 16 | 0;
       d = Math.floor(d / 16);
       return (c == "x" ? r : (r & 0x3) | 0x8).toString(16);
@@ -70,7 +88,7 @@ const Utils = {
    *
    * @param {Node} elem 元素节点
    */
-  getHideElementSize: function(elem) {
+  getHideElementSize: function (elem) {
     let width,
       height,
       // elem = document.querySelector(ele),
@@ -84,14 +102,13 @@ const Utils = {
 
     return {
       width: width,
-      height: height
+      height: height,
     };
 
     function getNoneNode(node) {
       let display = getStyles(node).getPropertyValue("display"),
         tagName = node.nodeName.toLowerCase();
-      if (display != "none"
-          && tagName != "body") {
+      if (display != "none" && tagName != "body") {
         getNoneNode(node.parentNode);
       } else {
         noneNodes.push(node);
@@ -103,7 +120,6 @@ const Utils = {
 
     //这方法才能获取最终是否有display属性设置，不能style.display。
     function getStyles(elem) {
-
       // Support: IE<=11+, Firefox<=30+ (#15098, #14150)
       // IE throws on elements created in popups
       // FF meanwhile throws on frame elements through "defaultView.getComputedStyle"
@@ -113,8 +129,7 @@ const Utils = {
         view = window;
       }
       return view.getComputedStyle(elem);
-    };
-
+    }
 
     function setNodeStyle() {
       let i = 0;
@@ -126,7 +141,7 @@ const Utils = {
         noneNodes[i].setAttribute("style", "visibility:hidden;display:block !important;" + style);
         nodeStyle[i] = {
           visibility: visibility,
-          display: display
+          display: display,
         };
       }
     }
@@ -137,34 +152,25 @@ const Utils = {
         noneNodes[i].style.visibility = nodeStyle[i].visibility;
         noneNodes[i].style.display = nodeStyle[i].display;
       }
-
     }
   },
   /**
    * 判断元素是否可见
    * @param {Node} element 元素节点
    */
-  isVisiable: function(element) {
+  isVisiable: function (element) {
     if (element === null || element === undefined) {
       return false;
     }
 
-    if (
-      element.style &&
-      ((element.style.display && element.style.display == "none") ||
-       (element.style.visibility && element.style.visibility == "hidden"))
-    ) {
+    if (element.style && ((element.style.display && element.style.display == "none") || (element.style.visibility && element.style.visibility == "hidden"))) {
       return false;
     }
 
     let parent = element.parentNode;
 
     while (parent) {
-      if (
-        parent.style &&
-        ((parent.style.display && parent.style.display == "none") ||
-         (parent.style.visibility && parent.style.visibility == "hidden"))
-      ) {
+      if (parent.style && ((parent.style.display && parent.style.display == "none") || (parent.style.visibility && parent.style.visibility == "hidden"))) {
         return false;
       } else {
         parent = parent.parentNode;
@@ -172,7 +178,7 @@ const Utils = {
     }
 
     return true;
-  }
+  },
 };
 
 export default Utils;

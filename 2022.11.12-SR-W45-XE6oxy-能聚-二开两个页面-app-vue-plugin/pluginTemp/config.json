@@ -1,7 +1,7 @@
 {
-  "id": "8785540c-891e-4339-8b43-a9f4f6e71499",
+  "id": "769cf8c0-7044-41f0-9190-deed7e44adb1",
   "type": "app",
-  "main": "app.3c91f248.js",
+  "main": "app.cdfc37f1.js",
   "version": "2",
   "props": {
     "type": "customize",
@@ -12,7 +12,9 @@
     "css_script": [],
     "customconf": [
       "是否派发",
-      "系统表资产ID"
+      "系统表资产ID",
+      "标签表资产ID",
+      "是否级联选择"
     ]
   }
 }

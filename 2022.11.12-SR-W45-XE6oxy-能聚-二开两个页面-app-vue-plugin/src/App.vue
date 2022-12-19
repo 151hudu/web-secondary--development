@@ -3,7 +3,23 @@
   <div :id="id" style="width: 100%; height: 100%" :ref="id">
     <!-- -->
     <div class="topSearch">
-      <el-select v-model="nowDep" value-key="id" style="width: 350px; margin-right: 20px" filterable @change="changeDep" clearable placeholder="请选择">
+      <el-cascader
+        v-if="this.customConfig.是否级联选择 == '是'"
+        :options="depOptions"
+        ref="cascader"
+        clearable
+        filterable
+        @change="changeDep"
+        :show-all-levels="false"
+        :props="props"
+        style="width: 350px; margin-right: 20px"
+      >
+        <!-- <template slot-scope="{ node, data }"> -->
+        <!-- <span>{{ data.office.name }}</span> -->
+        <!-- <span v-if="data.office.hasChild"> ({{ data.office.children.length }}) </span> -->
+        <!-- </template> -->
+      </el-cascader>
+      <el-select v-else v-model="nowDep" value-key="id" style="width: 350px; margin-right: 20px" filterable @change="changeDep" clearable placeholder="请选择">
         <el-option v-for="item in depOptions" :key="item.id" :label="item.name" :value="item"> </el-option>
       </el-select>
       <el-date-picker
@@ -21,38 +37,42 @@
       </el-date-picker>
     </div>
     <div class="topCard">
-      <div class="topCard_Div" v-for="(item, index) of topCardData" :class="{ focus: item.focus }" :key="index" @click="focusCardInfo(item)">
-        <div class="topCard_Div_Title">
-          <img class="topCard_Div_Title_Img" :src="item.src" width="16px" height="16px" alt="" />
-          <span class="topCard_Div_Title_Span">{{ item.early_warning_type_name }}</span>
+      <template v-for="(item, index) of topCardData">
+        <div class="topCard_Div" v-if="item.is_show != '1'" :class="{ focus: item.focus }" :key="index" @click="focusCardInfo(item)">
+          <div class="topCard_Div_Title">
+            <img class="topCard_Div_Title_Img" :src="item.src" width="16px" height="16px" alt="" />
+            <span class="topCard_Div_Title_Span">{{ item.early_warning_type_name }}</span>
+          </div>
+          <span class="topCard_Div_Info">{{ item.num }} </span>
         </div>
-        <span class="topCard_Div_Info">{{ item.num }} </span>
-      </div>
+      </template>
     </div>
     <hr />
     <div class="bottomInfoList">
-      <div class="bottomInfo" v-for="(item, index) of bottomInfoData.childList" :key="index">
-        <div class="bottomInfoTitle">{{ item.early_warning_type_name }}</div>
-        <div class="bottomInfoItem">
-          <div class="bottomInfoItemItem" v-for="(itemSon, indexSon) of item.childList" :key="indexSon" @click="goDetial(itemSon, item)">
-            <div class="bottomInfoItemItemLeft">
-              <img src="../pluginTemp/images/上下布局/信息.png" width="14px" height="14px" alt="" />
-              <span>{{ itemSon.early_warning_type_name }}</span>
-            </div>
-            <div class="bottomInfoItemItemRight">
-              <span>{{ itemSon.childList?.num ? itemSon.childList.num : 0 }}</span>
-              <img src="../pluginTemp/images/上下布局/箭头.png" width="16px" height="16px" alt="" />
+      <template v-for="(item, index) of bottomInfoData.childList">
+        <div class="bottomInfo" v-if="item.is_show != '1'" :key="index">
+          <div class="bottomInfoTitle">{{ item.early_warning_type_name }}</div>
+          <div class="bottomInfoItem">
+            <div class="bottomInfoItemItem" v-for="(itemSon, indexSon) of item.childList" :key="indexSon" @click="goDetial(itemSon, item)">
+              <div class="bottomInfoItemItemLeft">
+                <img src="../pluginTemp/images/上下布局/信息.png" width="14px" height="14px" alt="" />
+                <span>{{ itemSon.early_warning_type_name }}</span>
+              </div>
+              <div class="bottomInfoItemItemRight">
+                <span>{{ itemSon.childList?.num ? itemSon.childList.num : 0 }}</span>
+                <img src="../pluginTemp/images/上下布局/箭头.png" width="16px" height="16px" alt="" />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script>
 import eventActionDefine from "./components/msgCompConfig";
-import { queryWarningType, queryCountByOfficeId, user, queryConfigJumpUrl, queryAssetById } from "./api/asset";
+import { queryWarningType, queryCountByOfficeId, user, queryConfigJumpUrl, queryDropDown, queryAssetById } from "./api/asset";
 import "./index.css";
 import { RadioButton, RadioGroup, Cascader, DatePicker, Select, Option } from "element-ui";
 import Vue from "vue";
@@ -156,14 +176,28 @@ export default {
   },
   mounted() {
     let message = this.customConfig.系统表资产ID || "76b8e795-65da-aca4-ccc3-25aa048a8f09";
-    queryAssetById(message).then((res) => {
-      this.depOptions = Utils.translatePlatformDataToJsonArray(res).map((item) => {
-        return {
-          name: item.name,
-          id: item.id,
-        };
+    if (this.customConfig.是否级联选择 == "是") {
+      queryCountByOfficeId("123456789").then((res) => {
+        this.depOptions = res.data.map((item) => {
+          return {
+            name: item.office.name,
+            id: item.office.id,
+            leaf: !item.office.hasChild,
+          };
+        });
+        console.log(res);
       });
-    });
+    } else {
+      queryDropDown(message).then((res) => {
+        console.log(Utils.translatePlatformDataToJsonArray(res));
+        this.depOptions = Utils.translatePlatformDataToJsonArray(res).map((item) => {
+          return {
+            name: item.name,
+            id: item.id,
+          };
+        });
+      });
+    }
     user().then((res) => {
       this.depInfo.name = res.data.office_name;
       this.depInfo.id = "";
@@ -195,97 +229,143 @@ export default {
       } else if (this.customConfig.是否派发 && this.customConfig.是否派发 == "未派发") {
         this.messageFlag = false;
       }
+      console.log(this.nowDep);
       let message = {
         flag: this.messageFlag,
         time1: this.timeValue ? this.timeValue[0] || "" : "",
         time2: this.timeValue ? this.timeValue[1] || "" : "",
-        companyId: this.depInfo.id || "",
+        companyId: this.nowDep.id,
       };
       if (this.yearValue) {
         message.time1 = moment(this.yearValue).startOf("year").format("x");
         message.time2 = moment(this.yearValue).endOf("year").format("x");
       }
-      let message2 = [];
       queryWarningType(message).then((res) => {
-        res.data.forEach((item) => {
-          switch (item.early_warning_type_name) {
-            case "财务规范":
-              item.src = require("../pluginTemp/images/上下布局/小图标/财务规范.png");
-              message2[0] = item;
-              break;
-            case "墓葬领域":
-              item.src = require("../pluginTemp/images/上下布局/小图标/墓葬领域.png");
-              message2[9] = item;
-              break;
-            case "校园小微工程":
-              item.src = require("../pluginTemp/images/上下布局/小图标/校园小微工程.png");
-              message2[10] = item;
-              break;
-            case "农村土地发包":
-              item.src = require("../pluginTemp/images/上下布局/小图标/农村土地发包.png");
-              message2[11] = item;
-              break;
-            case "退役军人优抚":
-              item.src = require("../pluginTemp/images/上下布局/小图标/退役军人优抚.png");
-              message2[12] = item;
-              break;
-            case "农村集体资产":
-              item.src = require("../pluginTemp/images/上下布局/小图标/农村土地发包.png");
-              message2[13] = item;
-              break;
-            case "公务接待":
-              item.src = require("../pluginTemp/images/上下布局/小图标/公务接待.png");
-              message2[1] = item;
-              break;
-            case "会议、培训、差旅":
-              item.src = require("../pluginTemp/images/上下布局/小图标/会议、培训、差旅.png");
-              message2[2] = item;
-              break;
-            case "津补贴和奖金福利发放":
-              item.src = require("../pluginTemp/images/上下布局/小图标/津补贴和奖金.png");
-              message2[3] = item;
-              break;
-            case "公务用车配备":
-              item.src = require("../pluginTemp/images/上下布局/小图标/公务用车配备.png");
-              message2[4] = item;
-              break;
-            case "楼堂馆所、办公用房建设":
-              item.src = require("../pluginTemp/images/上下布局/小图标/楼堂馆所.png");
-              message2[5] = item;
-              break;
-            case "项目及工程结算":
-              item.src = require("../pluginTemp/images/上下布局/小图标/项目及工程结算.png");
-              message2[6] = item;
-              break;
-            case "工程项目监督":
-              item.src = require("../pluginTemp/images/上下布局/小图标/工程项目监督.png");
-              message2[7] = item;
-              break;
-            case "区块链预警":
-              item.src = require("../pluginTemp/images/上下布局/小图标/区块链预警.png");
-              message2[8] = item;
-              break;
+        // 和资产数据匹配  三级  拿字段  并排序
+        let message2 = this.customConfig.标签表资产ID || "";
+        queryAssetById(message2, []).then((resp) => {
+          let info = Utils.translatePlatformDataToJsonArray(resp);
+          res.data.forEach((item, index) => {
+            info.forEach((ele) => {
+              if (item.early_warning_type_name == ele.early_warning_type_name) {
+                item.is_show = ele.is_show;
+                // 999999是值为null  undefined 时候sort 会排前面 给个默认排后面
+                item.early_warning_type_number = ele.early_warning_type_number || 999999;
+              }
+            });
+            if (item.childList && item.childList.length > 0) {
+              item.childList.forEach((item2, index2) => {
+                info.forEach((ele) => {
+                  if (item2.early_warning_type_name == ele.early_warning_type_name) {
+                    item2.is_show = ele.is_show;
+                    item2.early_warning_type_number = ele.early_warning_type_number || 999999;
+                  }
+                });
+                item.childList.sort(this.compare("early_warning_type_number"));
+                if (item2.childList && item2.childList.length > 0) {
+                  item2.childList.forEach((item3, index3) => {
+                    info.forEach((ele) => {
+                      if (item3.early_warning_type_name == ele.early_warning_type_name) {
+                        item3.is_show = ele.is_show;
+                        item3.early_warning_type_number = ele.early_warning_type_number || 999999;
+                      }
+                    });
+                  });
+                  item2.childList.sort(this.compare("early_warning_type_number"));
+                }
+              });
+            }
+            switch (item.early_warning_type_name) {
+              case "财务规范":
+                item.src = require("../pluginTemp/images/上下布局/小图标/财务规范.png");
+                break;
+              case "墓葬领域":
+                item.src = require("../pluginTemp/images/上下布局/小图标/墓葬领域.png");
+                break;
+              case "校园小微工程":
+                item.src = require("../pluginTemp/images/上下布局/小图标/校园小微工程.png");
+                break;
+              case "农村土地发包":
+                item.src = require("../pluginTemp/images/上下布局/小图标/农村土地发包.png");
+                break;
+              case "退役军人优抚":
+                item.src = require("../pluginTemp/images/上下布局/小图标/退役军人优抚.png");
+                break;
+              case "农村集体资产":
+                item.src = require("../pluginTemp/images/上下布局/小图标/农村土地发包.png");
+                break;
+              case "公务接待":
+                item.src = require("../pluginTemp/images/上下布局/小图标/公务接待.png");
+                break;
+              case "会议、培训、差旅":
+                item.src = require("../pluginTemp/images/上下布局/小图标/会议、培训、差旅.png");
+                break;
+              case "津补贴和奖金福利发放":
+                item.src = require("../pluginTemp/images/上下布局/小图标/津补贴和奖金.png");
+                break;
+              case "公务用车配备":
+                item.src = require("../pluginTemp/images/上下布局/小图标/公务用车配备.png");
+                break;
+              case "楼堂馆所、办公用房建设":
+                item.src = require("../pluginTemp/images/上下布局/小图标/楼堂馆所.png");
+                break;
+              case "项目及工程结算":
+                item.src = require("../pluginTemp/images/上下布局/小图标/项目及工程结算.png");
+                break;
+              case "工程项目监督":
+                item.src = require("../pluginTemp/images/上下布局/小图标/工程项目监督.png");
+                break;
+              case "区块链预警":
+                item.src = require("../pluginTemp/images/上下布局/小图标/区块链预警.png");
+                break;
+              default:
+                item.src = require("../pluginTemp/images/上下布局/小图标/其他.png");
+            }
+          });
+          this.topCardData = res.data.sort(this.compare("early_warning_type_number"));
+          // 默认选中操作
+          for (let k = 0; k < this.topCardData.length; k++) {
+            if (this.topCardData[k].is_show != "1") {
+              this.topCardData[k].focus = true;
+              this.bottomInfoData = this.topCardData[k];
+              return;
+            }
           }
+          console.log(this.topCardData);
         });
-
-        this.topCardData = message2;
-        this.topCardData[0].focus = true;
-        this.bottomInfoData = this.topCardData[0];
       });
     },
+    compare(key) {
+      return function (a, b) {
+        var val1 = a[key];
+        var val2 = b[key];
+        return val1 - val2;
+      };
+    },
     changeDep(val) {
-      if (val == "") {
-        this.nowDep.name = this.depInfo.name;
+      console.log(val);
+      if (this.customConfig.是否级联选择 == "是") {
+        this.nowDep.id = this.$refs["cascader"].getCheckedNodes()[0]?.value || "";
+        this.nowDep.name = this.$refs["cascader"].getCheckedNodes()[0]?.label || this.depInfo.name;
+        this.searInfo();
+      } else {
+        if (val == "") {
+          this.nowDep = {
+            name:'',
+            id:''
+          };
+          this.nowDep.name = this.depInfo.name;
+        }
+        this.searInfo();
       }
-      this.searInfo();
     },
     changeDate() {
       this.searInfo();
     },
     changeYear() {
       this.timeValue = [];
-      this.timeValue.push(Number(moment(this.yearValue).startOf("year").format("x")))
-      this.timeValue.push(Number(moment(this.yearValue).endOf("year").format("x")))
+      this.timeValue.push(Number(moment(this.yearValue).startOf("year").format("x")));
+      this.timeValue.push(Number(moment(this.yearValue).endOf("year").format("x")));
       this.searInfo();
     },
     focusCardInfo(item) {
@@ -301,7 +381,6 @@ export default {
         flag: this.messageFlag,
         id: itemSon.id,
       };
-      console.log(this.depInfo, this.nowDep);
       queryConfigJumpUrl(message).then((res) => {
         let url = `${window.location.origin}${res.data[0].jump_url}&setName=${this.depInfo.name == this.nowDep.name ? "" : this.nowDep.name || ""}&time1=${
           this.timeValue ? this.timeValue[0] || "" : ""

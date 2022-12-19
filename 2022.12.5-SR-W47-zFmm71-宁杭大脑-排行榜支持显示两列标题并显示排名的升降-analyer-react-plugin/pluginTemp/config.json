@@ -1,7 +1,7 @@
 {
   "id": "d522915d-c0e1-4cf5-bbac-c165a05852fb",
   "type": "analyzer",
-  "main": "main.3153821d.js",
+  "main": "main.7ebf95cc.js",
   "version": "2",
   "configuration": true,
   "props": {
@@ -19,9 +19,12 @@
       "左侧字体大小",
       "top位置",
       "柱体宽度",
+      "图形左边距",
+      "图形右边距",
       "柱体文字大小",
-      "roadShow",
-      "road_posShow"
+      "服务编排名称",
+      "codeShow",
+      "NameShow"
     ],
     "optionModules": []
   },

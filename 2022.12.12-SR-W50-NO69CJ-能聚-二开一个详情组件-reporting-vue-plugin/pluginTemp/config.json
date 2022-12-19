@@ -1,0 +1,14 @@
+{
+  "id": "549af60f-482a-4a24-b04e-70ad94efa3b1",
+  "type": "reporting",
+  "main": "app.9fa8b3d1.js",
+  "version": "2",
+  "props": {
+    "styleArr": "[\"title\",\"key\", \"eventCenterConfig\"]",
+    "columnStyle": "{title:'自定义'}",
+    "componentAttributes": "{\"style\":[\"title\"],\"data\":[\"key\"],\"interaction\":[\"eventCenterConfig\"]}",
+    "assetColumnList": "[{\"col_name\":\"自定义\",\"col_datatype\":0}]"
+  },
+  "requirement-number": "SR-W50-NO69CJ",
+  "requirement-name": "二开一个详情组件"
+}

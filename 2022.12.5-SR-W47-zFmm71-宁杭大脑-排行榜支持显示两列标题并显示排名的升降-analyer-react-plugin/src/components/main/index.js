@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import MsgCompConfig from "./msgCompConfig.js";
 import * as echarts from "echarts";
 import Utils from "../../utils";
-import { roadSectionRank } from "../../api/asset";
+import "./app.css";
+import { queryConfigWithoutToken, getDataInfo } from "../../api/asset";
 export default class Main extends Component {
   state = {
     id: "headTopChart",
@@ -16,16 +17,16 @@ export default class Main extends Component {
     //   pubSub.subscribe("analyzeDataSource", (data) => {
     //     this.initEcharts && this.initEcharts(data);
     //   });
-    let options = JSON.parse(JSON.stringify(props.options));
-    if (props.options?.externalVariables) {
-      this.背景颜色 = options?.externalVariables?.背景颜色 || "#040B20";
-      this.左侧字体大小 = options?.externalVariables?.左侧字体大小 || "20px";
-      this.top位置 = options?.externalVariables?.top位置 || "200";
-      this.柱体宽度 = options?.externalVariables?.柱体宽度 || "35";
-      this.柱体文字大小 = options?.externalVariables?.柱体文字大小 || "24px";
-      this.roadShow = options?.externalVariables?.roadShow || "true";
-      this.road_posShow = options?.externalVariables?.road_posShow || "true";
-    }
+    let options = JSON.parse(JSON.stringify(props.options || {}));
+    this.背景颜色 = options?.externalVariables?.背景颜色 || "#040B20";
+    this.左侧字体大小 = options?.externalVariables?.左侧字体大小 || "10px";
+    this.top位置 = options?.externalVariables?.top位置 || "80";
+    this.柱体文字大小 = options?.externalVariables?.柱体文字大小 || "14px";
+    this.柱体宽度 = options?.externalVariables?.柱体宽度 || "15";
+    this.图形左边距 = options?.externalVariables?.图形左边距 || "30%";
+    this.图形右边距 = options?.externalVariables?.图形右边距 || "15%";
+    this.codeShow = options?.externalVariables?.codeShow || "true";
+    this.NameShow = options?.externalVariables?.NameShow || "true";
   }
   componentDidMount() {
     //dataSource为分析仪左侧拖入的数据源
@@ -82,34 +83,42 @@ export default class Main extends Component {
     //     change_rate: 4,
     //   },
     // ];
-    data.data.list.sort(this.compare("num"));
+    data.list.sort(this.compare("rankUpDown"));
     let YdataName = [];
     let Xdata = [];
     let Dvalue = [];
     let TopData = [];
-    data.data.list?.forEach((item, index) => {
-      if (this.roadShow == "true" && this.road_posShow == "true") {
-        YdataName.push(item.road + "  " + item.road_pos);
-      } else if (this.roadShow == "true" && this.road_posShow == "false") {
-        YdataName.push(item.road);
-      } else if (this.roadShow == "false" && this.road_posShow == "true") {
-        YdataName.push(item.road_pos);
+    data.list?.forEach((item, index) => {
+      if (this.codeShow == "true" && this.NameShow == "true") {
+        YdataName.push(item.segCode + "  " + item.segName);
+      } else if (this.codeShow == "true" && this.NameShow == "false") {
+        YdataName.push(item.segCode);
+      } else if (this.codeShow == "false" && this.NameShow == "true") {
+        YdataName.push(item.segName);
       } else {
         YdataName.push("");
       }
       Xdata.push(item.num);
-      item.change_rate > 0 ? Dvalue.push("▲ " + item.change_rate) : Dvalue.push("▼ " + Math.abs(Number(item.change_rate)));
+      item.rankUpDown > 0 ? Dvalue.push("▲ " + item.rankUpDown) : Dvalue.push("▼ " + Math.abs(Number(item.rankUpDown)));
       TopData.unshift("top " + (index + 1));
     });
+    if (YdataName.length < 5) {
+      let l = YdataName.length;
+      for (let k = 0; k < 5 - l; k++) {
+        YdataName.unshift("");
+        Xdata.unshift("");
+        Dvalue.unshift("");
+        TopData.unshift("");
+      }
+    }
     const myChart = echarts.init(this.refs.headTopAnalyzer);
     let option = {
       backgroundColor: this.背景颜色,
       grid: {
-        left: "5%",
+        left: this.图形左边距,
         top: "2%",
-        right: "5%",
+        right: this.图形右边距,
         bottom: "3%",
-        containLabel: true,
       },
       xAxis: [
         {
@@ -251,16 +260,26 @@ export default class Main extends Component {
   }
   initComData = () => {
     //customConfig为组件式配置项数据
-    const customConfig = this.props?.customConfig;
+    const customConfig = this.props?.customConfig || {};
     //customOptions为传统的输入框形式的配置项
     const customOptions = this.props.options?.externalVariables;
 
     //特别注意，因为配置项区域是懒加载，所以这里要给customConfig一个与配置项(designConfiguration下index.js)那边customConfig一样的默认值，否则由于第一次进去没有执行配置项的代码，customConfig此时其实是会报错，以下为样例
-
+    const name = customConfig.服务编排名称 ? customConfig.服务编排名称 : "accident_roadSectionRan";
     //!customConfig.number && (customConfig.number =1)
-    roadSectionRank().then((res) => {
-      console.log(res);
-      this.initEcharts(res.data);
+    queryConfigWithoutToken().then((res) => {
+      let message = "";
+      res.data.result.forEach((item) => {
+        if (item.name == name) {
+          message = item.value;
+          let data = {
+            param: {},
+          };
+          getDataInfo(message, data).then((resp) => {
+            this.initEcharts(resp.data?.result?.res?.data);
+          });
+        }
+      });
     });
   };
 

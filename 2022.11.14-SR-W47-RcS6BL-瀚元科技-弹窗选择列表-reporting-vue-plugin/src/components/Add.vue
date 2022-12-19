@@ -1,7 +1,11 @@
 <template>
    <div :style="{ width: '100%', height: '100%' }" class="outermost">
-      <el-input v-model="inputData" type="textarea" :rows="5" placeholder="请选择" readonly></el-input>
-      <el-button class="add_button" @click="openTableDialog">+ 选择</el-button>
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="130px">
+         <el-form-item label="站点名称：" prop="inputData">
+            <el-input v-model="ruleForm.inputData" type="textarea" :rows="5" placeholder="请选择" readonly></el-input>
+            <el-button class="add_button" @click="openTableDialog">+ 选择</el-button>
+         </el-form-item>
+      </el-form>
 
       <!-- 弹窗 -->
       <el-dialog
@@ -79,8 +83,13 @@ export default {
          // 储存字段
          saveField: "",
 
-         // 文本框数据
-         inputData: "",
+         ruleForm: {
+            inputData: "",
+         },
+         rules: {
+            inputData: [{ required: true, message: "必填!" }],
+         },
+
          // 接口保存的数据
          interfaceData: [],
          // 表格弹窗开关
@@ -212,7 +221,7 @@ export default {
          this.interfaceData = saveArr;
          // 输入框回显
          let _str = showStr.join(",");
-         this.inputData = _str;
+         this.ruleForm.inputData = _str;
          // 关闭弹窗
          this.tableDialogVisible = false;
       },
@@ -227,6 +236,11 @@ export default {
          let value = this.interfaceData;
          return { value };
       },
+
+      // do_EventCenter_ruleFormData() {
+      //    let value = this.interfaceData.split("");
+      //    return { value };
+      // },
 
       Event_Center_getName() {
          return "瀚元科技-弹窗选择列表";
@@ -255,6 +269,13 @@ export default {
       background: linear-gradient(174.13deg, rgba(20, 143, 255, 0.3) 25.38%, rgba(21, 246, 238, 0.5) 94.06%);
       border-image: linear-gradient(135.84deg, #2cdfe8 0%, #1a9ad9 101.5%) 1;
       letter-spacing: 5px;
+   }
+
+   .el-form-item__label {
+      color: #fff;
+      height: 177px;
+      line-height: 177px;
+      padding: 0;
    }
 }
 

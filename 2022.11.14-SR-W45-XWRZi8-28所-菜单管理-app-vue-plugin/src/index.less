@@ -1,247 +1,261 @@
 html,
 body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+   margin: 0;
+   padding: 0;
+   width: 100%;
+   height: 100%;
+   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
 }
 
 // 最外层
 .outermost {
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  border: 1px solid #ececec;
-  padding: 5px;
-  background: #fff;
-  // 左侧样式
-  .box_left {
-    .el-tree {
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
-    .el-tree-node__content {
-      margin-top: 4px;
-    }
-  }
-  // 右侧样式
-  .box_right {
-    padding: 20px 20px 0 20px;
-    // 按钮组
-    .button_group {
-      display: flex;
-      align-items: center;
+   width: 100%;
+   height: 100%;
+   box-sizing: border-box;
+   border: 1px solid #ececec;
+   padding: 5px;
+   background: #fff;
+   // 左侧样式
+   .box_left {
+      .el-tree {
+         overflow-y: auto;
+         overflow-x: hidden;
+      }
+      .el-tree-node__content {
+         margin-top: 4px;
+      }
+      .tree_search {
+         padding: 10px 0;
+      }
+   }
+   // 右侧样式
+   .box_right {
+      padding: 20px 20px 0 20px;
+      // 按钮组
+      .button_group {
+         display: flex;
+         align-items: center;
+         margin-bottom: 16px;
+      }
+      // 新增按钮
+      .addbutton_group {
+         margin: 16px 0;
+      }
+      // 按钮文本
+      .group_text {
+         margin-left: 8px;
+         font-size: 14px;
+      }
+      // 角色标签
+      .user_tag {
+         width: 128px;
+         height: 32px;
+         line-height: 32px;
+         display: inline-block;
+         background: #64bebb;
+         color: #fff;
+         border-radius: 3px;
+         box-sizing: border-box;
+         overflow: hidden;
+         text-overflow: ellipsis;
+         white-space: nowrap;
+         padding: 0 8px;
+         margin: 5px 10px 5px 10px;
+      }
+      .user_more {
+         width: 50px;
+         height: 32px;
+         line-height: 32px;
+         display: inline-block;
+         color: #409eff;
+         border-radius: 3px;
+         box-sizing: border-box;
+         overflow: hidden;
+         padding: 0 8px;
+         margin: 5px 10px 5px 10px;
+         cursor: pointer;
+      }
+      // 按钮列表
+      .table_buttonList {
+         width: 100%;
+         height: 100%;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         .tag {
+            margin: 0 5px;
+         }
+      }
+      // 按钮表格
+      .button_table {
+         margin-top: 20px;
+      }
+   }
+   // 赋权弹窗
+   .empower_dialog {
+      // 弹窗样式
+      .el-dialog__header {
+         display: none;
+      }
+      .el-dialog__body {
+         padding: 0px;
+      }
+      .el-dialog {
+         margin-top: 5vh !important;
+      }
+      .el-dialog__footer {
+         padding: 15px 40px 15px 0;
+      }
+      // tab样式
+      .el-tab-pane {
+         padding: 15px 40px 0 40px;
+      }
+      .el-tabs__item {
+         height: 50px;
+         line-height: 50px;
+         padding: 0 25px !important;
+      }
+      // 表格样式
+      .el-table {
+         height: 620px;
+         overflow-y: auto;
+      }
+      // 应用角色
+      .app_user {
+         height: 650px;
+         // 布局样式
+         .dialog_left {
+            height: 100%;
+            border: 1px solid #ececec;
+            overflow-y: auto;
+            div {
+               padding: 80px 0 0 30px;
+            }
+            .user_checklist {
+               display: flex;
+               flex-direction: column;
+            }
+            .el-checkbox {
+               margin-bottom: 40px;
+               color: #5e605f;
+            }
+         }
+         // 应用角色表格样式
+         .user_icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            img {
+               width: 32px;
+               height: 32px;
+               margin: 0 6px 0 0;
+               border-radius: 50%;
+            }
+         }
+      }
+      // 系统角色
+      .system_user {
+         height: 650px;
+         .dialog_left {
+            height: 100%;
+            padding: 0 !important;
+            border: 1px solid #ececec;
+            border-top: none;
+            overflow-y: auto;
+         }
+         // 折叠面板样式
+         .el-collapse {
+            border-top: 1px solid #dedfe0 !important;
+         }
+         .el-collapse-item__header {
+            padding-left: 15px;
+            border-bottom: 1px solid #dedfe0 !important;
+         }
+         .el-collapse-item__wrap {
+            border-color: #dedfe0;
+         }
+         .el-collapse-item__content {
+            padding: 8px 16px 12px 16px;
+            display: flex;
+            flex-direction: column;
+            .el-checkbox {
+               margin-top: 5px;
+            }
+         }
+         // 系统角色表格样式
+         .user_icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            img {
+               width: 32px;
+               height: 32px;
+               margin: 0 6px 0 0;
+               border-radius: 50%;
+            }
+         }
+      }
+      // 关闭按钮
+      .close_button {
+         position: absolute;
+         top: 0;
+         right: 0;
+         width: 50px;
+         height: 50px;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         :hover {
+            color: #111;
+         }
+         svg {
+            font-size: 16px;
+            cursor: pointer;
+         }
+      }
+   }
+   // 分页样式
+   .table_pagination {
+      margin-top: 10px;
+      text-align: right;
+   }
+   .el-pagination {
+      padding: 0;
+      padding-top: -3px;
+      margin: 0 -5px 0 0;
+   }
+   // 新增按钮
+   .add_button_group {
       margin-bottom: 16px;
-    }
-    // 新增按钮
-    .addbutton_group {
-      margin: 16px 0;
-    }
-    // 按钮文本
-    .group_text {
-      margin-left: 8px;
-      font-size: 14px;
-    }
-    // 角色标签
-    .user_tag {
-      width: 128px;
-      height: 32px;
-      line-height: 32px;
-      display: inline-block;
-      background: #64bebb;
+   }
+   // 保存按钮
+   .button_save {
+      margin-left: 10%;
+   }
+   // 按钮列表
+   .tag_list {
+      margin: 0 5px;
+   }
+   .el-button--primary {
+      border: 1px solid #0454f2;
+      background: #0454f2;
       color: #fff;
-      border-radius: 3px;
-      box-sizing: border-box;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      padding: 0 8px;
-      margin: 5px 10px 5px 10px;
-    }
-    .user_more {
-      width: 50px;
-      height: 32px;
-      line-height: 32px;
-      display: inline-block;
-      color: #409eff;
-      border-radius: 3px;
-      box-sizing: border-box;
-      overflow: hidden;
-      padding: 0 8px;
-      margin: 5px 10px 5px 10px;
-      cursor: pointer;
-    }
-    // 按钮列表
-    .table_buttonList {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      .tag {
-        margin: 0 5px;
-      }
-    }
-    // 按钮表格
-    .button_table {
-      margin-top: 20px;
-    }
-  }
-  // 赋权弹窗
-  .empower_dialog {
-    // 弹窗样式
-    .el-dialog__header {
-      display: none;
-    }
-    .el-dialog__body {
-      padding: 0px;
-    }
-    .el-dialog {
-      margin-top: 5vh !important;
-    }
-    .el-dialog__footer {
-      padding: 15px 40px 15px 0;
-    }
-    // tab样式
-    .el-tab-pane {
-      padding: 15px 40px 0 40px;
-    }
-    .el-tabs__item {
-      height: 50px;
-      line-height: 50px;
-      padding: 0 25px !important;
-    }
-    // 表格样式
-    .el-table {
-      height: 620px;
-      overflow-y: auto;
-    }
-    // 应用角色
-    .app_user {
-      height: 650px;
-      // 布局样式
-      .dialog_left {
-        height: 100%;
-        border: 1px solid #ececec;
-        overflow-y: auto;
-        div {
-          padding: 80px 0 0 30px;
-        }
-        .user_checklist {
-          display: flex;
-          flex-direction: column;
-        }
-        .el-checkbox {
-          margin-bottom: 40px;
-          color: #5e605f;
-        }
-      }
-      // 应用角色表格样式
-      .user_icon {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        img {
-          width: 32px;
-          height: 32px;
-          margin: 0 6px 0 0;
-          border-radius: 50%;
-        }
-      }
-    }
-    // 系统角色
-    .system_user {
-      height: 650px;
-      .dialog_left {
-        height: 100%;
-        padding: 0 !important;
-        border: 1px solid #ececec;
-        border-top: none;
-        overflow-y: auto;
-      }
-      // 折叠面板样式
-      .el-collapse {
-        border-top: 1px solid #dedfe0 !important;
-      }
-      .el-collapse-item__header {
-        padding-left: 15px;
-        border-bottom: 1px solid #dedfe0 !important;
-      }
-      .el-collapse-item__wrap {
-        border-color: #dedfe0;
-      }
-      .el-collapse-item__content {
-        padding: 8px 16px 12px 16px;
-        display: flex;
-        flex-direction: column;
-        .el-checkbox {
-          margin-top: 5px;
-        }
-      }
-      // 系统角色表格样式
-      .user_icon {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        img {
-          width: 32px;
-          height: 32px;
-          margin: 0 6px 0 0;
-          border-radius: 50%;
-        }
-      }
-    }
-    // 关闭按钮
-    .close_button {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 50px;
-      height: 50px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      :hover {
-        color: #111;
-      }
-      svg {
-        font-size: 16px;
-        cursor: pointer;
-      }
-    }
-  }
-  // 分页样式
-  .table_pagination {
-    margin-top: 10px;
-    text-align: right;
-  }
-  .el-pagination {
-    padding: 0;
-    padding-top: -3px;
-    margin: 0 -5px 0 0;
-  }
-  // 新增按钮
-  .add_button_group {
-    margin-bottom: 16px;
-  }
-  // 保存按钮
-  .button_save {
-    margin-left: 25%;
-  }
-  // 按钮列表
-  .tag_list {
-    margin: 0 5px;
-  }
+   }
 }
 
 // 保存按钮
 .save_button {
-  width: 100%;
-  text-align: right;
-  box-sizing: border-box;
-  margin-top: 20px;
-  padding-right: 20px;
+   width: 100%;
+   text-align: right;
+   box-sizing: border-box;
+   margin-top: 20px;
+   padding-right: 20px;
+   
+   .el-button--primary {
+      border: 1px solid #0454f2;
+      background: #0454f2;
+      color: #fff;
+   }
 }

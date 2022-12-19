@@ -1,7 +1,7 @@
 import Vue from "vue";
 import App from "./App.vue";
 // 按需引入组件，引入方式见https://element.eleme.cn/#/zh-CN/component/quickstart#an-xu-yin-ru
-import { Input, Button, Dialog, Table, TableColumn, Pagination, Form, FormItem } from "element-ui";
+import { Input, Button, Dialog, Table, TableColumn, Pagination, Form, FormItem, Message } from "element-ui";
 
 import "./index.css";
 // import Element from "element-ui";
@@ -17,6 +17,8 @@ Vue.use(TableColumn);
 Vue.use(Pagination);
 Vue.use(Form);
 Vue.use(FormItem);
+
+Vue.prototype.$message = Message;
 
 // Vue.use(Element);
 

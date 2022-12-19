@@ -3,11 +3,8 @@ import request from "./request";
 /**
  * 登录
  */
-export const fetchLogin = dataForm =>
-    request.post(`sdata/rest/system/authority/loginAccount4Application`, dataForm)
+export const fetchLogin = (params = {}) =>
+    request.get(`sdata/rest/ext/zebraWisdom/oneCheckLogin?openId=${params.openid}`)
 
-/**
- * 注册
- */
-export const fetchRegister = dataForm =>
-    request.post(`sdata/rest/ext/user/add`, dataForm)
+export const fetchUser = () =>
+    request.get(`sdata/rest/system/authority/user`);

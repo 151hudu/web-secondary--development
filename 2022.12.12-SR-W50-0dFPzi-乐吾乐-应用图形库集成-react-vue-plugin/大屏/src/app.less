@@ -1,0 +1,89 @@
+.custom_bigscreen_search_component_default {
+  position: relative;
+  .prefix_icon {
+    position: absolute;
+    top: 6px;
+    left: 0px;
+    display: inline-block;
+    width: 25px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    z-index: 2;
+  }
+  .custom_bigscreen_search_select.ant-select {
+    color: rgba(255, 255, 255, 0.9);
+    .ant-select-selector {
+      background-color: #151c22;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      .ant-select-selection-placeholder {
+        color: rgba(255, 255, 255, 0.9);
+      }
+      input {
+        color: rgba(255, 255, 255, 0.9);
+      }
+    }
+    &.ant-select-single .ant-select-selection-item {
+      padding-left: 18px;
+    }
+    &.ant-select-single .ant-select-selection-search {
+      left: 25px;
+    }
+  }
+}
+
+.bigscreen_search_component_wrapper, .vue-topology-wrap{
+  height: 100% !important;
+  .Preview{
+    height: 100% !important;
+    overflow: hidden !important;
+  }
+}
+.ant-select-dropdown.custom_bigscreen_search_component_dropdown_wrapper {
+  //   padding: 10px;
+  background-color: #151c22;
+  //   overflow-y: auto;
+  //   max-height: 456px;
+  .select_dropdown_item {
+    margin-bottom: 5px;
+    .item_title {
+      color: rgba(255, 255, 255, 0.9);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .item_desc {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 12px;
+      line-height: 18px;
+      //   max-height: 36px;
+      white-space: normal;
+      overflow: hidden;
+    }
+  }
+  .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+    background-color: rgba(255, 255, 255, 0.4);
+  }
+  .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+    background-color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .rc-virtual-list-scrollbar {
+    width: 2px !important;
+  }
+  .rc-virtual-list-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3) !important;
+  }
+  //   &::-webkit-scrollbar {
+  //     width: 6px;
+  //     height: 6px;
+  //     background-color: transparent;
+  //   }
+  //   &::-webkit-scrollbar-thumb {
+  //     border-radius: 6px;
+  //     background-color: rgba(255, 255, 255, 0.3);
+  //   }
+  //   &::-webkit-scrollbar-track {
+  //     border-radius: 10px;
+  //     background-color: transparent;
+  //   }
+}

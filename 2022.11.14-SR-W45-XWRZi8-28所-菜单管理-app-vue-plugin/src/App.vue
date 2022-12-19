@@ -6,6 +6,9 @@
             <!-- 左侧树组件 -->
             <el-col :span="4">
                <div class="box_left">
+                  <div class="tree_search">
+                     <el-input size="small" placeholder="请输入一级节点名称" v-model="filterText"></el-input>
+                  </div>
                   <el-tree
                      :style="`height: ${moduleHeight}px`"
                      :props="{ label: 'name', isLeaf: 'isLeaf', children: 'children' }"
@@ -14,6 +17,8 @@
                      :highlight-current="true"
                      @node-click="treeNodeChange"
                      @node-expand="treeNodeChange"
+                     :filter-node-method="filterNode"
+                     ref="tree"
                   >
                   </el-tree>
                </div>
@@ -30,19 +35,19 @@
                   <div :style="`width: 100%; height: ${moduleHeight - 110}px; overflow-y: auto; overflow-x: hidden;`">
                      <!-- 用户表格 -->
                      <div>
-                        <el-table :data="menuTableShowData" @selection-change="tableSelectionRow" :header-cell-style="{ background: '#fafafa', color: '#111' }" border>
+                        <el-table ref="menuTableShowData" :data="menuTableShowData" @selection-change="tableSelectionRow" :header-cell-style="{ background: '#fafafa', color: '#111' }" border>
                            <el-table-column type="selection" width="55" align="center"></el-table-column>
                            <el-table-column prop="name" label="菜单名称" width="220" align="center"> </el-table-column>
                            <el-table-column label="角色列表" align="center">
                               <template slot-scope="scope">
                                  <!-- 不展示所有 -->
                                  <div class="table_userList">
-                                    <template v-if="scope.row.isShowUser != 'noshow'">
-                                       <span v-for="(item, index) in scope.row.roles" :key="item.id">
+                                    <template v-if="scope.row.isShowUser != 'open'">
+                                       <span v-for="(item, index) in scope.row.roles" :key="index">
                                           <div class="user_tag" v-if="index < 4">{{ intlGetKey(item.name) }}</div>
                                        </span>
                                     </template>
-                                    <template v-if="scope.row.isShowUser == 'open' || scope.row.isShowUser == 'noshow'">
+                                    <template v-if="scope.row.isShowUser == 'open'">
                                        <span v-for="item in scope.row.roles" :key="item.id">
                                           <div class="user_tag">{{ intlGetKey(item.name) }}</div>
                                        </span>
@@ -258,7 +263,7 @@
                </el-form-item>
                <el-form-item label="按钮选择">
                   <el-select size="small" multiple collapse-tags v-model="buttonEmpowerForm.tag_id" placeholder="请选择角色" filterable>
-                     <el-option v-for="(item, index) in addbuttonTableData" :key="index" :label="intlGetKey(item.tag_name)" :value="item.id"> </el-option>
+                     <el-option v-for="(item, index) in addbuttonTableData" :key="index" :label="`${item.tag_name}(${item.tag_code})`" :value="item.id"> </el-option>
                   </el-select>
                </el-form-item>
                <el-form-item class="button_save">
@@ -266,7 +271,7 @@
                </el-form-item>
             </el-form>
 
-            <el-table :data="addbuttonEmpowerRow.roles" :header-cell-style="{ background: '#fafafa', color: '#111' }" border>
+            <el-table ref="addbuttonEmpowerTable" :data="addbuttonEmpowerRow.roles" :header-cell-style="{ background: '#fafafa', color: '#111' }" border>
                <el-table-column prop="name" label="角色" align="center">
                   <template slot-scope="scope"> {{ intlGetKey(scope.row.name) }} </template>
                </el-table-column>
@@ -287,8 +292,8 @@
       </div>
       <!-- 提交按钮 -->
       <div class="save_button">
-         <el-button type="primary" size="medium" @click="saveAllData">保 存</el-button>
-         <el-button size="medium">取 消</el-button>
+         <el-button type="primary" size="small" @click="saveAllData">保 存</el-button>
+         <el-button size="small">取 消</el-button>
       </div>
    </div>
 </template>
@@ -312,10 +317,8 @@ import {
    saveAddButtonEmpowerData,
    deleteUserButtonData,
 } from "./api/asset";
-
 // 按需引入
 import qs from "querystringify";
-
 export default {
    name: "App",
 
@@ -334,17 +337,16 @@ export default {
          appid: "",
          // 资产ID
          assetId: "",
-
          // 地区数据
          areaDataList: [],
-
+         // 搜索条件
+         filterText: "",
          // 首次加载的节点
          firstNode: null,
          // 树组件当前选中行
          nowCheckTreeRow: {},
          // 树组件当前选中节点
          nowCheckTreeNode: {},
-
          // 菜单表格数据
          menuTableData: [],
          // 菜单表格展示数据
@@ -355,12 +357,10 @@ export default {
          menuPage: 1,
          // 菜单表格数据页数
          menuPageSize: 10,
-
          // 按钮表格数据
          buttonTableData: [],
          // 按钮表格展示数据
          buttonTableShowData: [],
-
          // 按钮表格数据页码
          buttonPage: 1,
          // 按钮表格数据页数
@@ -369,7 +369,6 @@ export default {
          nowEmpowerData: {},
          // 当前赋权数据列表
          nowEmpowerDataList: [],
-
          // 弹窗开关
          empowerDialogVisible: false,
          // 弹窗默认Tabs
@@ -381,7 +380,6 @@ export default {
             app: [],
             system: [],
          },
-
          // 按钮弹窗开关
          addButtonDialogVisible: false,
          // 按钮弹窗开关
@@ -402,10 +400,8 @@ export default {
          addbuttonTableData: [],
          // 按钮弹窗赋权表格数据
          addbuttonEmpowerTableData: [],
-
          // 按钮弹窗赋权选中行数据
          addbuttonEmpowerRow: {},
-
          // 应用角色多选数据
          appUserCheckDataList: [],
          // 应用角色多选选中数据
@@ -418,7 +414,6 @@ export default {
          appPage: 1,
          // 应用角色表格数据页数
          appPageSize: 10,
-
          // 系统角色折叠面板数据
          collapseData: [],
          // 系统角色折叠板默认展开
@@ -445,9 +440,15 @@ export default {
       this.getAreaData();
    },
 
+   watch: {
+      filterText(val) {
+         this.$refs.tree.filter(val);
+      },
+   },
+
    methods: {
       // intlGetKey(name) {
-      //   return name;
+      //    return name;
       // },
 
       // 获取地区信息
@@ -473,7 +474,6 @@ export default {
          });
          return name;
       },
-
       // 懒加载树组件叶子节点
       loadNode(node, resolve) {
          this.firstNode = node;
@@ -514,7 +514,6 @@ export default {
                      .then((res) => {
                         let resData = JSON.parse(JSON.stringify(res.data));
                         this.buttonTableData = resData;
-                        // this.buttonTableShowData = resData;
                         this.dataPaging(this.buttonPage, this.buttonPageSize, this.buttonTableData, "button");
                         resData.forEach((item) => {
                            if (!item.children) {
@@ -559,15 +558,12 @@ export default {
          this.nowCheckTreeNode = node;
          this.menuPage = 1;
          this.buttonPage = 1;
-
          if (node.level <= 1) {
             this.appid = row.id;
          }
-
          this.getUserTableData();
          this.getLazyUserTableData();
       },
-
       // 获取菜单表格数据
       getUserTableData(firstNode) {
          if (this.nowCheckTreeNode?.id) {
@@ -579,12 +575,21 @@ export default {
                });
             } else {
                if (this.nowCheckTreeRow.children) {
-                  this.menuTableData = JSON.parse(JSON.stringify(this.nowCheckTreeRow.children));
-                  this.dataPaging(this.menuPage, this.menuPageSize, this.nowCheckTreeRow.children, "menu");
+                  let datappId = this.nowCheckTreeRow?.datappId;
+                  queryUserTableData(datappId).then((res) => {
+                     let newRow = this.getChildrenData(res.data, this.nowCheckTreeRow.id);
+                     this.menuTableData = JSON.parse(JSON.stringify(newRow.children));
+                     this.dataPaging(this.menuPage, this.menuPageSize, newRow.children, "menu");
+                  });
                   return;
                }
-               this.menuTableData = [this.nowCheckTreeRow];
-               this.dataPaging(this.menuPage, this.menuPageSize, this.nowCheckTreeRow, "menu");
+
+               let datappId = this.nowCheckTreeRow?.datappId;
+               queryUserTableData(datappId).then((res) => {
+                  let newRow = this.getChildrenData(res.data, this.nowCheckTreeRow.id);
+                  this.menuTableData = [newRow];
+                  this.dataPaging(this.menuPage, this.menuPageSize, newRow, "menu");
+               });
             }
          } else {
             if (this.firstNode?.data?.id) {
@@ -604,6 +609,29 @@ export default {
             }
          }
       },
+
+      // 递归遍历获取数据
+      getChildrenData(list, id) {
+         for (let i = 0; i < list.length; i++) {
+            let a = list[i];
+            if (a.id === id) {
+               return a;
+            } else {
+               if (a.children && a.children.length > 0) {
+                  let res = this.getChildrenData(a.children, id);
+                  if (res) {
+                     return res;
+                  }
+               }
+            }
+         }
+      },
+
+      // 树形控件查询
+      filterNode(value, data) {
+         if (!value) return true;
+         return data.name.indexOf(value) !== -1;
+      },
       // 获取懒加载菜单表格数据
       getLazyUserTableData() {
          let dataForm = {
@@ -612,6 +640,13 @@ export default {
          };
          queryLazyTreeData(dataForm).then((res) => {
             this.buttonTableData = JSON.parse(JSON.stringify(res.data));
+
+            res.data.forEach((item) => {
+               if (item.id == this.addbuttonEmpowerRow.id) {
+                  this.addbuttonEmpowerRow = item;
+               }
+            });
+
             this.dataPaging(this.buttonPage, this.buttonPageSize, this.buttonTableData, "button");
          });
       },
@@ -627,7 +662,6 @@ export default {
             }
          });
       },
-
       // 打开赋权弹窗
       openEmpowerDialog(row) {
          // 重置tab页签
@@ -662,7 +696,7 @@ export default {
       },
       // 打开按钮赋权弹窗
       openButtonEmpowerDialog(row) {
-         this.addbuttonEmpowerRow = row;
+         this.addbuttonEmpowerRow = JSON.parse(JSON.stringify(row));
          this.getButtonDialogTableData();
          this.buttonEmpowerDialogVisible = true;
       },
@@ -686,7 +720,6 @@ export default {
       // 弹窗确认按钮
       saveDialog() {
          let roleList = [];
-         let _index = [];
          // 过滤应用角色赋权
          this.appUserCheckList.forEach((item) => {
             this.appUserCheckDataList.forEach((e) => {
@@ -712,34 +745,37 @@ export default {
                roleList.splice(index, 1);
             }
          });
-         // 更改原数据中的角色列表
+
+         // 更改原数据中的角色列表,方便保存
          this.menuTableData.forEach((item, index) => {
             if (this.dialogType == "row") {
                if (item.id == this.nowEmpowerData.id) {
                   item.roles = roleList;
+                  if (roleList.length > 4) {
+                     item.isShowUser = "open";
+                  } else {
+                     item.isShowUser = "";
+                  }
                }
             } else {
                this.nowEmpowerDataList.forEach((e) => {
                   if (item.id == e.id) {
-                     e.roles = roleList;
+                     item.roles = roleList;
+                     if (roleList.length > 4) {
+                        item.isShowUser = "open";
+                     } else {
+                        item.isShowUser = "";
+                     }
                   }
                });
             }
          });
 
+         // 更新展示数组的值
+         this.menuTableShowData = this.menuTableData;
+
          this.coloseEmpowerDialog();
       },
-
-      // 获取赋权弹窗两个tabs选中项
-      getTbasCheckDataList() {
-         let _appList = this.saveEmpowerDataList.app;
-         let _roles = this.nowEmpowerData.roles;
-
-         let idList = [];
-         if (this.nowEmpowerData.roles.length) {
-         }
-      },
-
       // 按钮弹窗保存按钮
       saveButtonForm() {
          let dataForm = {
@@ -772,6 +808,7 @@ export default {
                tag_id: item,
             });
          });
+
          saveAddButtonEmpowerData(dataForm)
             .then(() => {
                this.$message.success("添加成功");
@@ -799,7 +836,6 @@ export default {
             role_id: row.id,
             menu_id: this.addbuttonEmpowerRow.id,
          };
-
          deleteUserButtonData(dataForm).then((res) => {
             this.$message.success("删除成功");
             this.getLazyUserTableData();
@@ -815,23 +851,22 @@ export default {
             this.addbuttonTableData = res.data;
          });
       },
-
       // 切换弹窗tabs
       changeDialogTabs() {
          this.getSystemUserCheckData();
          if (this.dialogType == "row") {
             if (!this.collapseCheckList.length) {
-               this.nowEmpowerData.roles.forEach((item) => {
-                  this.collapseCheckList.push(item.id);
-               });
+               if (this.nowEmpowerData.roles) {
+                  this.nowEmpowerData.roles.forEach((item) => {
+                     this.collapseCheckList.push(item.id);
+                  });
+               }
             }
          }
       },
-
       // 获取应用角色多选数据
       getAppUserCheckData() {
          let _checkList = [];
-
          queryAppUserCheckData(this.appid).then((res) => {
             this.appUserCheckDataList = res.data;
             res.data.forEach((item) => {
@@ -839,21 +874,17 @@ export default {
                   _checkList.push(item.id);
                }
                if (this.dialogType == "row") {
-                  this.nowEmpowerData.roles.forEach((e) => {
-                     if (item.id == e.id) {
-                        _checkList.push(item.id);
-                     }
-                  });
+                  if (this.nowEmpowerData.roles) {
+                     this.nowEmpowerData.roles.forEach((e) => {
+                        if (item.id == e.id) {
+                           _checkList.push(item.id);
+                        }
+                     });
+                  }
                }
             });
-
             this.appUserCheckList = _checkList;
-
             this.saveEmpowerDataList.app = _checkList;
-
-            // 获取两个页面选中数据
-            this.getTbasCheckDataList();
-
             this.getAppUserTableData(this.appUserCheckList, "appUser");
          });
       },
@@ -862,7 +893,6 @@ export default {
          this.appPage = 1;
          this.getAppUserTableData(this.appUserCheckList, "appUser");
       },
-
       // 获取系统角色多选数据
       getSystemUserCheckData() {
          querySystemUserCheckData().then((res) => {
@@ -877,7 +907,6 @@ export default {
          this.systemPage = 1;
          this.getAppUserTableData(this.collapseCheckList);
       },
-
       // 获取弹窗表格数据
       getAppUserTableData(dataList, type) {
          let dataForm = JSON.parse(JSON.stringify([...new Set(dataList)]));
@@ -891,7 +920,6 @@ export default {
             }
          });
       },
-
       // 菜单表格切换页码
       menuPageChange(page) {
          this.menuPage = page;
@@ -935,7 +963,6 @@ export default {
       // 分页处理
       dataPaging(page, size, data, type) {
          let pageArray = [];
-
          if (data.id) {
             if (type == "menu") {
                pageArray.push(data);
@@ -943,7 +970,6 @@ export default {
                return;
             }
          }
-
          data.forEach((item, index) => {
             if (page == 1) {
                if (index < size) {
@@ -955,14 +981,17 @@ export default {
                }
             }
          });
-
          if (type == "menu") {
             pageArray.forEach((item) => {
-               if (item.roles.length <= 5) {
-                  item.isShowUser = "noshow";
-               }
-               if (item.roles.length > 5) {
-                  item.isShowUser = "close";
+               if (item.roles) {
+                  if (item.roles.length <= 4) {
+                     item.isShowUser = "";
+                  }
+                  if (item.roles.length > 4) {
+                     item.isShowUser = "close";
+                  }
+               } else {
+                  item.roles = [];
                }
             });
             this.menuTableShowData = pageArray;
@@ -974,7 +1003,6 @@ export default {
             this.buttonTableShowData = pageArray;
          }
       },
-
       // 保存所有数据
       saveAllData() {
          let _data = JSON.parse(JSON.stringify(this.menuTableData));
@@ -985,20 +1013,17 @@ export default {
             datappButtonList: [],
             datappMenuList: _data,
          };
-
          saveCheckData(dataForm).then(() => {
             this.$message.success("保存成功");
             this.getUserTableData();
             this.getLazyUserTableData();
          });
       },
-
       // 注册组件名
       Event_Center_getName() {
          return "组件名称";
       },
    },
-
    // 注销页面
    destroyed() {
       window.componentCenter?.removeInstance(this.customConfig?.componentId);

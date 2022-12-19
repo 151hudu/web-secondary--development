@@ -1,0 +1,23 @@
+{
+  "id": "613116e0-673a-4e5d-a88f-e0ec818b6cb5",
+  "type": "bigscreen",
+  "main": "main.a6cd3e77.js",
+  "version": "2",
+  "process": true,
+  "props": {
+    "configuration": [
+      "data",
+      "style",
+      "other"
+    ],
+    "img": "custom_table.png",
+    "disableimg": "disabled_custom_table.png",
+    "name": "React版本的演示Demo",
+    "className": "className-demo",
+    "vars": [
+      "id"
+    ]
+  },
+  "requirement-number": "SR-W50-SwhmoR",
+  "requirement-name": "二开头像"
+}

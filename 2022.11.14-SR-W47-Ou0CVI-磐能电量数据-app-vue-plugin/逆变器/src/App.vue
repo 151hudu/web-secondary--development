@@ -1149,6 +1149,15 @@ export default {
           tempLength = eachartData[x].length
         }
       })
+      let time = []
+      eachartData.sub_time.forEach((x, i) => {
+
+        if (time.indexOf(x) == -1) {
+          time.push(x)
+          console.log(x,);
+        }
+
+      })
 
       serData[this.fdField].forEach(x => {
         if (eachartData[x].length < tempLength) {
@@ -1281,8 +1290,8 @@ export default {
           },
 
 
-          data: eachartData.sub_time
-          // data: a
+          // data: eachartData.sub_time
+          data: time//过滤时间数据
         },
         yAxis: [
           {

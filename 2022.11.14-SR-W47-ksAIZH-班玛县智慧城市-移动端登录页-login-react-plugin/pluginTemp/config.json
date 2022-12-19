@@ -1,10 +1,10 @@
 {
   "id": "dbf46b7f-edfa-447a-895b-048d1f3313f7",
   "type": "app",
-  "main": "app.5c464760.js",
-  "baseVersion": "V8R4C60SPC140",
-  "requirement-number": "SR-W47-ksAIZH",
-  "requirement-name": "根据姓名，身份证号进行注册，注册账号默认在“人民群众”组织下“市民”角色",
+  "main": "app.453204ef.js",
+  "baseVersion": "V8R4C60SPC150",
+  "requirement-number": "SR-W49-fMvH0z",
+  "requirement-name": "（整体）移动端根据openid登录",
   "version": "2",
   "props": {
     "type": "login"

@@ -1,0 +1,20 @@
+{
+  "id": "21bf3bc0-a56d-429d4-8cfe-60521ce5dcww",
+  "type": "bigscreen",
+  "main": "",
+  "version": "2",
+  "process": true,
+  "props": {
+    "configuration": [
+      "data",
+      "other"
+    ],
+    "configurationComponents": {
+      "data": []
+    },
+    "img": "custom_table.png",
+    "disableimg": "disabled_custom_table.png",
+    "name": "React版本的演示Demo",
+    "className": "className-demo"
+  }
+}

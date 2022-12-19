@@ -1,0 +1,14 @@
+{
+  "id": "0377aeed-5913-429b-94cb-f90cc36f5c41",
+  "type": "list-custom-btn",
+  "main": "main.6644c9b3.js",
+  "version": "2",
+  "props": {
+    "styleArr": "[\"title\",\"height\",\"key\", \"eventCenterConfig\"]",
+    "columnStyle": "{title:'自定义'}",
+    "componentAttributes": "{\"style\":[\"title\",\"height\"],\"data\":[\"key\"],\"interaction\":[\"eventCenterConfig\"]}",
+    "assetColumnList": "[{\"col_name\":\"自定义\",\"col_datatype\":0}]"
+  },
+  "requirement-number": "SR-W49-Ms3J37",
+  "requirement-name": "弹窗图片"
+}

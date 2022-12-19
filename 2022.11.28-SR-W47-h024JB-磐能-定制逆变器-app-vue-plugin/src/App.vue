@@ -4,7 +4,8 @@
       <div class="header_box">
          <!-- 日期选择器 -->
          <div class="datepicker_button">
-            <el-date-picker v-model="datePicke" type="daterange" size="small" start-placeholder="开始日期" end-placeholder="结束日期" @change="changeDatePicker" :clearable="false"></el-date-picker>
+            <el-date-picker v-model="datePicke" type="daterange" size="small" start-placeholder="开始日期"
+               end-placeholder="结束日期" @change="changeDatePicker" :clearable="false"></el-date-picker>
             <img class="export_button" src="./assets/export.png" @click="exportEcharts()" />
          </div>
          <!-- 导出 -->
@@ -26,37 +27,34 @@
       </div>
       <!-- 表格 -->
       <div class="table_box" v-if="pageType == 'table'">
-         <el-table ref="tableData" :data="tableData" border :cell-style="tableRowClassName" :header-cell-style="{ background: '#ECF5FF' }" height="100%">
-            <el-table-column class-name="first_column" prop="time" label="时间" width="160" sortable fixed align="center"></el-table-column>
-            <el-table-column class-name="second_column" prop="dispersion_rate" label="离散率（%）" min-width="120" fixed align="center"></el-table-column>
-            <el-table-column class-name="third_column" prop="equivalent_hours" label="平均等效时数" min-width="105" fixed align="center"></el-table-column>
-            <template v-for="i in 24">
-               <el-table-column v-if="columnIsShow(i)" :key="i" class-name="dynamic_column" min-width="65" align="center">
-                  <template slot="header">
+         <el-table ref="tableData" :data="tableData" border :cell-style="tableRowClassName"
+            :header-cell-style="{ background: '#ECF5FF' }" height="100%">
+            <el-table-column class-name="first_column" prop="time" label="时间" width="160" sortable fixed
+               align="center"></el-table-column>
+            <el-table-column class-name="second_column" prop="dispersion_rate" label="离散率（%）" min-width="120" fixed
+               align="center"></el-table-column>
+            <el-table-column class-name="third_column" prop="equivalent_hours" label="平均等效时数" min-width="105" fixed
+               align="center"></el-table-column>
+            <template>
+               <el-table-column v-for="(item, i) in columnData" :key="i" class-name="dynamic_column" min-width="65"
+                  :label="item" :prop="item" align="center">
+                  <!-- <template slot="header">
                      <div>
-                        <!-- <span class="column_label">{{ i }}</span> -->
+                      
                         <span>{{ i }}</span>
                         <span>#</span>
                         <span>逆变器</span>
                      </div>
-                  </template>
-                  <template slot-scope="scope">
+                  </template> -->
+                  <!-- <template slot-scope="scope">
                      <div :class="dispersionStyle(scope.row, i)">{{ scope.row[`PV${i}`] }}</div>
-                  </template>
+                  </template> -->
                </el-table-column>
             </template>
          </el-table>
-         <el-pagination
-            class="table_pagination"
-            background
-            @size-change="handlePageSizeChange"
-            @current-change="handlePageChange"
-            :current-page="page"
-            :page-sizes="[15, 30, 50, 100]"
-            :page-size="pageSize"
-            layout="total, prev, pager, next, sizes, jumper"
-            :total="total"
-         >
+         <el-pagination class="table_pagination" background @size-change="handlePageSizeChange"
+            @current-change="handlePageChange" :current-page="page" :page-sizes="[15, 30, 50, 100]"
+            :page-size="pageSize" layout="total, prev, pager, next, sizes, jumper" :total="total">
          </el-pagination>
       </div>
    </div>
@@ -97,6 +95,8 @@ export default {
          tableData: [],
          // 图表
          myChart: null,
+         //表头数据
+         columnData: [],
          // 图表数据
          seriesData: [0, 0, 0, 0, 0],
          // 页面展示类型
@@ -128,7 +128,8 @@ export default {
       this.addDatePickerIcon();
 
       if (process.env.NODE_ENV !== "production") {
-         this.do_EventCenter_getIds({ value: "d1ae9ab0-2678-e6db-5ced-0b01bd3eec61" });
+         // this.do_EventCenter_getIds({ value: "d1ae9ab0-2678-e6db-5ced-0b01bd3eec61" });
+         this.do_EventCenter_getIds({ value: "119" });
       }
    },
 
@@ -390,7 +391,21 @@ export default {
 
          queryAssetByTime(this.ids, this.page, this.pageSize, _startTime, _endTime).then((res) => {
             let resData = JSON.parse(JSON.stringify(res.data.results));
+            console.log(res.data.results[0], /^(?=.*[a-zA-Z])(?=.*\d).+$/, /^[a-zA-Z]+$/, '======data');
+            let AB1 = /^(?=.*[a-zA-Z])(?=.*\d).+$/
+            let AB = /^[a-zA-Z]+$/
+            let head = Object.keys(res.data.results[0])
 
+            head.splice(head.indexOf('time'), 1)
+            head.splice(head.indexOf('equivalent_hours_avg'), 1)
+            head.splice(head.indexOf('equivalent_hours'), 1)
+            head.splice(head.indexOf('dispersion_rate'), 1)
+            let headCopy = JSON.parse(JSON.stringify(head))
+            head = headCopy.filter((x, i) => {
+               if (x.substring(0, 2) != 'PV') return x
+            })
+
+            this.columnData = head
             resData.forEach((item) => {
                if (item.time) {
                   let times = Date.parse(new Date(item.time));
@@ -399,6 +414,7 @@ export default {
             });
             this.$nextTick(() => {
                this.tableData = resData;
+               console.log('tableData', this.tableData);
                this.$forceUpdate();
             });
          });
@@ -540,6 +556,7 @@ export default {
    box-sizing: border-box;
    background: #fff;
    padding: 25px 25px 28px 25px;
+
    // 头部盒子
    .header_box {
       width: 100%;
@@ -547,20 +564,24 @@ export default {
       justify-content: space-between;
       margin-bottom: 5px;
    }
+
    // 日期选择器
    .datepicker_button {
       border-radius: 2px;
       margin-left: 2px;
       display: flex;
       align-items: center;
+
       .export_button {
          cursor: pointer;
          margin-top: 1px;
          margin-left: 25px;
       }
+
       .el-range-input {
          background: rgba(239, 240, 243, 1);
       }
+
       // 选择器整体
       .el-date-editor {
          cursor: pointer;
@@ -586,6 +607,7 @@ export default {
       .el-range__icon {
          display: none;
       }
+
       // 右侧图标
       .el-range__close-icon {
          position: absolute;
@@ -596,6 +618,7 @@ export default {
          top: -1px;
       }
    }
+
    // ehcarts盒子
    .ehcarts_box {
       margin-left: -0.8px;
@@ -603,8 +626,10 @@ export default {
       height: 418.09px;
       margin-bottom: 24.91px;
    }
+
    // 表格头部
    .el-table__header {
+
       // 头部单元格
       .el-table__cell {
          padding: 14px 0;
@@ -614,6 +639,7 @@ export default {
          font-weight: bold;
          font-family: "Alibaba PuHuiTi";
          box-sizing: border-box;
+
          // 头部单元格内元素
          .cell {
             padding: 0;
@@ -622,12 +648,15 @@ export default {
          }
       }
    }
+
    // 表格行
    .el-table__row {
+
       // 头部单元格
       .el-table__cell {
          padding: 0 !important;
          height: 40px;
+
          // 头部单元格内元素
          .cell {
             padding: 0;
@@ -637,22 +666,26 @@ export default {
          }
       }
    }
+
    // 表格底部横线
    .el-table::before {
       height: 0;
    }
+
    // 表格边框颜色
    .el-table--border,
    .el-table--group {
       border: 1px solid #d0dae4;
       border-bottom: none;
    }
+
    // 表格内竖线颜色
    .el-table--border td,
    .el-table--border th,
-   .el-table__body-wrapper .el-table--border.is-scrolling-left ~ .el-table__fixed {
+   .el-table__body-wrapper .el-table--border.is-scrolling-left~.el-table__fixed {
       border-right: 1px solid #d0dae4;
    }
+
    // 表格内行线颜色
    .el-table td,
    .el-table th.is-leaf {
@@ -665,6 +698,7 @@ export default {
       box-sizing: border-box;
       margin-top: 30px;
       background: transparent;
+
       li {
          width: 30px;
          height: 28px;
@@ -674,6 +708,7 @@ export default {
          background: transparent !important;
       }
    }
+
    .el-pagination.is-background .el-pager li:not(.disabled).active {
       color: #111 !important;
       border-radius: 4px;
@@ -713,6 +748,7 @@ export default {
       background-color: #1b85ff;
       border-radius: 5px;
    }
+
    /* 滚动条背景颜色 */
    ::-webkit-scrollbar-track {
       background-color: #fff;
@@ -726,16 +762,19 @@ export default {
    color: #ffffff;
    height: 100%;
 }
+
 .coloumn_white {
    background: #fff;
    color: #000000;
    height: 100%;
 }
+
 .coloumn_grey {
    background: #aaaaaa;
    color: #fff;
    height: 100%;
 }
+
 .column_label {
    font-size: 11px;
 }
@@ -748,6 +787,7 @@ export default {
    border-width: 0 !important;
    border-radius: 5 !important;
 }
+
 .tooltipBox_title,
 .tooltipBox_content {
    display: flex;
@@ -757,18 +797,22 @@ export default {
    padding-left: 10px;
    padding-top: 5px;
 }
+
 .tooltipBox_radius {
    width: 15px;
    height: 15px;
    margin-right: 10px;
    border-radius: 50%;
 }
+
 .tooltipBox_title {
    margin: 5px 0 5px 0;
 }
+
 .tooltipBox_content {
    margin-bottom: 5px;
 }
+
 .tooltipBox .tooltipBox_content:last-child {
    margin-bottom: 10px;
 }

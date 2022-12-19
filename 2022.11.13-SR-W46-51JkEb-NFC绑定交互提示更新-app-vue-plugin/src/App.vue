@@ -1,10 +1,12 @@
 <template>
   <!-- 定义外层容器标识，宽高百分百 不可删除 -->
   <div class="iotNFC" ref="iotNFC" style="width: 100%;height: 100%">
-    <el-button class="nfcBtn" type="primary" plain @click="openCode">开启NFC服务</el-button>
-    <div v-show="dialogVisible" class="zhezhao" @click="diaLogClose">
+    <div class="btnBox">
+      <el-button class="nfcBtn" type="primary" @click="openCode">开启NFC服务</el-button>
+    </div>
+    <div v-if="dialogVisible" class="zhezhao" @click="diaLogClose">
       <!-- 加载 -->
-      <div v-show="dotLoading == 'load'" class="loading">
+      <div v-if="dotLoading == 'load'" class="loading">
         <div class="dotBox">
           <div class="greenDot"></div>
           <div class="yellowDot"></div>
@@ -12,7 +14,7 @@
         </div>
       </div>
       <!-- 绑定 -->
-      <div v-show="dotLoading == 'success'" class="dialogBox">
+      <div v-if="dotLoading == 'success'" class="dialogBox">
         <div class="dialogBody">
           <b class="nfcTitle">NFC绑定</b>
           <div class="nfcTip" :style="{color: NFCBind == 1 ? '#75d4c4' : '#ff8d8d'}">
@@ -33,7 +35,7 @@
 
 <script>
 import eventActionDefine from "./components/msgCompConfig";
-import vConsole from './utils/vconsole.js'
+// import vConsole from './utils/vconsole.js'
 import {
   Button,
   Icon
@@ -55,7 +57,8 @@ export default {
     appVariables: Array,
     sysVariables: Array,
     //8.11 V8R4C60SPC100需求新加，之前版本取不到themeInfo
-    themeInfo: Object
+    themeInfo: Object,
+    // allParams: Object,
   },
   data() {
     return {
@@ -79,7 +82,7 @@ export default {
     this.nfcTaskId = this.getQueryString(taskId);
     this.nfcRouteId = this.getQueryString(routeId);
     // console.log('this.customConfig',this.customConfig);
-    console.log('taskId, routeId',this.nfcTaskId,this.nfcRouteId);
+    // console.log('taskId, routeId',this.nfcTaskId,this.nfcRouteId);
     // 判断当前系统是ios还是安卓
     let u = navigator.userAgent;
     let isAndroid = u.indexOf("Android") > -1 || u.indexOf("Adr") > -1; //android终端
@@ -164,36 +167,33 @@ export default {
         if (data.status == 500) {
           this.messageTip = data.result.message;
           this.dotLoading = "success";
+        }else {
+          this.messageTip = "绑定失败！";
+          this.dotLoading = "success";
         }
       })
-      
     },
     footBtnHandel(vals){
       this.diaLogClose();
       if (vals == '1') {
         // this.triggerEvent('refreshList',{})
         window.location.reload()
+        // console.log('this.allParams',this.allParams);
+        // this.allParams.loadRefresh && this.allParams.loadRefresh();
       }
     },
     openCode() {
-      this.dialogVisible = true;
-          this.dotLoading = "load";
-          console.log('dialogVisible',this.dialogVisible);
-          console.log('dotLoading',this.dotLoading);
       switch (this.phonePower) {
         case 'Android':
           FEParksJSInterface.startNFCListening()
           this.dialogVisible = true;
           this.dotLoading = "load";
-          console.log('dialogVisible',this.dialogVisible);
-          console.log('dotLoading',this.dotLoading);
           break;
-        case 'ios':
-          window.webkit.messageHandlers.FEParksJSInterface.startNFCListening();
-          this.dialogVisible = true;
-          this.dotLoading = "load";
-          console.log('ios',this.phonePower);
-          break;
+        // case 'ios':
+        //   window.webkit.messageHandlers.FEParksJSInterface.startNFCListening();
+        //   this.dialogVisible = true;
+        //   this.dotLoading = "load";
+        //   break;
       }
     },
     diaLogClose() {
@@ -201,15 +201,13 @@ export default {
         case 'Android':
           this.dotLoading = "";
           this.dialogVisible = false;
-          console.log('dialogVisible',this.dialogVisible);
-          console.log('dotLoading',this.dotLoading);
           FEParksJSInterface.stopNFCListening()
           break;
-        case 'ios':
-          this.dotLoading = "";
-          this.dialogVisible = false;
-          window.webkit.messageHandlers.FEParksJSInterface.stopNFCListening();
-          break;
+        // case 'ios':
+        //   this.dotLoading = "";
+        //   this.dialogVisible = false;
+        //   window.webkit.messageHandlers.FEParksJSInterface.stopNFCListening();
+        //   break;
       }
     },
     setForm() {
@@ -218,13 +216,12 @@ export default {
       // this.triggerEvent('setForm',dataId)
       let urlA = this.routerUrl.indexOf('?')
       this.diaLogClose();
-      // let aa = `${this.routerUrl}?${this.dataIdKey}=${dataId}`;
-      // console.log('aa',aa);
-      // return;
       if (urlA != "-1") {
-        window.location.href = `${this.routerUrl}?${this.dataIdKey}=${dataId}`;
+        // alert(`${window.location.origin}${this.routerUrl}&${this.dataIdKey}=${dataId}`)
+        window.location.href = `${window.location.origin}${this.routerUrl}&${this.dataIdKey}=${dataId}`;
       } else {
-        window.location.href = `${this.routerUrl}&${this.dataIdKey}=${dataId}`;
+        // alert(`${window.location.origin}${this.routerUrl}?${this.dataIdKey}=${dataId}`)
+        window.location.href = `${window.location.origin}${this.routerUrl}?${this.dataIdKey}=${dataId}`;
       }
     }
   },
@@ -245,12 +242,17 @@ export default {
 .iotNFC {
   user-select: none;
   position: relative;
-  .nfcBtn {
+  .btnBox {
+    padding: 10px 20px;
     position: fixed;
-    bottom: 32px;
-    right: 50%;
-    transform: translateX(50%);
+    bottom: 0;
+    width: 100%;
     z-index: 9;
+    border-radius: 10px 10px 0 0;
+    box-sizing: border-box;
+    .nfcBtn {
+      width: 100% !important;
+    }
   }
   .zhezhao {
     display: flex;

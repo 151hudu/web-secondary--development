@@ -1,7 +1,6 @@
 <template>
   <!-- 定义外层容器标识，宽高百分百 不可删除 -->
-  <div :id="id" style="width: 100%; height: 100%" :ref="id">
-    <!-- -->
+  <div :id="qingtianMain" style="width: 100%; height: 100%; background-color: #fff" :ref="qingtianMain">
     <!-- -->
     <div class="contentBox" v-if="!src">
       <div class="shzzfwBox contentBoxSon">
@@ -30,7 +29,7 @@
           <div class="news">
             <div class="preview">
               <template v-for="(item, index) in ghxmData">
-                <span class="previewTitle" v-if="index < 6" @click="goIframe(item, 'ghxm')">{{ item.title }}</span>
+                <span class="previewTitle" v-if="index < 6" @click="goIframe(item, 'ghxm')">{{ item.project_name }}</span>
               </template>
             </div>
           </div>
@@ -132,60 +131,18 @@
 </template>
 
 <script>
+// import appService from "@njsdata/app-sdk";
 import { queryAssetById } from "./api/asset";
 import eventActionDefine from "./components/msgCompConfig";
 import "./index.css";
-import Vue from "vue";
-import Utils from "./utils";
-
 export default {
-  //这里写组件英文名称，容器dom的id及事件中心命名均用到这个name，请认真填写
-  name: "qingtianMain",
+  name: "App",
   props: {
     customConfig: Object,
     info: Object,
-    //应用变量和系统变量 7.26 V8R4C50SPC220需求新加 之前版本取不到appVariables和sysVariables
-    appVariables: Array,
-    sysVariables: Array,
-    //8.11 V8R4C60SPC100需求新加，之前版本取不到themeInfo
-    themeInfo: Object,
-  },
-  computed: {
-    theme() {
-      let { theme_global_config } = this.themeInfo || {
-        theme_global_config: {
-          "--theme-public-pinPai-color": "rgba(24,144,255,1)",
-          "--theme-public-text-color-1": "rgba(12, 13, 14,1)",
-        },
-      };
-
-      let themeColor = theme_global_config["--theme-public-pinPai-color"];
-      let textColor = theme_global_config["--theme-public-text-color-1"];
-      this.$nextTick(() => {
-        let style = `#${this.id} .el-radio-button__inner:hover{
-                      color:${this.theme.themeColor};
-                      }
-                     #${this.id} .el-radio-button.is-active .el-radio-button__inner:hover{
-                      color: #FFF;
-                      }
-                      `;
-        if (this.$refs[this.id]) {
-          this.styleEle = document.createElement("style");
-          document.head.appendChild(this.styleEle);
-          this.styleEle.innerText = style;
-        }
-      });
-      return {
-        themeColor,
-        textColor,
-      };
-    },
   },
   data() {
     return {
-      //必需，不可删除
-      id: "",
-      //业务代码
       shzzfwData: [],
       ghxmData: [],
       zgxqData: [],
@@ -196,63 +153,49 @@ export default {
       tabshow: true,
     };
   },
+  computed: {
+    title() {
+      return this.customConfig?.title || "数据构建";
+    },
+    desc() {
+      return this.customConfig?.desc || "描述";
+    },
+  },
   mounted() {
     console.log(this.customConfig);
-    let message = this.customConfig.社会组织服务资产 || "";
+    let message = "58e9f58f-91b6-6098-7ed5-98cd9b11bcd1";
     queryAssetById(message).then((res) => {
-      this.shzzfwData = this.translatePlatformDataToJsonArray(res).sort(this.compare("create_time"));
+      this.shzzfwData = this.translatePlatformDataToJsonArray(res);
     });
-    let message2 = this.customConfig.工会项目资产 || "";
+    let message2 = "267f0955-53d7-8d6e-7226-c40791ab19d0";
     queryAssetById(message2).then((res) => {
       this.translatePlatformDataToJsonArray(res).forEach((item, index) => {
+        if (item.release_status == "已发布") {
           this.ghxmData.push(item);
+        }
       });
-      this.ghxmData.sort(this.compare("create_time"));
-      console.log(this.ghxmData);
     });
-    let message3 = this.customConfig.职工需求资产 || "";
+    let message3 = "fbd3b45f-ba9d-8b0a-c0cc-e835f9d51112";
     queryAssetById(message3).then((res) => {
-      this.zgxqData = this.translatePlatformDataToJsonArray(res).sort(this.compare("create_time"));
+      this.zgxqData = this.translatePlatformDataToJsonArray(res);
     });
-    let message4 = this.customConfig.政策法规资产 || "";
+    let message4 = "ad1b8ddb-3a6a-45af-49ea-8efcdb250aa2";
     queryAssetById(message4).then((res) => {
-      this.zcfgData = this.translatePlatformDataToJsonArray(res).sort(this.compare("create_time"));
+      this.zcfgData = this.translatePlatformDataToJsonArray(res);
       console.log(this.zcfgData);
     });
-    let message5 = this.customConfig.工作动态资产 || "";
+    let message5 = "873b2a55-c8bc-b65b-ed80-08307309fe46";
     queryAssetById(message5).then((res) => {
-      this.gzdtData = this.translatePlatformDataToJsonArray(res).sort(this.compare("create_time"));
+      this.gzdtData = this.translatePlatformDataToJsonArray(res);
     });
-    let message6 = this.customConfig.公告通知资产 || "";
+    let message6 = "db001428-2026-7fc7-4bda-f510c0a38955";
     queryAssetById(message6).then((res) => {
-      this.ggtzData = this.translatePlatformDataToJsonArray(res).sort(this.compare("create_time"));
+      this.ggtzData = this.translatePlatformDataToJsonArray(res);
     });
-    //用于注册事件定义，不可删除
     let { componentId } = this.customConfig || {};
     componentId && window.componentCenter?.register(componentId, "comp", this, eventActionDefine);
-    let { buttons, id } = this.customConfig;
-    let componentName = this.$vnode.tag.split("-").pop().toLowerCase();
-    this.id = id ? `secondary_${componentName}_${id}` : `secondary_${componentName}_${Utils.generateUUID()}`;
-    //用于定义接收用户输入
-    this.buttons = JSON.parse(buttons).data;
-    this.defaultValue = JSON.parse(buttons).defaultValue;
-    //业务代码
-    if (this.defaultValue) {
-      this.selected = this.defaultValue;
-      this.triggerEvent("valueChange", {
-        value: this.defaultValue,
-      });
-    }
   },
   methods: {
-    compare(key) {
-      return function (a, b) {
-        //第一个参数是前一个对象，第二个参数是后一个对象,如果从大到小排序，将参数位置调换
-        var val1 = a[key];
-        var val2 = b[key];
-        return val2 - val1; //求差：如果差值大于0，这两个就要对调位置
-      };
-    },
     tabclick(num) {
       if (num == 1) {
         this.tabshow = true;
@@ -262,32 +205,63 @@ export default {
     },
     goIframe(item, type) {
       if (type == "shzzfw") {
-        window.location.href = `${this.customConfig.社会组织服务 || ""}&dataId=${item.data_id}`;
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=6bb9a511-64f4-9ca6-9801-69044bdac3e6%233&goback=1&data_id=${item.data_id}`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/form/detail?goback=1&appid=a8b741b5-772b-8723-e009-3613866f0977&menuId=b6bfa6bb-401d-b781-b7aa-5c356cfb5ad5%233&type=view&breadcrumb=145b91dec3bd5b0adaf017f602dc0562&view_id=37305912e16c4fc2810d9b89992000b4&form_id=3c2f316e0a66454a94a7ed6205a62930&id=" +
+        //   item.data_id +
+        //   "&related=1";
       } else if (type == "ghxm") {
-        window.location.href = `${this.customConfig.工会项目 || ""}&dataId=${item.data_id}&create_time=${item.create_time}&title=${item.title}`;
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=c7fbc7b9-a2be-a146-54bc-f5987caa6425%233&goback=1&data_id=${item.data_id}&create_time=${item.create_time}&project_name=${item.project_name}`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=ba344e81-9094-dba3-c2f5-dc8c82e4a174&type=view&menuId=16e974bb-8fda-d37f-4cc2-5a5011557811%233%C2%A4tOpen=true&data_id=" +
+        //   item.data_id;
       } else if (type == "zgxq") {
-        window.location.href = `${this.customConfig.职工需求 || ""}&dataId=${item.data_id}`;
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=28296a7e-e9f6-c74e-97c0-9b562192bcd3%233&goback=1&data_id=${item.data_id}`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/form/detail?goback=1&appid=a8b741b5-772b-8723-e009-3613866f0977&menuId=6a6f3627-819f-e5c9-ac36-36a41c5512dc%233&type=view&breadcrumb=fe07ad795a194ebdae7f5991a5f80f3f&view_id=dc7f2e4d94b542918aa122bb171d0464&form_id=6446d0d4fcec44a094eea78ce0b6a137&id=" +
+        //   item.data_id;
       } else if (type == "zcfg") {
-        window.location.href = `${this.customConfig.政策法规 || ""}&dataId=${item.data_id}`;
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=17efb817-4241-38fb-1c74-3b7417246402%233&goback=1&data_id=${item.data_id}`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/form/detail?goback=1&appid=a8b741b5-772b-8723-e009-3613866f0977&menuId=55389dae-2ef7-cb4d-b88c-afe217a4c2ba%233&type=view&breadcrumb=874e0bee7c23c17670824c15b98fa7b7&view_id=93eaf737ff5948d49fe0670d893d0c7e&form_id=a21abbd92f954689b65dbdd12668ac36&id=" +
+        //   item.data_id;
       } else if (type == "gzdt") {
-        window.location.href = `${this.customConfig.工作动态 || ""}&dataId=${item.data_id}`;
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=99d5fff6-13f0-7f2b-2219-e54d3f354826%233&goback=1&data_id=${item.data_id}`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/form/detail?goback=1&appid=a8b741b5-772b-8723-e009-3613866f0977&menuId=55389dae-2ef7-cb4d-b88c-afe217a4c2ba%233&type=view&breadcrumb=874e0bee7c23c17670824c15b98fa7b7&view_id=93eaf737ff5948d49fe0670d893d0c7e&form_id=a21abbd92f954689b65dbdd12668ac36&id=" +
+        //   item.data_id;
       } else if (type == "ggtz") {
-        window.location.href = `${this.customConfig.公告通知 || ""}&dataId=${item.data_id}`;
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=3ab98180-2cf1-54ad-f3a9-ddf8078422fc&goback=1&data_id= ${item.data_id}`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/form/detail?goback=1&appid=a8b741b5-772b-8723-e009-3613866f0977&menuId=55389dae-2ef7-cb4d-b88c-afe217a4c2ba%233&type=view&breadcrumb=874e0bee7c23c17670824c15b98fa7b7&view_id=93eaf737ff5948d49fe0670d893d0c7e&form_id=a21abbd92f954689b65dbdd12668ac36&id=" +
+        //   item.data_id;
       }
     },
     goMore(type) {
       if (type == "shzzfw") {
-        window.location.href = this.customConfig.社会组织服务更多 || "";
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=b6bfa6bb-401d-b781-b7aa-5c356cfb5ad5%233`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=b6bfa6bb-401d-b781-b7aa-5c356cfb5ad5%233";
       } else if (type == "ghxm") {
-        window.location.href = this.customConfig.工会项目更多 || "";
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=497932c8-60d0-a6ba-404f-781a15a0e441%233`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=497932c8-60d0-a6ba-404f-781a15a0e441%233";
       } else if (type == "zgxq") {
-        window.location.href = this.customConfig.职工需求更多 || "";
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=6a6f3627-819f-e5c9-ac36-36a41c5512dc%233`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=6a6f3627-819f-e5c9-ac36-36a41c5512dc%233";
       } else if (type == "zcfg") {
-        window.location.href = this.customConfig.政策法规更多 || "";
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=55389dae-2ef7-cb4d-b88c-afe217a4c2ba%233`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=55389dae-2ef7-cb4d-b88c-afe217a4c2ba%233";
       } else if (type == "gzdt") {
-        window.location.href = this.customConfig.工作动态更多 || "";
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=2120d80c-ba64-0ff0-34a2-84569de8fcc0%233`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=2120d80c-ba64-0ff0-34a2-84569de8fcc0%233";
       } else if (type == "ggtz") {
-        window.location.href = this.customConfig.公告通知更多 || "";
+        window.location.href = `https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=d89beef4-6649-ef57-6cb3-b541693968b7%233`;
+        // this.src =
+        //   "https://tyzy.jsghfw.com/jss_zgh_gxpt/applicationview/content/view?appid=a8b741b5-772b-8723-e009-3613866f0977&type=view&menuId=d89beef4-6649-ef57-6cb3-b541693968b7%233";
       }
     },
     translatePlatformDataToJsonArray(originTableData) {
@@ -307,33 +281,29 @@ export default {
       });
       return tableData;
     },
-    /**
-     * 触发事件 必需，不可删除
-     * @param {String} eventName 事件名
-     * @param {Array} payload 事件传参
-     *
-     */
-    triggerEvent(eventName, payload) {
+    triggerEvent() {
       let { componentId, appId } = this.customConfig || {};
-      componentId && appId && window.eventCenter?.triggerEvent(componentId, eventName, payload);
+      componentId &&
+        appId &&
+        window.eventCenter?.triggerEventNew({
+          objectId: appId,
+          componentId: componentId,
+          type: "app",
+          event: "onImgClick",
+          payload: {
+            value: "sasdasd",
+          },
+        });
     },
-    //必需，不可删除
+    do_EventCenter_messageSuccess() {
+      alert("动作执行成功！");
+    },
     Event_Center_getName() {
-      return this.id;
-    },
-    //与msgCompConfig.js文件actions相对应，组件动作，依据定义加上do_message前缀
-    do_EventCenter_setValue(value) {
-      this.setValue(value);
-    },
-    setValue(value) {
-      this.selected = value;
+      return "应用二开测试";
     },
   },
   destroyed() {
-    //必需，不可删除
     window.componentCenter?.removeInstance(this.customConfig?.componentId);
-    //业务代码，不需要记得清除
-    document.head.removeChild(this.styleEle);
   },
 };
 </script>
@@ -393,12 +363,11 @@ export default {
           height: 100%;
           display: flex;
           flex-direction: column;
-          justify-content: flex-start;
+          justify-content: space-around;
           .previewTitle {
             display: block;
             font-size: 16px;
             padding: 0 40px 0 20px;
-            line-height: 300%;
             cursor: pointer;
             &:hover {
               color: dodgerblue;
@@ -456,8 +425,7 @@ export default {
           height: 100%;
           display: flex;
           flex-direction: column;
-          justify-content: flex-start;
-          line-height: 200%;
+          justify-content: space-around;
           li {
             margin-left: 10px;
             cursor: pointer;

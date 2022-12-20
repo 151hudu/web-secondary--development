@@ -3,7 +3,7 @@ module.exports = {
     disableHostCheck: true,
     proxy: {
       "/api": {
-        target: "https://www.jsghfw.com:20101/gxpt",
+        target: "https://tyzy.jsghfw.com/jss_zgh_gxpt",
         changeOrigin: true,
         pathRewrite: {
           "/api": "",
@@ -37,11 +37,11 @@ module.exports = {
       .rule("images")
       .use("url-loader")
       .loader("url-loader")
-      .tap(options => Object.assign(options, { limit: 10 * 100 * 1024 * 1024 }));
+      .tap((options) => Object.assign(options, { limit: 10 * 100 * 1024 * 1024 }));
     config.module
       .rule("fonts")
       .use("url-loader")
       .loader("url-loader")
-      .tap(options => Object.assign(options, { limit: 10 * 100 * 1024 * 1024 }));
+      .tap((options) => Object.assign(options, { limit: 10 * 100 * 1024 * 1024 }));
   },
 };

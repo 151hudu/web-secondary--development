@@ -382,7 +382,7 @@ export default {
         id: itemSon.id,
       };
       queryConfigJumpUrl(message).then((res) => {
-        let url = `${window.location.origin}${res.data[0].jump_url}&setName=${this.depInfo.name == this.nowDep.name ? "" : this.nowDep.name || ""}&time1=${
+        let url = `${window.location.origin}${res.data[0].jump_url}&setCode=${this.depInfo.id == this.nowDep.id ? "" : this.nowDep.id || ""}&time1=${
           this.timeValue ? this.timeValue[0] || "" : ""
         }&time2=${this.timeValue ? this.timeValue[1] || "" : ""}&data_type=${res.data[0].early_warning_type_id}&title=${itemSon.early_warning_type_name}`;
         window.open(url, "_blank");

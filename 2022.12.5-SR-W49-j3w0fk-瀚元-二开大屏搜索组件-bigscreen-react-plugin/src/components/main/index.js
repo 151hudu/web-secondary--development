@@ -37,6 +37,7 @@ export default class Main extends Component {
       },
     ],
     checkoOptionsed: ["侦测设备", "巡检设备"],
+    handleClickBigscreenData: "",
   };
 
   componentDidMount() {
@@ -163,17 +164,28 @@ export default class Main extends Component {
   };
   reSelect = () => {
     this.setState({
-      cityInSelect: { value: "", label: "" },
-      cityOption: this.state.cityAsset,
-      provinceInSelect: { value: "", label: "" },
-      provinceOption: this.state.provinceAsset,
-      pointInSelect: { value: "", label: "" },
-      pointOption: this.state.pointAsset,
+      cityInSelect: this.state.disabledCity ? this.state.cityInSelect : { value: "", label: "" },
+      // cityOption: this.state.cityAsset,
+      provinceInSelect: this.state.disabledProv ? this.state.provinceInSelect : { value: "", label: "" },
+      // provinceOption: this.state.provinceAsset,
+      pointInSelect: this.state.disabledPoint ? this.state.pointInSelect : { value: "", label: "" },
+      // pointOption: this.state.pointAsset,
       checkoOptionsed: ["侦测设备", "巡检设备"],
     });
+    if (!this.state.disabledProv) {
+      this.setState({
+        cityOption: this.state.cityAsset,
+        provinceOption: this.state.provinceAsset,
+        pointOption: this.state.pointAsset,
+      });
+    }
   };
   handleClickBigscreen = (data) => {
-    console.log(data);
+    console.log(JSON.stringify(data) == this.state.handleClickBigscreenData, 184);
+    console.log(JSON.stringify(data), this.state.handleClickBigscreenData, 185185185);
+    if (JSON.stringify(data) == this.state.handleClickBigscreenData) {
+      return;
+    }
     let bigscreenData = [];
     for (let k in data) {
       bigscreenData.push({
@@ -203,15 +215,28 @@ export default class Main extends Component {
         });
       }
     });
-
+    this.setState({
+      handleClickBigscreenData: JSON.stringify(data),
+    });
     // 触发变量改变
     notifyVariable && notifyVariable(params);
   };
   setDefault = () => {
     this.props.pubSub &&
       this.props.pubSub.subscribe("updateChart" + this.props?.componentId, (val) => {
-        console.log(val, 206);
-        this.reSelect();
+        console.log(val);
+        this.setState({
+          cityInSelect: { value: "", label: "" },
+          cityOption: this.state.cityAsset,
+          provinceInSelect: { value: "", label: "" },
+          provinceOption: this.state.provinceAsset,
+          pointInSelect: { value: "", label: "" },
+          pointOption: this.state.pointAsset,
+          checkoOptionsed: ["侦测设备", "巡检设备"],
+          disabledCity: false,
+          disabledPoint: false,
+          disabledProv: false,
+        });
         let provice =
           (val?.variable?.current_value && JSON.parse(val?.variable?.current_value).province_id) ||
           (val?.variable?.default_value && JSON.parse(val?.variable?.default_value).province_id) ||

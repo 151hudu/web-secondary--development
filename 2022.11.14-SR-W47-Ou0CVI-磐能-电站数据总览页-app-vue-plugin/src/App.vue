@@ -36,15 +36,16 @@
         <el-divider style="background-color: '#F0F2F5'" />
         <div class="top_Center_Card_Date_Operation">
           <div class="top_Center_Card_Date_Box">
-            <a-locale-provider :locale="zh_CN">
-              <a-date-picker
-                :defaultValue="this.$moment(new Date(), 'YYYY-MM-DD')"
-                value-format="yyyy-MM-DD"
-                style="width: 133px"
-                @change="queryPowerData"
-                placeholder="选择时间"
-              />
-            </a-locale-provider>
+            <DatePicker
+              type="date"
+              :transfer="true"
+              transfer-class-name="two_ivew_date"
+              @on-change="queryPowerData"
+              format="yyyy-MM-dd"
+              :value="new Date()"
+              placeholder="选择时间"
+              style="width: 133px"
+            ></DatePicker>
             <img src="../pluginTemp/images/date.png" alt="" />
           </div>
           <img style="cursor: pointer" width="85px" height="32px" @click="exportPower" src="../pluginTemp/images/export.png" alt="" />
@@ -62,17 +63,21 @@
             <el-radio-button label="总"></el-radio-button>
           </el-radio-group>
           <div class="top_Right_Card_Date_Box">
-            <a-locale-provider :locale="zh_CN" v-if="radioData == '日'">
-              <a-date-picker
-                :defaultValue="this.$moment(new Date(), 'YYYY-MM-DD')"
-                value-format="yyyy-MM-DD"
-                style="width: 133px"
-                @change="queryGeneratingCapacity"
-                placeholder="选择时间"
-              />
-            </a-locale-provider>
+            <DatePicker
+              v-if="radioData == '日'"
+              type="date"
+              :transfer="true"
+              transfer-class-name="two_ivew_date"
+              @on-change="queryGeneratingCapacity"
+              format="yyyy-MM-dd"
+              :value="new Date()"
+              placeholder="选择时间"
+              style="width: 133px"
+            ></DatePicker>
             <DatePicker
               type="month"
+              :transfer="true"
+              transfer-class-name="two_ivew_date2"
               @on-change="queryGeneratingCapacityMon"
               format="yyyy-MM"
               v-if="radioData == '月'"
@@ -82,6 +87,8 @@
             ></DatePicker>
             <DatePicker
               type="year"
+              :transfer="true"
+              transfer-class-name="two_ivew_date2"
               @on-change="queryGeneratingCapacityYear"
               format="yyyy"
               :value="new Date()"
@@ -252,6 +259,7 @@ import "./index.css";
 import Qs from "qs";
 import zh_CN from "ant-design-vue/lib/locale-provider/zh_CN";
 import moment from "moment";
+// import "ant-design-vue/dist/antd.css";
 import "moment/locale/zh-cn";
 moment.locale("zh-cn");
 Vue.use(Card);
@@ -336,7 +344,7 @@ export default {
       longitude: "",
       multipleSelection: "",
       tableColData: {},
-      stationID: "",
+      stationID: 1,
       weatherInfo: "",
       imgss: DefaultIcon,
       resRichu: "",
@@ -345,10 +353,10 @@ export default {
   mounted() {
     console.log(Qs.parse(window.location.href.split("?")[1]));
     //业务代码
-    this.powerDatePick = this.formatDate(this.powerDatePick);
-    this.electricDatePick = this.formatDate(this.electricDatePick);
-    this.electricDatePickMon = this.formatDateMon(this.electricDatePickMon);
-    this.electricDatePickYear = this.formatDateYear(this.electricDatePickYear);
+    this.powerDatePick = this.$moment(this.powerDatePick).format("YYYY-MM-DD");
+    this.electricDatePick = this.$moment(this.electricDatePick).format("YYYY-MM-DD");
+    this.electricDatePickMon = this.$moment(this.electricDatePickMon).format("YYYY-MM");
+    this.electricDatePickYear = this.$moment(this.electricDatePickYear).format("YYYY");
     this.connectWS();
     this.longitudeAndLatitude();
     this.queryLeftData();
@@ -365,8 +373,8 @@ export default {
     let componentName = this.$vnode.tag.split("-").pop().toLowerCase();
     this.id = id ? `secondary_${componentName}_${id}` : `secondary_${componentName}_${Utils.generateUUID()}`;
     //用于定义接收用户输入
-    this.buttons = JSON.parse(buttons).data;
-    this.defaultValue = JSON.parse(buttons).defaultValue;
+    // this.buttons = JSON.parse(buttons).data;
+    // this.defaultValue = JSON.parse(buttons).defaultValue;
   },
   methods: {
     radioChange(val) {
@@ -961,7 +969,7 @@ export default {
           },
           {
             type: "value",
-            name:  "单位:（h）" ,
+            name: "单位:（h）",
             nameTextStyle: {
               color: "#000",
               padding: [0, xData.length > 0 ? 20 : 60, 0, xData.length > 0 ? 30 : 0], // 上右下左与原位置距离
@@ -1153,7 +1161,7 @@ export default {
           },
           {
             type: "value",
-            name:  "单位:（h）" ,
+            name: "单位:（h）",
             nameTextStyle: {
               color: "#000",
               padding: [0, xData.length > 0 ? 20 : 60, 0, xData.length > 0 ? 30 : 0], // 上右下左与原位置距离
@@ -1345,7 +1353,7 @@ export default {
           },
           {
             type: "value",
-            name: "单位:（h）" ,
+            name: "单位:（h）",
             nameTextStyle: {
               color: "#000",
               padding: [0, xData.length > 0 ? 20 : 60, 0, xData.length > 0 ? 30 : 0], // 上右下左与原位置距离
@@ -1619,6 +1627,7 @@ export default {
       window.addEventListener("resize", debounceTask);
     },
     async queryApplyTableData() {
+      console.log(window.location.search, 1630);
       this.tableData = [];
       let message = {
         pageNum: this.pageNum,
@@ -1629,10 +1638,17 @@ export default {
         variables: [],
       };
       for (let k in this.getSearch(window.location.search)) {
-        message.variables.push({
-          variable_name: k,
-          variable_value: this.getSearch(window.location.search)[k],
-        });
+        if (k == "SearchTreeSelectedKey") {
+          message.variables.push({
+            variable_name: k,
+            variable_value: this.stationID || this.getSearch(window.location.search).SearchTreeSelectedKey,
+          });
+        } else {
+          message.variables.push({
+            variable_name: k,
+            variable_value: this.getSearch(window.location.search)[k],
+          });
+        }
       }
       let params = {
         view_id: `${this.customConfig.view_id}`,
@@ -1875,14 +1891,15 @@ export default {
       this.queryApplyTableData();
     },
     formatDate(row) {
-      const date = new Date(row);
-      const Y = date.getFullYear() + "-";
-      const M = date.getMonth() + 1 + "-";
-      const D = date.getDate() + " ";
-      const h = (date.getHours() + ":").padStart(3, "0");
-      const m = (date.getMinutes() + ":").padStart(3, "0");
-      const s = (date.getSeconds() + "").padStart(2, "0");
+      console.log(row,1894);
       if (row) {
+        const date = new Date(row);
+        const Y = date.getFullYear() + "-";
+        const M = date.getMonth() + 1 + "-";
+        const D = date.getDate() < 10 ? '0' + date.getDate() + " " : date.getDate() + " ";
+        const h = (date.getHours() + ":").padStart(3, "0");
+        const m = (date.getMinutes() + ":").padStart(3, "0");
+        const s = (date.getSeconds() + "").padStart(2, "0");
         return Y + M + D;
       } else {
         return "";
@@ -2452,6 +2469,9 @@ export default {
     margin-top: 0px !important;
   }
 }
+.ivu-date-picker-cells-header span {
+  margin: 5px 7px !important;
+}
 .application-content-wrap::-webkit-scrollbar {
   width: 0px;
 }
@@ -2484,5 +2504,97 @@ export default {
     margin-right: 30px;
     background: #0454f2;
   }
+}
+.two_ivew .ivu-input {
+  border-radius: 2px !important;
+  background: rgba(239, 240, 243, 1) !important;
+}
+
+.two_ivew .ivu-icon-ios-calendar-outline {
+  display: none !important;
+}
+
+.two_ivew .ivu-date-picker-cells-cell-selected {
+  background: #0454f2 !important;
+  height: 22px !important;
+  line-height: 22px !important;
+}
+
+.two_ivew .ivu-date-picker-cells {
+  width: 280px !important;
+}
+
+.two_ivew .ivu-date-picker-cells-cell {
+  width: 40px !important;
+  margin: 10px 26px !important;
+}
+
+.two_ivew .ivu-date-picker-cells-cell-selected em {
+  background: #0454f2 !important;
+  height: 22px !important;
+  line-height: 22px !important;
+  box-shadow: 0 0 0 0 !important;
+  margin-top: 0px !important;
+}
+
+.two_ivew .ivu-date-picker-rel .ivu-input-wrapper .ivu-input {
+  padding-right: 0px;
+}
+
+.two_ivew_date .ivu-input {
+  border-radius: 2px !important;
+  background: rgba(239, 240, 243, 1) !important;
+}
+
+.two_ivew_date .ivu-icon-ios-calendar-outline {
+  display: none !important;
+}
+
+.two_ivew_date .ivu-date-picker-cells-cell-selected {
+  background: #0454f2 !important;
+  height: 22px !important;
+  line-height: 22px !important;
+}
+
+.two_ivew_date .ivu-date-picker-cells-header span {
+  margin: 5px 7px !important;
+}
+
+.two_ivew_date .ivu-date-picker-cells {
+  width: 280px !important;
+}
+
+.two_ivew_date .ivu-date-picker-cells-cell-today em:after {
+  content: "";
+  display: block;
+  width: 0px !important;
+  height: 0px !important;
+  border-radius: 50%;
+  background: #2d8cf0;
+  position: absolute;
+  top: 1px;
+  right: 1px;
+}
+
+.two_ivew_date .ivu-date-picker-cells-cell {
+  /* width: 40px !important; */
+  width: 28px !important;
+  margin: 5px !important;
+}
+
+.two_ivew_date .ivu-date-picker-cells-cell-selected {
+  border-radius: 3px;
+}
+
+.two_ivew_date .ivu-date-picker-cells-cell-selected em {
+  background: #0454f2 !important;
+  height: 22px !important;
+  line-height: 22px !important;
+  box-shadow: 0 0 0 0 !important;
+  margin-top: 0px !important;
+}
+
+.two_ivew_date .ivu-date-picker-rel .ivu-input-wrapper .ivu-input {
+  padding-right: 0px;
 }
 </style>

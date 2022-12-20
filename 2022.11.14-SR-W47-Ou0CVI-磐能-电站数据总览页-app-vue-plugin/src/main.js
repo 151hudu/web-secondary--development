@@ -6,7 +6,6 @@ Vue.prototype.$echarts = echarts;
 import ViewUI  from 'view-design';
 import {DatePicker,ConfigProvider } from 'ant-design-vue';
 import 'view-design/dist/styles/iview.css';
-import 'ant-design-vue/dist/antd.css';
 import moment from "moment"
 Vue.prototype.$moment = moment;
 Vue.use(DatePicker,ConfigProvider );

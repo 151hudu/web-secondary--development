@@ -1,7 +1,7 @@
 {
-  "id": "56bfed3c-26a5-4aac-8dc4-de477af68a83",
+  "id": "5f66a22f-af0e-4b75-9c47-e885b3c1d777",
   "type": "reporting",
-  "main": "app.8c9782cf.js",
+  "main": "app.40a81349.js",
   "version": "2",
   "props": {
     "styleArr": "[\"title\",\"key\", \"eventCenterConfig\"]",
@@ -9,6 +9,6 @@
     "componentAttributes": "{\"style\":[\"title\"],\"data\":[\"key\"],\"interaction\":[\"eventCenterConfig\"]}",
     "assetColumnList": "[{\"col_name\":\"自定义\",\"col_datatype\":0}]"
   },
-  "requirement-number": "填报组件二开",
+  "requirement-number": "金陵石油申报计划",
   "requirement-name": "SR-W50-TwEUaq"
 }

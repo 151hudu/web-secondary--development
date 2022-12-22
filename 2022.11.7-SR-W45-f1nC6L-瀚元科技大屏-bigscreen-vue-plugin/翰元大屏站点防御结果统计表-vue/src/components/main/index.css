@@ -11,3 +11,49 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.inputSelectBacPoper {
+  background: linear-gradient(180deg, rgba(8, 57, 87, 0.9) 0%, rgba(9, 24, 39, 0.9) 100%) !important;
+  border: 1px solid rgba(21, 154, 255, 0.7) !important;
+  color: #fff !important;
+}
+
+.inputSelectBacPoper .el-picker-panel__body-wrapper {
+  color: #fff !important;
+}
+
+.inputSelectBacPoper .in-range div {
+  background: linear-gradient(rgba(20, 143, 255, 0.3) 25.38%, rgba(21, 246, 238, 0.5) 94.06%)
+}
+
+.inputSelectBacPoper .el-date-table td.end-date span {
+  background-color: none !important;
+}
+
+.inputSelectBacPoper .el-date-table td.start-date span {
+  background-color: none !important;
+}
+
+
+.inputSelectBacPoper .el-picker-panel__icon-btn {
+  color: #fff;
+}
+
+.inputSelectBacPoper.el-popper[x-placement^=bottom] .popper__arrow {
+  border-bottom-color: rgba(21, 154, 255, 0.7);
+}
+
+.inputSelectBacPoper.el-popper[x-placement^=bottom] .popper__arrow::after {
+  border-bottom-color: rgba(21, 154, 255, 0.7);
+}
+
+.inputSelectBacPoper .el-select-dropdown__item {
+  color: #99AFCC;
+}
+
+.inputSelectBacPoper .el-select-dropdown__item.hover,
+.el-select-dropdown__item:hover {
+  background: linear-gradient(270deg, rgba(91, 222, 218, 0.3) -7.2%, rgba(23, 82, 101, 0.5) 100%);
+  color: #D0DEEE;
+
+}

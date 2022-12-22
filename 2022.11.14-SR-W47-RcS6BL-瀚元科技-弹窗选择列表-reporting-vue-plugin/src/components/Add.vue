@@ -60,7 +60,7 @@
 
 <script>
 import eventActionDefine from "./msgCompConfig";
-import { queryAssetById } from "../api/asset";
+import { getAssetData } from "../api/asset";
 
 export default {
    name: "Add",
@@ -120,7 +120,7 @@ export default {
          // 拼接规则
          this.saveField = columnStyle.saveField;
       } else {
-         this.assetId = "ea7c9900-0652-a5a0-2f11-194074ec2957";
+         this.assetId = "dc5cbd7d-b319-588b-bd13-96c1b8fbc41f";
          this.showField = "substation_name";
          this.saveField = "data_id";
       }
@@ -164,10 +164,9 @@ export default {
 
       // 获取表格数据
       getTableData() {
-         queryAssetById(this.assetId, this.page, this.pageSize).then((res) => {
-            let resData = this.translatePlatformDataToJsonArray(res);
-            this.tableDialogData = resData;
-            this.pageTotal = res.data[2];
+         getAssetData(this.assetId, this.page, this.pageSize).then((res) => {
+            this.tableDialogData = res.data.data;
+            this.pageTotal = res.data.count;
 
             this.$nextTick(() => {
                if (this.interfaceData.length) {
@@ -210,6 +209,11 @@ export default {
 
       // 保存选中的值
       saveTableSelect() {
+         this.$refs["ruleForm"].validate((valid) => {
+            if (!valid) {
+               return false;
+            }
+         });
          let showStr = [];
          let saveArr = [];
 
@@ -237,10 +241,14 @@ export default {
          return { value };
       },
 
-      // do_EventCenter_ruleFormData() {
-      //    let value = this.interfaceData.split("");
-      //    return { value };
-      // },
+      // 校验动作
+      do_EventCenter_ruleFormData() {
+         this.$refs["ruleForm"].validate((valid) => {
+            if (!valid) {
+               return false;
+            }
+         });
+      },
 
       Event_Center_getName() {
          return "瀚元科技-弹窗选择列表";
@@ -276,6 +284,10 @@ export default {
       height: 177px;
       line-height: 177px;
       padding: 0;
+   }
+
+   .el-form-item__error {
+      margin-top: -62px;
    }
 }
 

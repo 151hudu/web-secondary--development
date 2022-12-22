@@ -1,5 +1,6 @@
 export default {
-  variable: { default_value: "测试的数据", id: "测试的ID" },
+  // variable: { default_value: "测试的数据", id: "测试的ID" },
+  variable: { current_value: '{"province_id":"16","city_id":"16"}', id: "测试的ID" },
   options: {
     // auto: true,
     // showToolbar: false,

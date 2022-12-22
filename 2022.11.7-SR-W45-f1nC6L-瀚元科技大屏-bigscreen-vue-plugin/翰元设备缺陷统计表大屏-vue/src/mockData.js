@@ -1,5 +1,6 @@
 export default {
-  variable: { default_value: "测试的数据", id: "测试的ID" },
+  // variable: { current_value: '{"substation_no":"20"}', id: "测试的ID" },
+  variable: { current_value: '', id: "测试的ID" },
   options: {
     // auto: true,
     // showToolbar: false,

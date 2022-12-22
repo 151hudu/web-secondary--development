@@ -68,7 +68,7 @@
         <div class="alarmt_two_main">
           <div class="alarmt_two_main_echart">
             <div class="alarmt_two_main_echart_title border_title">
-              TOP{{ paramsObj.top || 10 }} 告警统计表
+              TOP{{ titleTop || 10 }} 告警统计表
             </div>
             <div class="alarmt_two_main_echart_main" ref="alarmt_echart"></div>
           </div>
@@ -161,6 +161,7 @@ export default {
       }, {
         label: '10', value: 10
       }],
+      titleTop: 10,
       cityOp: [],
       substationOp: [],
       cycleOp: [{ value: 1, label: '一个月' },
@@ -177,7 +178,7 @@ export default {
       city: '',
       substationName: '',
       province: '',
-      paramsObj: { province: '', city: '', substationName: '', period: '', status: '', top: '' }
+      paramsObj: { province: '', city: '', substationName: '', period: 6, status: '', top: '10' }
     };
   },
   props: {
@@ -243,7 +244,7 @@ export default {
     'paramsObj.province': {
       handler(val) {
         if (!this.totalArr.substationOp) return
-        if (val == '' || val == undefined) return
+
         let substationOp = this.totalArr.substationOp
         this.substationOp = substationOp.filter((x, i) => {
 
@@ -270,7 +271,7 @@ export default {
     'paramsObj.city': {
       handler(val) {
         if (!this.totalArr.substationOp) return
-        if (val == '' || val == undefined) return
+
         let substationOp = this.totalArr.substationOp
         this.substationOp = substationOp.filter((x, i) => {
           let filed = String(x.id)
@@ -329,6 +330,8 @@ export default {
           this.paramsObj.substationName = substationOp?.value
           this.paramsObj.province = provinceOp?.value
           this.paramsObj.city = cityOp?.value
+
+          if (data?.variable?.current_value === '' || data?.variable?.default_value === '') this.queryTable()
         }
       );
     window.componentCenter?.register &&
@@ -377,6 +380,7 @@ export default {
       params.city = this.paramsObj.city || this.city
       params.substationName = this.paramsObj.substationName || this.substationName
       params.top = this.paramsObj.top || 10
+      this.titleTop = this.paramsObj.top
       TOPNAlarmInfo(params).then(res => {
         this.tableData = res.data
         this.tableData.forEach(x => {
@@ -384,7 +388,7 @@ export default {
           x.lastAlarm = moment(x.lastAlarm).format("YYYY-MM-DD hh:mm:ss")
         })
         this.tableData.sort(function (a, b) {
-          return a.alarm_level - b.alarm_level
+          return b.alarmNum - a.alarmNum
         })
         this.initEchartFn(this.tableData)
       }).catch(err => {
@@ -513,11 +517,12 @@ export default {
             data: xAData,
             axisTick: {
               show: false,
-              // interval: 0,
+              interval: 0,
 
             },
             axisLabel: {
-              interval: interval,
+              interval: 0,
+              rotate: 20
             },
             axisLine: {
               show: false,
@@ -595,21 +600,22 @@ export default {
     tableToExcel(tableData) {
       const headArr = Object.keys(tableData[0])
 
-      const titleObj = { alarm_level: '告警级别', description: '等级(中文)', alarm_name: '告警名称', alarmNum: '告警次数', alarm_src: '告警源', firstAlarm: '首次发生时间', lastAlarm: '最后发生时间' }
+      const titleObj = { description: '告警级别', alarm_name: '告警名称', alarmNum: '告警次数', alarm_src: '告警源', firstAlarm: '首次发生时间', lastAlarm: '最后发生时间' }
+      const head = Object.keys(titleObj)
       // 要导出的json数据
       // 列标题
       let str = "<tr>"
-      headArr.forEach((item, index) => {
+      head.forEach((item, index) => {
 
-        str += (index == (headArr.length - 1)) ? `<td>${titleObj[item]}</td></tr>` : `<td>${titleObj[item]}</td>`
+        str += (index == (head.length - 1)) ? `<td>${titleObj[item]}</td></tr>` : `<td>${titleObj[item]}</td>`
 
       })
       // 循环遍历，每行加入tr标签，每个单元格加td标签
       for (let i = 0; i < tableData.length; i++) {
         str += '<tr>';
-        for (const key of headArr) {
+        for (const key of head) {
           // 增加\t为了不让表格显示科学计数法或者其他格式
-          str += `<td>${tableData[i][key] + '\t'}</td>`;
+          str += `<td>${tableData[i][key] || '' + '\t'}</td>`;
         }
         str += '</tr>';
       }
@@ -618,14 +624,16 @@ export default {
       const uri = 'data:application/vnd.ms-excel;base64,';
 
       // 下载的表格模板数据
-      const template = `<html xmlns:o="urn:schemas-microsoft-com:office:office" 
-    xmlns:x="urn:schemas-microsoft-com:office:excel" 
-    xmlns="http://www.w3.org/TR/REC-html40">
-    <head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
-    <x:Name>${worksheet}</x:Name>
-    <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
-    </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
-    </head><body><table>${str}</table></body></html>`;
+      const template = `<html
+             xmlns:o="urn:schemas-microsoft-com:office:office" 
+             xmlns:x="urn:schemas-microsoft-com:office:excel"
+        xmlns="http://www.w3.org/TR/REC-html40">
+      <head> <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+          <x:Name>${worksheet}</x:Name>
+          <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+          </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--> </head>
+    <body><table>${str}</table></body>
+      </html>`;
       // 下载模板
 
       // 输出base64编码
@@ -655,6 +663,9 @@ export default {
       }
 
       this.paramsObj = a
+      this.paramsObj.top = 10
+      this.paramsObj.period = 6
+
       this.queryTable()
     },
     do_EventCenter_setValue(value) {

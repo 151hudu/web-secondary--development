@@ -9,7 +9,11 @@ export const actions = [
     key: "setValue",
     name: "设值",
     params: [
-
+      {
+        key: "value",
+        name: "值",
+        dataType: "string"
+      }
     ],
 
   }

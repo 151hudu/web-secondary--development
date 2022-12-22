@@ -1,6 +1,6 @@
 <template>
   <el-form ref="form" :model="form" label-width="80px">
-    <el-form-item label="占位符">
+    <el-form-item label="元素高">
       <el-input v-model="form.placeholder"></el-input>
     </el-form-item>
   </el-form>

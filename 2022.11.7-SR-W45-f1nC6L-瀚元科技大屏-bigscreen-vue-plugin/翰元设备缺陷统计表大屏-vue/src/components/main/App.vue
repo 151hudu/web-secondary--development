@@ -35,7 +35,7 @@
         class="inputSelectBac" value-key="value" style="width: 120px">
         <el-option v-for="item in levelOption" :key="item.value" :label="item.label" :value="item"> </el-option>
       </el-select>
-      <span class="selectSpan">计划日期</span>
+      <span class="selectSpan">巡检日期</span>
       <el-date-picker v-model="searchDate" popper-class="inputSelectBacPoper" type="daterange" class="inputSelectBac"
         style="width: 210px" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
         value-format="yyyy-MM-dd" size="small">
@@ -43,7 +43,7 @@
       <el-button plain class="searchReload" @click="searchTable">查询</el-button>
       <el-button plain class="searchReload" @click="reloadSearch">重置</el-button>
     </div>
-    <el-table :data="tableData" stripe
+    <el-table :data="tableData" stripe max-height="600px"
       :header-cell-style="{ color: '#fff', background: 'linear-gradient(0deg, #235B80 0%, #27536F 100%)', fontSize: '12px', border: 'unset' }"
       style="width: 100%; margin-top: 16px; margin-bottom: 10px">
       <el-table-column type="index" width="50" label="序号"> </el-table-column>
@@ -135,7 +135,7 @@ export default {
       handler(val) {
 
         if (this.provinceData.length == 0) return
-        if (val == '' || val == undefined || val.province_name == undefined) return
+
         this.citySelect = {};
         this.cityOption = [];
         this.stationSelect = {};
@@ -161,8 +161,8 @@ export default {
     'citySelect': {
       handler(val) {
 
-        if (!this.provinceData.length == 0) return
-        if (val == '' || val == undefined || val.city_name == undefined) return
+
+
         this.stationSelect = {};
         this.stationOption = [];
 
@@ -233,7 +233,7 @@ export default {
         })
       }
 
-      this.stationSelect = substationOp
+      // this.stationSelect = substationOp
       this.provinceSelect = provinceOp
       this.citySelect = cityOp
     });
@@ -260,9 +260,10 @@ export default {
         })
 
 
-        this.stationSelect = substationOp
+        // this.stationSelect = substationOp
         this.provinceSelect = provinceOp
         this.citySelect = cityOp
+        if (data?.variable?.current_value === '' || data?.variable?.default_value === '') this.searchTable()
       });
     window.componentCenter?.register && window.componentCenter.register(this.componentId, "comp", this, MsgCompConfig);
     this.updateProcess && this.updateProcess();
@@ -399,21 +400,27 @@ export default {
         str += "<tr>";
         for (const key of headArr) {
           // 增加\t为了不让表格显示科学计数法或者其他格式
-          str += `<td>${tableData[i][key] + "\t"}</td>`;
+          if (key == 'substation_level') {
+            str += `<td>${levelTemp[tableData[i][key] - 1] + "\t"}</td>`;
+          } else {
+            str += `<td>${tableData[i][key] + "\t"}</td>`;
+          }
         }
         str += "</tr>";
       } // Worksheet名
       const worksheet = "Sheet1";
       const uri = "data:application/vnd.ms-excel;base64,"; // 下载的表格模板数据
 
-      const template = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
-    xmlns:x="urn:schemas-microsoft-com:office:excel"
-    xmlns="http://www.w3.org/TR/REC-html40">
-    <head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
-    <x:Name>${worksheet}</x:Name>
-    <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
-    </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
-    </head><body><table>${str}</table></body></html>`; // 下载模板 // 输出base64编码
+      const template = `<html
+             xmlns:o="urn:schemas-microsoft-com:office:office" 
+             xmlns:x="urn:schemas-microsoft-com:office:excel"
+        xmlns="http://www.w3.org/TR/REC-html40">
+      <head> <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+          <x:Name>${worksheet}</x:Name>
+          <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+          </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--> </head>
+    <body><table>${str}</table></body>
+      </html>`;// 下载模板 // 输出base64编码
       const base64 = function (s) {
         return window.btoa(unescape(encodeURIComponent(s)));
       };
@@ -754,3 +761,81 @@ export default {
 
 }
 </style>
+<style>
+/* .inputSelectBacPoper .el-select-dropdown__list,
+.inputSelectBacPoper .el-picker-panel__content {
+  background: linear-gradient(180deg, rgba(8, 57, 87, 0.9) 0%, rgba(9, 24, 39, 0.9) 100%) !important;
+}
+
+.inputSelectBacPoper .el-picker-panel {
+  border: 0px;
+}
+
+.inputSelectBacPoper {
+  border: 1px solid rgba(21, 154, 255, 0.7) !important;
+}
+
+.inputSelectBacPoper .available {
+  color: #99afcc;
+}
+
+.inputSelectBacPoper .popper__arrow::after,
+.inputSelectBacPoper .popper__arrow {
+  border-bottom-color: rgba(21, 154, 255, 0.7) !important;
+}
+
+.inputSelectBacPoper .in-range div {
+  background: rgb(51, 125, 150) !important;
+}
+
+.inputSelectBacPoper .el-select-dropdown__item.hover,
+.inputSelectBacPoper .el-select-dropdown__item:hover {
+  background: linear-gradient(270deg, rgba(91, 222, 218, 0.3) -7.2%, rgba(23, 82, 101, 0.5) 100%);
+  color: #d0deee;
+} */
+
+
+.inputSelectBacPoper {
+  background: linear-gradient(180deg, rgba(8, 57, 87, 0.9) 0%, rgba(9, 24, 39, 0.9) 100%) !important;
+  border: 1px solid rgba(21, 154, 255, 0.7) !important;
+  color: #fff !important;
+
+}
+
+.inputSelectBacPoper .in-range div {
+  background: linear-gradient(rgba(20, 143, 255, 0.3) 25.38%, rgba(21, 246, 238, 0.5) 94.06%)
+}
+
+.inputSelectBacPoper .el-date-table td.end-date span {
+  background-color: none !important;
+}
+
+.inputSelectBacPoper .el-date-table td.start-date span {
+  background-color: none !important;
+}
+
+
+.inputSelectBacPoper .el-picker-panel__icon-btn {
+  color: #fff;
+}
+
+.inputSelectBacPoper.el-popper[x-placement^=bottom] .popper__arrow {
+  border-bottom-color: rgba(21, 154, 255, 0.7);
+}
+
+.inputSelectBacPoper.el-popper[x-placement^=bottom] .popper__arrow::after {
+  border-bottom-color: rgba(21, 154, 255, 0.7);
+}
+
+.inputSelectBacPoper .el-select-dropdown__item {
+  color: #99AFCC;
+}
+
+.inputSelectBacPoper .el-select-dropdown__item.hover,
+.el-select-dropdown__item:hover {
+  background: linear-gradient(270deg, rgba(91, 222, 218, 0.3) -7.2%, rgba(23, 82, 101, 0.5) 100%);
+  color: #D0DEEE;
+
+}
+</style>
+

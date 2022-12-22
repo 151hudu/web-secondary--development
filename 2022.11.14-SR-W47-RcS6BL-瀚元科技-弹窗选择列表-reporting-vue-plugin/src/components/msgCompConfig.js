@@ -17,15 +17,8 @@ export const actions = [
    },
    {
       key: "ruleFormData",
-      name: "校验返回值",
-      hasReturn: true,
-      returns: [
-         {
-            key: "value",
-            name: "返回值",
-            dataType: "string",
-         },
-      ],
+      name: "校验",
+      params: [],
    },
 ];
 

@@ -177,7 +177,7 @@ export default {
       substationName: '',
       province: '',
       pageObj: { currentPage: 1, pageSize: 10, total: null },
-      paramsObj: { province: '', city: '', substationName: '', status: '', period: '' }
+      paramsObj: { province: '', city: '', substationName: '', status: '', period: '年' }
     };
   },
   props: {
@@ -242,7 +242,7 @@ export default {
     'paramsObj.province': {
       handler(val) {
         if (!this.totalArr.substationOp) return
-        if (val == '' || val == undefined) return
+
         let substationOp = this.totalArr.substationOp
         this.substationOp = substationOp.filter((x, i) => {
 
@@ -269,7 +269,7 @@ export default {
     'paramsObj.city': {
       handler(val) {
         if (!this.totalArr.substationOp) return
-        if (val == '' || val == undefined) return
+
         let substationOp = this.totalArr.substationOp
         this.substationOp = substationOp.filter((x, i) => {
           let filed = String(x.id)
@@ -328,6 +328,7 @@ export default {
           this.paramsObj.substationName = substationOp?.value
           this.paramsObj.province = provinceOp?.value
           this.paramsObj.city = cityOp?.value
+          if (data?.variable?.current_value === '' || data?.variable?.default_value === '') this.queryTable()
         }
       );
     window.componentCenter?.register &&
@@ -379,8 +380,8 @@ export default {
       TOPNAlarmInfo(params).then(res => {
         this.dataAll = res.data
         this.dataAll.forEach(x => {
-          x.firstAlarm = moment(x.firstAlarm).format("YYYY-MM-DD hh:mm:ss")
-          x.lastAlarm = moment(x.lastAlarm).format("YYYY-MM-DD hh:mm:ss")
+          x.firstAlarm = x.firstAlarm ? moment(x.firstAlarm).format("YYYY-MM-DD hh:mm:ss") : ''
+          x.lastAlarm = x.lastAlarm ? moment(x.lastAlarm).format("YYYY-MM-DD hh:mm:ss") : ''
         })
 
         this.tableData = this.dataAll.slice(0, this.pageObj.currentPage * this.pageObj.pageSize)
@@ -678,6 +679,7 @@ export default {
       }
 
       this.paramsObj = a
+      this.paramsObj.period = '年'
       this.queryTable()
     },
     tableToExcel(tableData) {
@@ -685,18 +687,28 @@ export default {
       const titleObj = { time: '日期', urgency: '紧急', significance: '重要', ordinary: '一般', hint: '提示', firstAlarm: '首次发生时间', lastAlarm: '最后发生时间' }
       // 要导出的json数据
       // 列标题
+      const head = Object.keys(titleObj)
       let str = "<tr>"
-      headArr.forEach((item, index) => {
 
-        str += (index == (headArr.length - 1)) ? `<td>${titleObj[item]}</td></tr>` : `<td>${titleObj[item]}</td>`
+
+      head.forEach((item, index) => {
+
+        str += (index == (head.length - 1)) ? `<td>${titleObj[item]}</td></tr>` : `<td>${titleObj[item]}</td>`
 
       })
       // 循环遍历，每行加入tr标签，每个单元格加td标签
       for (let i = 0; i < tableData.length; i++) {
         str += '<tr>';
-        for (const key of headArr) {
+        for (const key of head) {
           // 增加\t为了不让表格显示科学计数法或者其他格式
-          str += `<td>${tableData[i][key] + '\t'}</td>`;
+          if (key == 'firstAlarm' || key == 'lastAlarm') {
+            str += `<td>${tableData[i][key] || '' + '\t'}</td>`;
+          } else if (key == 'time') {
+            str += `<td>${tableData[i][key] ? moment(tableData[i][key]).format("YYYY-MM") : '' + '\t'}</td>`;
+          } else {
+            str += `<td>${tableData[i][key] || 0 + '\t'}</td>`;
+          }
+
         }
         str += '</tr>';
       }
@@ -705,16 +717,18 @@ export default {
       const uri = 'data:application/vnd.ms-excel;base64,';
 
       // 下载的表格模板数据
-      const template = `<html xmlns:o="urn:schemas-microsoft-com:office:office" 
-    xmlns:x="urn:schemas-microsoft-com:office:excel" 
-    xmlns="http://www.w3.org/TR/REC-html40">
-    <head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
-    <x:Name>${worksheet}</x:Name>
-    <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
-    </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
-    </head><body><table>${str}</table></body></html>`;
+      const template = `<html
+             xmlns:o="urn:schemas-microsoft-com:office:office" 
+             xmlns:x="urn:schemas-microsoft-com:office:excel"
+        xmlns="http://www.w3.org/TR/REC-html40">
+      <head> <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+          <x:Name>${worksheet}</x:Name>
+          <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+          </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--> </head>
+    <body><table>${str}</table></body>
+      </html>`;
       // 下载模板
-
+      console.log(str, '====date数据');
       // 输出base64编码
       const base64 = function (s) {
         return window.btoa(unescape(encodeURIComponent(s)));

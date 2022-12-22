@@ -163,7 +163,7 @@ export default {
         { value: false, label: '未消除' },
       ],
       totalArr: {},
-      paramsObj: { province: '', city: null, substationName: null, period: null, status: null },
+      paramsObj: { province: '', city: null, substationName: null, period: 6, status: null },
       Gechart: null,
       city: '',
       substationName: '',
@@ -233,7 +233,7 @@ export default {
     'paramsObj.province': {
       handler(val) {
         if (!this.totalArr.substationOp) return
-        if (val == '' || val == undefined) return
+        //  
         let substationOp = this.totalArr.substationOp
         this.substationOp = substationOp.filter((x, i) => {
 
@@ -260,7 +260,7 @@ export default {
     'paramsObj.city': {
       handler(val) {
         if (!this.totalArr.substationOp) return
-        if (val == '' || val == undefined) return
+        //  
         let substationOp = this.totalArr.substationOp
         this.substationOp = substationOp.filter((x, i) => {
           let filed = String(x.id)
@@ -321,6 +321,8 @@ export default {
           this.paramsObj.substationName = substationOp?.value
           this.paramsObj.province = provinceOp?.value
           this.paramsObj.city = cityOp?.value
+          if (data?.variable?.current_value === '' || data?.variable?.default_value === '') this.queryTable()
+
         }
 
       );
@@ -382,8 +384,8 @@ export default {
         if (this.tableData.length != 0) {
 
           this.tableData.forEach(x => {
-            x.firstAlarm = moment(x.firstAlarm).format("YYYY-MM-DD hh:mm:ss")
-            x.lastAlarm = moment(x.lastAlarm).format("YYYY-MM-DD hh:mm:ss")
+            x.firstAlarm = x.firstAlarm ? moment(x.firstAlarm).format("YYYY-MM-DD HH:mm:ss") : ''
+            x.lastAlarm = x.lastAlarm ? moment(x.lastAlarm).format("YYYY-MM-DD HH:mm:ss") : ''
           })
           this.alarmObj.forEach((x, y) => {
 
@@ -569,19 +571,20 @@ export default {
     tableToExcel(tableData) {
       const headArr = Object.keys(tableData[0])
 
-      const titleObj = { alarm_level: '告警级别', description: '等级(中文)', alarmNum: '告警次数', firstAlarm: '首次发生时间', lastAlarm: '最后发生时间' }
+      const titleObj = { description: '告警级别', alarmNum: '告警次数', firstAlarm: '首次发生时间', lastAlarm: '最后发生时间' }
+      const head = Object.keys(titleObj)
       // 要导出的json数据
       // 列标题
       let str = "<tr>"
-      headArr.forEach((item, index) => {
+      head.forEach((item, index) => {
 
-        str += (index == (headArr.length - 1)) ? `<td>${titleObj[item]}</td></tr>` : `<td>${titleObj[item]}</td>`
+        str += (index == (head.length - 1)) ? `<td>${titleObj[item]}</td></tr>` : `<td>${titleObj[item]}</td>`
 
       })
       // 循环遍历，每行加入tr标签，每个单元格加td标签
       for (let i = 0; i < tableData.length; i++) {
         str += '<tr>';
-        for (const key of headArr) {
+        for (const key of head) {
           // 增加\t为了不让表格显示科学计数法或者其他格式
           str += `<td>${tableData[i][key] + '\t'}</td>`;
         }
@@ -591,17 +594,17 @@ export default {
       const worksheet = 'Sheet1'
       const uri = 'data:application/vnd.ms-excel;base64,';
 
-      // 下载的表格模板数据
-      const template = `<html 
-      xmlns:o="urn:schemas-microsoft-com:office:office" 
-    xmlns:x="urn:schemas-microsoft-com:office:excel" 
-    xmlns="http://www.w3.org/TR/REC-html40">
-    <head>
-  <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
-    <x:Name>${worksheet}</x:Name>
-    <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
-    </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
-    </head><body><table>${str}</table></body></html>`;
+      const template = `<html
+             xmlns:o="urn:schemas-microsoft-com:office:office" 
+             xmlns:x="urn:schemas-microsoft-com:office:excel"
+        xmlns="http://www.w3.org/TR/REC-html40">
+      <head> <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+          <x:Name>${worksheet}</x:Name>
+          <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+          </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--> </head>
+    <body><table>${str}</table></body>
+      </html>`;
+      // 下载模板
       // 下载模板
 
       // 输出base64编码
@@ -632,6 +635,7 @@ export default {
       }
 
       this.paramsObj = a
+      this.paramsObj.period = 6
       this.queryTable()
     },
     //逻辑控制

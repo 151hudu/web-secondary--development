@@ -4,7 +4,7 @@ module.exports = {
     disableHostCheck: true,
     proxy: {
       "/api": {
-        target: "http://10.15.111.15:12345",
+        target: "http://10.15.112.2:18188/",
         // target: "http://10.15.111.9:12245",
         changeOrigin: true,
         pathRewrite: {
@@ -22,33 +22,33 @@ module.exports = {
         (element) => {
           ["vue-modules", "vue", "normal-modules", "normal"].forEach((m) => {
             config.module
-                  .rule(element)
-                  .oneOf(m)
-                  .uses.delete("extract-css-loader")
-                  .end()
-                  .use("vue-style-loader")
-                  .loader("vue-style-loader")
-                  .options({
-                    sourceMap: false,
-                    shadowMode: false
-                  })
-                  .before("css-loader");
+              .rule(element)
+              .oneOf(m)
+              .uses.delete("extract-css-loader")
+              .end()
+              .use("vue-style-loader")
+              .loader("vue-style-loader")
+              .options({
+                sourceMap: false,
+                shadowMode: false
+              })
+              .before("css-loader");
           });
         }
       );
     });
     config.resolve.alias
-          .set("@", resolve("./src"));
+      .set("@", resolve("./src"));
     config.module
-          .rule("images")
-          .use("url-loader")
-          .loader("url-loader")
-          .tap(options => Object.assign(options, { limit: 1 * 100 * 1024 * 1024 }));
+      .rule("images")
+      .use("url-loader")
+      .loader("url-loader")
+      .tap(options => Object.assign(options, { limit: 1 * 100 * 1024 * 1024 }));
     config.module
-          .rule("fonts")
-          .use("url-loader")
-          .loader("url-loader")
-          .tap(options => Object.assign(options, { limit: 1 * 100 * 1024 * 1024 }));
+      .rule("fonts")
+      .use("url-loader")
+      .loader("url-loader")
+      .tap(options => Object.assign(options, { limit: 1 * 100 * 1024 * 1024 }));
 
   }
 };

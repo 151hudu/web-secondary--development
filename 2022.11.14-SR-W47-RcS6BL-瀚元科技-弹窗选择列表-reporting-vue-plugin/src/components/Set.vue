@@ -56,7 +56,7 @@
 
 <script>
 import eventActionDefine from "./msgCompConfig";
-import { queryAssetById } from "../api/asset";
+import { getAssetData } from "../api/asset";
 
 export default {
    name: "Set",
@@ -108,7 +108,7 @@ export default {
          // 拼接规则
          this.saveField = columnStyle.saveField;
       } else {
-         this.assetId = "ea7c9900-0652-a5a0-2f11-194074ec2957";
+         this.assetId = "dc5cbd7d-b319-588b-bd13-96c1b8fbc41f";
          this.showField = "";
          this.saveField = "";
       }
@@ -154,10 +154,9 @@ export default {
 
       // 获取表格数据
       getTableData() {
-         queryAssetById(this.assetId, this.page, this.pageSize).then((res) => {
-            let resData = this.translatePlatformDataToJsonArray(res);
-            this.tableDialogData = resData;
-            this.pageTotal = res.data[2];
+         getAssetData(this.assetId, this.page, this.pageSize).then((res) => {
+            this.tableDialogData = res.data.data;
+            this.pageTotal = res.data.count;
 
             this.$nextTick(() => {
                if (this.interfaceData.length) {

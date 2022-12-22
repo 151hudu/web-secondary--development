@@ -91,7 +91,7 @@
                 <el-table-column prop="failedNum" label="防御失败次数" min-width="80" align="center">
 
                 </el-table-column>
-                <el-table-column prop="probability" label="防御成功率" align="center">
+                <el-table-column prop="probability" :formatter="oneFixed" label="防御成功率" align="center">
 
                 </el-table-column>
                 <el-table-column prop="firstAlarm" label="首次发生时间" min-width="124">
@@ -182,7 +182,7 @@ export default {
       substationName: '',
       province: '',
       pageObj: { currentPage: 1, pageSize: 10, total: null },
-      paramsObj: { province: '', city: '', substationName: '', period: '' }
+      paramsObj: { province: '', city: '', substationName: '', period: '年' }
     };
   },
   props: {
@@ -247,7 +247,7 @@ export default {
     'paramsObj.province': {
       handler(val) {
         if (!this.totalArr.substationOp) return
-        if (val == '' || val == undefined) return
+
         let substationOp = this.totalArr.substationOp
         this.substationOp = substationOp.filter((x, i) => {
 
@@ -274,7 +274,7 @@ export default {
     'paramsObj.city': {
       handler(val) {
         if (!this.totalArr.substationOp) return
-        if (val == '' || val == undefined) return
+
         let substationOp = this.totalArr.substationOp
         this.substationOp = substationOp.filter((x, i) => {
           let filed = String(x.id)
@@ -332,6 +332,7 @@ export default {
           this.paramsObj.substationName = substationOp?.value
           this.paramsObj.province = provinceOp?.value
           this.paramsObj.city = cityOp?.value
+          if (data?.variable?.current_value === '' || data?.variable?.default_value === '') this.queryTable()
         }
       );
     window.componentCenter?.register &&
@@ -352,6 +353,13 @@ export default {
   methods: {
     dateHandler(row, column, cellValue, index) {
       return moment(cellValue).format("YYYY-MM-DD hh:mm:ss")
+    },
+    oneFixed(row, column, cellValue, index) {
+
+      let colName = column.label
+
+      // console.log(row, column, cellValue, '=============ds');
+      return row.defensetotal == 0 ? '--' : Number(cellValue).toFixed(2)
     },
     colorAlartmFn(data) {
 
@@ -381,13 +389,16 @@ export default {
       params.substationName = this.paramsObj.substationName || this.substationName
       TOPNAlarmInfo(params).then(res => {
 
-        this.dataAll = res.data
+        this.dataAll = [...res.data]
 
         this.dataAll.forEach(x => {
+
           x.defensetotal = x.successNum + x.failedNum
-          x.firstAlarm = moment(x.firstAlarm).format("YYYY-MM-DD hh:mm:ss")
-          x.lastAlarm = moment(x.lastAlarm).format("YYYY-MM-DD hh:mm:ss")
+          x.firstAlarm = x.firstAlarm ? moment(x.firstAlarm).format("YYYY-MM-DD hh:mm:ss") : ''
+          x.lastAlarm = x.lastAlarm ? moment(x.lastAlarm).format("YYYY-MM-DD hh:mm:ss") : ''
+          // x.probability = x.defensetotal != 0 ? Number(x.probability).toFixed(2) : '--'
         })
+        // console.log(this.dataAll, res.data, '===========');
         this.tableData = this.dataAll.slice(0, this.pageObj.currentPage * this.pageObj.pageSize)
         this.pageObj.total = this.dataAll.length
 
@@ -545,7 +556,7 @@ export default {
         temp.defensetotal.push(x.defensetotal)
         temp.successNum.push(x.successNum)
         temp.failedNum.push(x.failedNum)
-        temp.probability.push(x.probability)
+        temp.probability.push({ value: x.probability, total: x.defensetotal })
 
         xAxData.push(chuli(x.time))
 
@@ -719,6 +730,28 @@ export default {
               type: "dotted",
               width: 1
             }
+          },
+          formatter: function (params) {
+            let htmlStr = '';
+            for (let i = 0; i < params.length; i++) {
+              let param = params[i];
+              let xName = param.name;//x轴的名称
+              let seriesName = param.seriesName;//图例名称
+
+              let value = (param.data.total == undefined || param.data.total == 0) ? '--' : Number(param.value).toFixed(2);//y轴值
+              let year = param.data.year
+
+              let color = param.color;//图例颜色
+              if (i === 0) {
+                htmlStr += xName + '<br/>';//x轴的名称
+              }
+              htmlStr += '<div style="display:flex;align-items:center">';
+              htmlStr += '<span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:' + color + ';"></span>';//一个点
+              htmlStr += '<div style="display:flex;justify-content: space-between;flex:1" >' + '<span>' + seriesName + '：' + '</span>' + '<span>' + `${value || 0}` + '</span>' + '</div>';//圆点后面显示的文本
+              htmlStr += '</div>';
+            }
+            return htmlStr;
+
           }
         },
 
@@ -767,7 +800,7 @@ export default {
             },
             axisLabel: {
               color: '#D0DEEE',
-              formatter: '{value} 次'
+              formatter: '{value} '
             },
           }
         ],
@@ -838,25 +871,36 @@ export default {
       }
 
       this.paramsObj = a
+      this.paramsObj.period = '年'
       this.queryTable()
     },
     tableToExcel(tableData) {
       const headArr = Object.keys(tableData[0])
-      const titleObj = { time: '日期', successNum: '成功防御次数', failedNum: '防御失败次数', probability: '成功率', defensetotal: '防御总次数', firstAlarm: '首次发生时间', lastAlarm: '最后发生时间' }
+      const titleObj = { time: '日期', defensetotal: '防御总次数', successNum: '成功防御次数', failedNum: '防御失败次数', probability: '成功率', firstAlarm: '首次发生时间', lastAlarm: '最后发生时间' }
+
+      const head = Object.keys(titleObj)
       // 要导出的json数据
       // 列标题
       let str = "<tr>"
-      headArr.forEach((item, index) => {
+      head.forEach((item, index) => {
 
-        str += (index == (headArr.length - 1)) ? `<td>${titleObj[item]}</td></tr>` : `<td>${titleObj[item]}</td>`
+
+        str += (index == (head.length - 1)) ? `<td>${titleObj[item]}</td></tr>` : `<td>${titleObj[item]}</td>`
 
       })
       // 循环遍历，每行加入tr标签，每个单元格加td标签
       for (let i = 0; i < tableData.length; i++) {
         str += '<tr>';
-        for (const key of headArr) {
+        for (const key of head) {
           // 增加\t为了不让表格显示科学计数法或者其他格式
-          str += `<td>${tableData[i][key] + '\t'}</td>`;
+          if (key == 'probability') {
+            str += `<td>${(tableData[i].defensetotal == 0 ? '--' : tableData[i][key]) + '\t'}</td>`;
+          } else {
+
+
+            str += `<td>${tableData[i][key] + '\t'}</td>`;
+          }
+
         }
         str += '</tr>';
       }
@@ -865,14 +909,16 @@ export default {
       const uri = 'data:application/vnd.ms-excel;base64,';
 
       // 下载的表格模板数据
-      const template = `<html xmlns:o="urn:schemas-microsoft-com:office:office" 
-    xmlns:x="urn:schemas-microsoft-com:office:excel" 
-    xmlns="http://www.w3.org/TR/REC-html40">
-    <head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
-    <x:Name>${worksheet}</x:Name>
-    <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
-    </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
-    </head><body><table>${str}</table></body></html>`;
+      const template = `<html
+             xmlns:o="urn:schemas-microsoft-com:office:office" 
+             xmlns:x="urn:schemas-microsoft-com:office:excel"
+        xmlns="http://www.w3.org/TR/REC-html40">
+      <head> <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+          <x:Name>${worksheet}</x:Name>
+          <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+          </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--> </head>
+    <body><table>${str}</table></body>
+      </html>`;
       // 下载模板
 
       // 输出base64编码

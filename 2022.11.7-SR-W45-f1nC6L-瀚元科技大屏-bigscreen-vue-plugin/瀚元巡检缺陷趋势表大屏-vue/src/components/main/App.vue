@@ -57,16 +57,16 @@
         <div class="alarmt_two_main">
           <div class="alarmt_two_main_echart">
             <div class="alarmt_two_main_echart_title border_title">
-              缺陷发现率(%)（{{ period }}）
+              缺陷发现率(%)（{{ titlePiod }}）
             </div>
             <div class="alarmt_two_main_echart_main" ref="alarmt_echart_top"></div>
             <div class="alarmt_two_main_echart_title border_title" style="margin-top: 20px">
-              缺陷数量(个)（{{ period }}）
+              缺陷数量(个)（{{ titlePiod }}）
             </div>
             <div class="alarmt_two_main_echart_main" ref="alarmt_echart_bot"></div>
           </div>
           <div class="alarmt_two_main_table">
-            <div class="alarmt_two_main_table_title  border_title">告警信息级别
+            <div class="alarmt_two_main_table_title  border_title">巡检缺陷表
               <button class="alarmt_two_main_button" @click="tableToExcel(tableData)">导出</button>
             </div>
             <div ref="alarmt_main_tow" class="alarmt_two_main_table_main">
@@ -77,7 +77,7 @@
                 <el-table-column prop="total" label="任务执行次数"></el-table-column>
                 <el-table-column prop="findFlawNum" label="发现缺陷次数"></el-table-column>
                 <el-table-column prop="flawNum" label="缺陷数量"></el-table-column>
-                <el-table-column prop="probability" label="发现缺陷比率(%)"></el-table-column>
+                <el-table-column prop="probability" :formatter="oneFixed" label="发现缺陷比率(%)"></el-table-column>
               </el-table>
               <div class="page_two" style="margin-top:16px">
                 <el-pagination popper-class="two_options" background layout="sizes, total, pager, jumper"
@@ -133,6 +133,7 @@ export default {
       dataAll: [],
       pageObj: { currentPage: 1, pageSize: 10, total: null },
       period: "年",
+      titlePiod: '年',
       periodOption: [
         {
           label: "最近一年",
@@ -182,7 +183,7 @@ export default {
       handler(val) {
 
         if (this.provinceData.length == 0) return
-        if (val == '' || val == undefined || val.province_name == undefined) return
+
         this.citySelect = {};
         this.cityOption = [];
         this.stationSelect = {};
@@ -198,18 +199,14 @@ export default {
             this.stationOption.push(item);
           }
         });
-
         if (!this.city && !this.substationName && this.province) this.searchTable()
       },
 
-      // immediate: true,
       deep: true
     },
     'citySelect': {
       handler(val) {
 
-        if (!this.provinceData.length == 0) return
-        if (val == '' || val == undefined || val.city_name == undefined) return
         this.stationSelect = {};
         this.stationOption = [];
 
@@ -218,6 +215,7 @@ export default {
             this.stationOption.push(item);
           }
         });
+
         if (this.city && !this.substationName) this.searchTable()
       },
 
@@ -282,10 +280,10 @@ export default {
           return x.province_id == this.province
         })
       }
-
-      this.stationSelect = substationOp
       this.provinceSelect = provinceOp
       this.citySelect = cityOp
+      this.stationSelect = substationOp
+
     });
     this.pubSub &&
       this.pubSub.subscribe(
@@ -309,10 +307,12 @@ export default {
             return x.substation_no == this.substationName
           })
 
-
-          this.stationSelect = substationOp
           this.provinceSelect = provinceOp
           this.citySelect = cityOp
+          this.stationSelect = substationOp
+
+
+          if (data?.variable?.current_value === '' || data?.variable?.default_value === '') this.searchTable()
         }
       );
     window.componentCenter?.register &&
@@ -367,6 +367,7 @@ export default {
         // pageSize: this.pageSize || "", //页面数据条数  数字
         // pageNo: this.pageNo || "", //页码  数字
       };
+      this.titlePiod = this.period
       this.newLineChart(message)
     },
     reloadSearch() {
@@ -427,7 +428,9 @@ export default {
 
 
         this.dataAll = res.data.map(x => {
-          x.time = moment(x.time).format(dateStr)
+          x.time = x.time ? moment(x.time).format(dateStr) : ''
+          //TODO
+          // x.probability = x.total == 0 ? '--' : Number(x.probability).toFixed(2)
           return x;
         })
         // this.total = res.data.total;
@@ -440,7 +443,8 @@ export default {
         this.dataAll.forEach(x => {
           this.legendData.push(chuli(x.time))
           this.flawNumData.push(x.flawNum)
-          this.probabilityData.push(x.probability)
+          // this.probabilityData.push(x.probability)
+          this.probabilityData.push({ value: x.probability, total: x.total })
         })
 
 
@@ -464,21 +468,26 @@ export default {
 
     tableToExcel(tableData) {
       const headArr = ['time', 'total', 'Execute', 'noExecute', 'probability']
-      const titleObj = { time: '日期', total: '任务总次数', Execute: '任务执行次数', noExecute: '未执行次数', probability: '任务执行率(%)' }
+      let tableData2 = JSON.parse(JSON.stringify(tableData))
+      tableData2.forEach((x, i) => {
+        x.probability = x.total == 0 ? '--' : Number(x.probability).toFixed(2)
+      })
+      const titleObj = { time: '日期', total: '任务执行次数', findFlawNum: '发现缺陷次数', flawNum: '缺陷数量', probability: '发现缺陷比率(%)' }
       // 要导出的json数据
       // 列标题
+      const head = Object.keys(titleObj)
       let str = "<tr>"
-      headArr.forEach((item, index) => {
+      head.forEach((item, index) => {
 
-        str += (index == (headArr.length - 1)) ? `<td>${titleObj[item]}</td></tr>` : `<td>${titleObj[item]}</td>`
+        str += (index == (head.length - 1)) ? `<td>${titleObj[item]}</td></tr>` : `<td>${titleObj[item]}</td>`
 
       })
       // 循环遍历，每行加入tr标签，每个单元格加td标签
-      for (let i = 0; i < tableData.length; i++) {
+      for (let i = 0; i < tableData2.length; i++) {
         str += '<tr>';
-        for (const key of headArr) {
+        for (const key of head) {
           // 增加\t为了不让表格显示科学计数法或者其他格式
-          str += `<td>${tableData[i][key] + '\t'}</td>`;
+          str += `<td>${tableData2[i][key] + '\t'}</td>`;
         }
         str += '</tr>';
       }
@@ -528,6 +537,14 @@ export default {
       this.tableData = this.dataAll.slice((pageNum - 1) * pageSize, (pageNum - 1) * pageSize + pageSize)
       // this.initEchartFn(this.tableData)
     },
+
+    oneFixed(row, column, cellValue, index) {
+
+      let colName = column.label
+
+      // console.log(row, column, cellValue, '=============ds');
+      return row.total == 0 ? '--' : Number(cellValue).toFixed(2)
+    },
     initEchartFn() {
       if (this.myChart !== null && this.myChart !== "" && this.myChart !== undefined) {
         this.myChart.dispose();//销毁
@@ -544,6 +561,28 @@ export default {
               type: "dotted",
               width: 1
             }
+          },
+          formatter: function (params) {
+            let htmlStr = '';
+            for (let i = 0; i < params.length; i++) {
+              let param = params[i];
+              let xName = param.name;//x轴的名称
+              let seriesName = param.seriesName;//图例名称
+
+              let value = (param.data.total == undefined || param.data.total == 0) ? '--' : Number(param.value).toFixed(2);//y轴值
+              let year = param.data.year
+
+              let color = param.color;//图例颜色
+              if (i === 0) {
+                htmlStr += xName + '<br/>';//x轴的名称
+              }
+              htmlStr += '<div style="display:flex;align-items:center">';
+              htmlStr += '<span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:' + color + ';"></span>';//一个点
+              htmlStr += '<div style="display:flex;justify-content: space-between;flex:1" >' + '<span>' + seriesName + '：' + '</span>' + '<span>' + `${value || 0}` + '</span>' + '</div>';//圆点后面显示的文本
+              htmlStr += '</div>';
+            }
+            return htmlStr;
+
           }
         },
         legend: {

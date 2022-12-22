@@ -64,7 +64,7 @@
         <div class="alarmt_two_main">
           <div class="alarmt_two_main_echart">
             <div class="alarmt_two_main_echart_title border_title">
-              防御结果分时统计（{{ paramsObj.period || '年' }}）
+              防御结果分时统计（{{ period || '年' }}）
             </div>
             <div class="alarmt_two_main_echart_main" ref="alarmt_echart"></div>
 
@@ -169,9 +169,10 @@ export default {
       { value: 12, label: '最近一年' },
       { value: 24, label: '最近两年' },
       ],
+      period: '年',
       totalArr: {},
-      Gechart: null,
-      paramsObj: { province: '', city: '', substationName: '', period: '' }
+      GechartE: null,
+      paramsObj: { province: '', city: '', substationName: '', period: 24 }
     };
   },
   props: {
@@ -236,7 +237,7 @@ export default {
     'paramsObj.province': {
       handler(val) {
         if (!this.totalArr.substationOp) return
-        if (val == '' || val == undefined) return
+
         let substationOp = this.totalArr.substationOp
         this.substationOp = substationOp.filter((x, i) => {
 
@@ -263,7 +264,7 @@ export default {
     'paramsObj.city': {
       handler(val) {
         if (!this.totalArr.substationOp) return
-        if (val == '' || val == undefined) return
+
         let substationOp = this.totalArr.substationOp
         this.substationOp = substationOp.filter((x, i) => {
           let filed = String(x.id)
@@ -294,7 +295,8 @@ export default {
     //   console.log('this.tableHeight', this.tableHeight);
     // })
 
-
+    let date = { 0: '周', 1: '月', 3: '季度', 6: '半年', 12: '年', 24: '两年' }
+    this.period = date[this.paramsObj.period]
     this.pubSub &&
       this.pubSub.subscribe(
         "updateChart" + this.componentId,
@@ -326,6 +328,7 @@ export default {
           this.paramsObj.substationName = substationOp?.value
           this.paramsObj.province = provinceOp?.value
           this.paramsObj.city = cityOp?.value
+          if (data?.variable?.current_value === '' || data?.variable?.default_value === '') this.queryTable()
         }
       );
     window.componentCenter?.register &&
@@ -376,6 +379,8 @@ export default {
       params.province = this.paramsObj.province || this.province
       params.city = this.paramsObj.city || this.city
       params.substationName = this.paramsObj.substationName || this.substationName
+      let date = { 0: '周', 1: '月', 3: '季度', 6: '半年', 12: '年', 24: '两年' }
+      this.period = date[this.paramsObj.period]
       TOPNAlarmInfo(params).then(res => {
         this.echartsDat = res.data
         this.timeAll = JSON.parse(JSON.stringify(timeAll))
@@ -424,6 +429,7 @@ export default {
         let tab = []
 
         this.timeAll.forEach((x, i) => {
+          x.probability = x.probability == '--' ? x.probability : Number(x.probability).toFixed(2)
           a.push(x)
           if ((i + 1) % 8 == 0) {
             tab.push(a)
@@ -489,6 +495,7 @@ export default {
         this.paramsObj.substationName = substationOp?.value
         this.paramsObj.province = provinceOp?.value
         this.paramsObj.city = cityOp?.value
+        if (data?.variable?.current_value === '' || data?.variable?.default_value === '') this.queryTable()
       }).catch(err => {
         console.log(err);
       })
@@ -607,7 +614,7 @@ export default {
         ],
         series: [
           {
-            name: '防御分时',
+            name: '防御成功次数',
             type: 'line',
             smooth: true,
             showSymbol: false,
@@ -655,12 +662,12 @@ export default {
         ]
       };
 
-      this.Gechart = echarts.init(this.$refs.alarmt_echart);
+      this.GechartE = echarts.init(this.$refs.alarmt_echart);
 
-      this.Gechart.setOption(option);
-
+      this.GechartE.setOption(option);
+      this.GechartE.resize()
       const task = () => {
-        this.Gechart.resize();
+        this.GechartE.resize();
 
       };
       window.addEventListener("resize", debounce(task, 300));
@@ -679,6 +686,9 @@ export default {
       }
 
       this.paramsObj = a
+      this.paramsObj.period = 24
+      let date = { 0: '周', 1: '月', 3: '季度', 6: '半年', 12: '年', 24: '两年' }
+      this.period = date[this.paramsObj.period]
       this.queryTable()
     },
     tableToExcel(tableData) {
@@ -706,14 +716,16 @@ export default {
       const uri = 'data:application/vnd.ms-excel;base64,';
 
       // 下载的表格模板数据
-      const template = `<html xmlns:o="urn:schemas-microsoft-com:office:office" 
-    xmlns:x="urn:schemas-microsoft-com:office:excel" 
-    xmlns="http://www.w3.org/TR/REC-html40">
-    <head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
-    <x:Name>${worksheet}</x:Name>
-    <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
-    </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
-    </head><body><table>${str}</table></body></html>`;
+      const template = `<html
+             xmlns:o="urn:schemas-microsoft-com:office:office" 
+             xmlns:x="urn:schemas-microsoft-com:office:excel"
+        xmlns="http://www.w3.org/TR/REC-html40">
+      <head> <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+          <x:Name>${worksheet}</x:Name>
+          <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+          </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--> </head>
+    <body><table>${str}</table></body>
+      </html>`;
       // 下载模板
 
       // 输出base64编码
@@ -731,8 +743,8 @@ export default {
       a.click();
     },
     do_EventCenter_setValue(value) {
-      this.Gechart.resize();
-      this.Gechart2.resize();
+      this.GechartE.resize();
+      // this.GechartE2.resize();
 
     },
     Event_Center_getName: () => {

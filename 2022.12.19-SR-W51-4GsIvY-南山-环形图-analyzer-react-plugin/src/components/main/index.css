@@ -1,0 +1,37 @@
+.echartsInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.echartsInfo div:first-child {
+  margin-bottom: 10%;
+  display: flex;
+}
+.echartsInfo div:last-child {
+  display: flex;
+}
+.echartsInfo .colorBox {
+  height: 100%;
+  width: 50%;
+  display: flex;
+}
+.echartsInfo .colorBox div {
+  height: 0;
+  width: 15%;
+  padding-top: 15%;
+  border-radius: 10%;
+  margin: auto 0;
+  margin-left: 15%;
+}
+.echartsInfo .colorBox span {
+  margin: auto;
+}
+.echartsInfo .numBox {
+  height: 100%;
+  width: 50%;
+  display: flex;
+}
+.echartsInfo .numBox span {
+  margin: auto;
+  font-weight: 700;
+}

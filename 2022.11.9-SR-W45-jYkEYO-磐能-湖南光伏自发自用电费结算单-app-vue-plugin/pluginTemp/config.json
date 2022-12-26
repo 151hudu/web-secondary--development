@@ -1,7 +1,7 @@
 {
-  "id": "5e962462-d59b-4b5f-9ac6-16b015243e00",
+  "id": "60915043-ae62-4c80-931e-5811e5733ab2",
   "type": "app",
-  "main": "app.fa4b885e.js",
+  "main": "app.e032f793.js",
   "version": "2",
   "props": {
     "type": "customize",
@@ -12,7 +12,7 @@
     "css_script": [],
     "customconf": [
       "id",
-      "buttons"
+      "导出地址前面部分"
     ]
   }
 }

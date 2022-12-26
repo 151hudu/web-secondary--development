@@ -344,7 +344,7 @@ export default {
       longitude: "",
       multipleSelection: "",
       tableColData: {},
-      stationID: 1,
+      stationID: "",
       weatherInfo: "",
       imgss: DefaultIcon,
       resRichu: "",
@@ -609,12 +609,14 @@ export default {
       });
     },
     queryLeftData() {
+      console.log(this.getSearch(window.location.search).SearchTreeSelectedKey, 612);
       let message = {
         stationId: this.stationID || this.getSearch(window.location.search).SearchTreeSelectedKey,
       };
       queryLeftData(message).then((res) => {
-        console.log(res);
+        console.log(res, 616);
         this.queryLeftDataRes = res.data;
+        this.$forceUpdate();
       });
     },
     queryPowerData(e) {
@@ -1748,7 +1750,7 @@ export default {
       try {
         let userid = window?.currentUser ? window?.currentUser.id : "1234567890";
         // let url = `ws://${window.location.host}/sdata/webSocket/` + userid;
-        let url = `ws://122.112.210.100:15933/`;
+        let url = this.customConfig?.WS地址 || `ws://122.112.210.100:15933/`;
         console.log("-----前端开始连接websocket-----", url);
         websocket = new WebSocket(url);
         websocket.onerror = (e) => {
@@ -1891,12 +1893,12 @@ export default {
       this.queryApplyTableData();
     },
     formatDate(row) {
-      console.log(row,1894);
+      console.log(row, 1894);
       if (row) {
         const date = new Date(row);
         const Y = date.getFullYear() + "-";
         const M = date.getMonth() + 1 + "-";
-        const D = date.getDate() < 10 ? '0' + date.getDate() + " " : date.getDate() + " ";
+        const D = date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + " ";
         const h = (date.getHours() + ":").padStart(3, "0");
         const m = (date.getMinutes() + ":").padStart(3, "0");
         const s = (date.getSeconds() + "").padStart(2, "0");

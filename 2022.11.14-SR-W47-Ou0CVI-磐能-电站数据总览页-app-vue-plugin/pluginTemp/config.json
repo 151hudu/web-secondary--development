@@ -1,7 +1,7 @@
 {
-  "id": "1076e634-2991-4f36-9e43-832bf5854b30",
+  "id": "45560046-c9b7-453b-bcaa-3b46f140280e",
   "type": "app",
-  "main": "app.ebaa945d.js",
+  "main": "app.4c6b33e1.js",
   "version": "2",
   "props": {
     "type": "customize",
@@ -15,7 +15,8 @@
       "一次接线图跳转",
       "通讯拓补图跳转",
       "图例跳转",
-      "view_id"
+      "view_id",
+      "WS地址"
     ]
   },
   "requirement-number": "SR-W47-Ou0CVI",

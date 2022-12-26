@@ -1,0 +1,22 @@
+{
+  "id": "31b909c9-8bd7-40fe-9e10-380f3e162805",
+  "type": "bigscreen",
+  "main": "app.923ca305.js",
+  "version": "2",
+  "requirement-number": "SR-W50-YxtN3m",
+  "requirement-name": "单元格合并的定制化表格",
+  "props": {
+    "img": "APP_0001.png",
+    "disableimg": "disabled_custom_table.png",
+    "name": "Vue版本的演示Demo",
+    "className": "className-demo",
+    "configuration": [
+      "style",
+      "data",
+      "other"
+    ],
+    "vars": [
+      "id"
+    ]
+  }
+}

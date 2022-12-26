@@ -7,10 +7,10 @@
     </div>
     <div class="settlement-details">
       <div class="button-line" v-show="activeShow">
-        <img src="../pluginTemp/images/export.png" style="cursor: pointer" @click="exportExcel('D')" alt="" />
+        <img src="../pluginTemp/images/export.png" style="cursor: pointer" @click="saveTable('D')" alt="" />
       </div>
       <div class="button-line" v-show="!activeShow">
-        <img src="../pluginTemp/images/export.png" style="cursor: pointer" @click="exportExcel('B')" alt="" />
+        <img src="../pluginTemp/images/export.png" style="cursor: pointer" @click="saveTable('B')" alt="" />
       </div>
       <div class="top_Title" v-show="activeShow">光伏自发自用电费账单</div>
       <div class="top_Title" v-show="!activeShow">光伏计量表表码值明细</div>
@@ -20,13 +20,13 @@
       </div>
       <div class="topInfoText" v-show="!activeShow">
         <span></span>
-        <span>计量周期：{{ this.formatDate(this.excelAllData.bill_start_time) }}~{{ this.formatDate(this.excelAllData.bill_start_time) }}</span>
+        <span>计量周期：{{ this.excelAllData.settlement_cycle }}</span>
       </div>
       <div class="top_Info" v-show="activeShow">
         <div style="width: 310px; color: #000" class="info-label">发电单位</div>
         <div style="width: 310px; color: #000">{{ this.excelAllData.generating_unit }}</div>
         <div style="width: 310px; color: #000" class="info-label">电站名称</div>
-        <div style="width: 310px; color: #000">{{ this.excelAllData.power_cell_name }}</div>
+        <div style="width: 310px; color: #000">{{ this.excelAllData.power_station }}</div>
         <div style="width: 310px; color: #000" class="info-label">结算方式</div>
         <div style="width: calc(100% - 1550px); color: #000" class="div_Right">
           {{ this.excelAllData.settlement_type }}
@@ -192,7 +192,7 @@
         <span>自发自用电量明细：</span>
       </div>
       <div class="bottomTable" v-show="activeShow">
-        <el-table :data="tableData.t_monthly_electricity_bill_details" border class="bottomTable" :header-cell-style="headerCellStyle" :cell-style="cellStyle" :row-class-name="tableRowClassName">
+        <el-table :data="tableData.t_monthly_electricity_bill_details" border class="bottomTable" :header-cell-style="headerCellStyle" :cell-style="cellStyle">
           <el-table-column prop="dnbmc" label="电能表名称" width="310" />
           <el-table-column prop="bjzc_no" label="表计资产号" width="310" />
           <el-table-column prop="data_value_j" :render-header="renderHeader" label="“尖”|(kWh)" width="232.5" :formatter="data_value_jSum"></el-table-column>
@@ -546,11 +546,11 @@ export default {
               let a = document.createElement("a");
               let event = new MouseEvent("click");
               if (type == "D") {
-                a.href = `${window.location.origin}${res.data}`;
+                a.href = `${this.customConfig.导出地址前面部分 ? this.customConfig.导出地址前面部分 : window.location.origin + "/dtyq/pngf"}${res.data}`;
                 a.download = "光伏自发自用电费账单.xlsx";
                 a.dispatchEvent(event);
               } else {
-                a.href = `${window.location.origin}${res.data}`;
+                a.href = `${this.customConfig.导出地址前面部分 ? this.customConfig.导出地址前面部分 : window.location.origin + "/dtyq/pngf"}${res.data}`;
                 a.download = "光伏计量表表码值明细.xlsx";
                 a.dispatchEvent(event);
               }
@@ -577,7 +577,7 @@ export default {
         }, 200);
       }
     },
-    saveTable() {
+    saveTable(flag) {
       for (let k = 0; k < this.tableData.t_monthly_bill_details_new.length; k++) {
         console.log(this.tableData["t_monthly_bill_details_new"][k].lastnum_f_edit);
         delete this.tableData["t_monthly_bill_details_new"][k].lastnum_j_edit;
@@ -593,7 +593,6 @@ export default {
         // delete item.lastnum_g_edit;
         // delete item.lastnum_all_edit;
       });
-
       // this.excelAllData.childData[0].t_monthly_bill_list = this.tableData.t_monthly_bill_list;
       // this.excelAllData.childData[0].childTableName = "t_monthly_bill_list";
       // this.excelAllData.childData[1].t_monthly_electricity_bill_details = this.tableData.t_monthly_electricity_bill_details;
@@ -622,11 +621,13 @@ export default {
         form_id: this.GetQueryString("form_id"),
         id: this.GetQueryString("data_id"),
       };
-      console.log(this.excelAllData);
       saveData(message, this.excelAllData)
         .then((res) => {
           if (res.status == 200) {
             this.queryDataDetailFunc(false);
+            if (flag) {
+              this.exportExcel(flag);
+            }
             return this.$message({
               message: "更新成功",
               type: "success",
@@ -1219,14 +1220,6 @@ export default {
     setValue(value) {
       this.selected = value;
     },
-
-    tableRowClassName({row}) {
-      const { dnbmc } = row;
-      if (['发电量合计', '自发自用电量'].includes(dnbmc)) {
-        return "row_blod";
-      }
-      return ''
-    }
   },
   destroyed() {
     //必需，不可删除
@@ -1443,8 +1436,5 @@ input[type="number"] {
 }
 .el-table--scrollable-x .el-table__body-wrapper {
   overflow: visible;
-}
-.row_blod{
-  font-weight: bold;
 }
 </style>

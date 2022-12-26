@@ -1,0 +1,14 @@
+{
+  "id": "572b5197-4dc0-40d1-996c-f5f91d1a2add",
+  "type": "reporting",
+  "main": "app.ff19f10f.js",
+  "version": "2",
+  "props": {
+    "styleArr": "[\"title\",\"key\", \"eventCenterConfig\"]",
+    "columnStyle": "{title:'自定义'}",
+    "componentAttributes": "{\"style\":[\"title\"],\"data\":[\"key\"],\"interaction\":[\"eventCenterConfig\"]}",
+    "assetColumnList": "[{\"col_name\":\"自定义\",\"col_datatype\":0}]"
+  },
+  "requirement-number": "SR-W52-C9cCgj",
+  "requirement-name": "详情页中支持播放视频"
+}

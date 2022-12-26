@@ -16,6 +16,7 @@ export default {
   props: {
     type: String,
     customConfig: Object,
+    intlGetKey: Function
   },
   components: {
     Set,

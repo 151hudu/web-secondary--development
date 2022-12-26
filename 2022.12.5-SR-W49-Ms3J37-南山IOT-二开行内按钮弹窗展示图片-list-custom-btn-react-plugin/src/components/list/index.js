@@ -47,7 +47,7 @@ const List = (props) => {
         str = el.value.value
       }
     });
-    if (str === '' || str.trim() === '') {
+    if (str === '') {
       return false;
     }
     imgSets(str)

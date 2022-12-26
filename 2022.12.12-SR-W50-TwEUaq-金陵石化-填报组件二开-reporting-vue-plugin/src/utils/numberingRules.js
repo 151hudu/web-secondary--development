@@ -21,5 +21,5 @@ export const get_NumberingRules = (year, unitNo, planType, serialNumber, planNum
       month.length < 1 ? (number = "0" + month) : (number = month);
    }
 
-   return `${year}-${unitNo}${projectCategory}${number}-${serialNumber}`;
+   return `${year}-${unitNo}${projectCategory}${number}`;
 }

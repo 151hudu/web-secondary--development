@@ -13,13 +13,13 @@
          :visible.sync="tableDialogVisible"
          :append-to-body="true"
          custom-class="table_dialog"
-         width="70%"
+         width="85%"
          :show-close="false"
          :close-on-press-escape="false"
          :close-on-click-modal="false"
       >
          <!-- 表格 -->
-         <el-table :data="tableDialogData" ref="multipleTable" :row-class-name="tableRowClassName" height="405px" row-key="data_id" @selection-change="selectTabel">
+         <el-table :data="tableDialogData" ref="multipleTable" :row-class-name="tableRowClassName" height="405px" :row-key="saveField" @selection-change="selectTabel">
             <el-table-column type="selection" width="55" align="center" reserve-selection></el-table-column>
             <el-table-column type="index" label="序号" width="55" align="center"></el-table-column>
             <el-table-column property="substation_no" label="站点编号" align="center" show-overflow-tooltip></el-table-column>
@@ -120,9 +120,9 @@ export default {
          // 拼接规则
          this.saveField = columnStyle.saveField;
       } else {
-         this.assetId = "dc5cbd7d-b319-588b-bd13-96c1b8fbc41f";
+         this.assetId = "ea7c9900-0652-a5a0-2f11-194074ec2957";
          this.showField = "substation_name";
-         this.saveField = "data_id";
+         this.saveField = "substation_no";
       }
    },
 

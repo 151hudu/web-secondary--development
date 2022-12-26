@@ -38,11 +38,65 @@ if (process.env.NODE_ENV !== "production") {
     { title: "列表页组件", type: "table" },
     { title: "详情页组件", type: "preview" }
   ];
-  let temp = []
+  let temp = [{
+    "data_id": "",
+    "plan_name": "计划计划",
+    "plan_number": "2022-301W01",
+    "plan_type": "月度",
+    "applicant": "1234567890",
+    "applicant_unit": "123456789",
+    "subunit": "",
+    "applicant_date": "2022-12-23",
+    "quality_record_number": "AWF323434",
+    "mode_type": "Plan",
+    "tasks": [{
+      "data_id": "",
+      "project_name": "任务aaa",
+      "project_type": "A",
+      "parent_id": "",
+      "function_area": "区域1",
+      "associated_devices": "设备1",
+      "requirement_for_construction": "标准11",
+      "remark": "备注",
+      "file": "/stopere/werere/sd.pdf",
+      "mode_type": "Task",
+      "procedures": [{
+        "data_id": "",
+        "process_name": "工序1vbbb",
+        "remark": "",
+        "parent_id": "",
+        "mode_type": "Procedure",
+        "steps": [{
+          "data_id": "",
+          "process_desc": "步骤1awd",
+          "parent_id": "",
+          "unit_engineering_quantity": "小时",
+          "quantity_engineering_quantity": "3",
+          "mode_type": "Step"
+        }],
+        "materials": [{
+          "data_id": "",
+          "parent_id": "",
+          "material_name": "物料Aad",
+          "material_code": "ASF334",
+          "standard_materials": "标准AB",
+          "additional_note": "备注",
+          "main_unit": "个",
+          "auxiliary_unit": "个",
+          "material_demand": "3",
+          "material_purchase_main": "",
+          "material_purchase_auxiliary": "",
+          "whether_workshop_supply": "",
+          "mode_type": "Material"
+        }]
+      }
+      ]
+    }]
+  }]
   const customConfig = {
     componentId: "111",
-    // data: JSON.stringify(temp),
-    data: '',
+    data: JSON.stringify(temp),
+    // data: '',
     saveValue: [],
     component: {
       columnStyle: {

@@ -1,0 +1,179 @@
+// 整体
+.outermost {
+   width: 100%;
+   height: 100%;
+}
+
+// 外层弹窗
+.dialog_outer {
+   // 弹窗整体
+   .el-dialog {
+      width: 55%;
+      height: 630px;
+      overflow-y: auto;
+      overflow-x: hidden;
+   }
+   // 弹窗标题区域
+   .el-dialog__header {
+      padding: 5px;
+   }
+   // 弹窗体
+   .el-dialog__body {
+      padding: 30px 30px 0 30px;
+   }
+}
+// 外层表格
+.outer_table {
+   // 表格单元格
+   .el-table .el-table__cell {
+      padding: 4px 0 !important;
+   }
+   // 新增按钮
+   .outer_addbutton {
+      margin-top: 10px;
+      width: 100%;
+   }
+}
+// 单位转换 & 转换关系
+.outer_conversion_box {
+   margin: 20px 0;
+   height: 90px;
+   .el-row {
+      margin: 10px 0;
+   }
+   // 单位转换标题
+   .box_unit_title {
+      height: 40px;
+      line-height: 40px;
+      font-size: 16px;
+      text-align: center;
+      font-weight: bold;
+   }
+   // 单位转换行样式
+   .box_unit_row {
+      display: flex;
+      div {
+         width: 85px;
+         height: 40px;
+         line-height: 40px;
+         text-align: center;
+      }
+      .el-input {
+         width: 100%;
+      }
+   }
+}
+// 外层汇总计算按钮
+.outer_summy_button {
+   width: 100%;
+   // 按钮
+   .el-button {
+      padding: 9px 25px;
+   }
+}
+// 外层汇总计算
+.outer_summy_box {
+   margin-top: 20px;
+   // 行样式
+   .outer_input {
+      width: 100%;
+      display: flex;
+      margin: 20px 0;
+      height: 40px;
+      line-height: 40px;
+      div:nth-child(1) {
+         margin-left: 30px;
+         width: 170px;
+         box-sizing: border-box;
+      }
+      div:nth-child(2) {
+         width: 50%;
+      }
+   }
+}
+// 内层弹窗整体
+.dialog_inner {
+   // 弹窗整体
+   .el-dialog {
+      width: 45%;
+      height: 580px;
+      margin-top: 17vh !important;
+      overflow-y: auto;
+      overflow-x: hidden;
+   }
+   // 弹窗标题区域
+   .el-dialog__header {
+      padding: 5px;
+   }
+   // 弹窗体
+   .el-dialog__body {
+      padding: 30px 30px 0 30px;
+   }
+   // 内层选择器标题
+   .inner_select_title {
+      div {
+         text-align: center;
+         height: 40px;
+         line-height: 40px;
+      }
+   }
+   // 内层选择器
+   .inner_select {
+      .el-select {
+         width: 100%;
+      }
+   }
+   // 公式模板
+   .inner_template {
+      display: flex;
+      height: 40px;
+      line-height: 40px;
+      margin: 20px 0;
+      div:nth-child(1) {
+         text-align: center;
+         font-weight: bold;
+      }
+   }
+
+   // 参数
+   .inner_params,
+   .inner_remarks {
+      .title {
+         height: 40px;
+         line-height: 40px;
+         text-align: center;
+      }
+      .row_box {
+         padding-left: 80px !important;
+         box-sizing: border-box;
+      }
+      .params_content {
+         display: flex;
+         margin: 10px 0;
+         padding: 0 !important;
+         .content_title {
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+         }
+      }
+   }
+   // 备注
+   .inner_remarks {
+      .row_box {
+         height: 40px;
+         line-height: 40px;
+      }
+   }
+}
+// 外层底部按钮
+.outer_button {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   // 按钮
+   .el-button {
+      margin: 0 20px;
+      padding: 9px 30px;
+   }
+}

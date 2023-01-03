@@ -20,8 +20,12 @@ export const queryDevices = () =>
 export const queryFunArea = () =>
   request.get(`ext/plan/apply/queryFunArea`);  //查询功能区域  
 
-export const queryMaterials = () =>
-  request.get(`ext/plan/apply/queryMaterials`);  //查询物料  
+// export const queryMaterials = () =>
+//   request.get(`ext/plan/apply/queryMaterials`);  //查询物料  
+
+export const queryMaterials = (params) =>
+  request.post(`ext/plan/apply/queryMaterials`, params);  //查询物料    
+
 
 export const queryOfficeUser = (value) =>
   request.post(`/system/office/queryOfficeUser`, {
@@ -42,7 +46,7 @@ export const puginImport = params =>
 *  name 数据字典类型  plan_type_dictId 计划类型 quality_record_number_dictId 质量编号
 */
 export const getDictId = params =>
-  request.get(`system/config/queryConfig?type=plan_apply&name=${params}`);
+  request.get(`system/config/queryConfig?type=${params.type}&name=${params.name}`);
 
 /*
 *  dictId 数据字典类型
@@ -55,12 +59,6 @@ export const queryDict = params =>
 */
 export const queryPlanNumber = params =>
   request.get(`ext/plan/apply/queryPlanNumber?year=${params}`);
-
-/*
-*  子单位查询
-*/
-export const queryzidanwei = params =>
-  request.post(`system/office/queryOfficeUser`, {type: "office",value: "9d2035cd-e639-4b1b-8e99-2c3e556a8198",varibleType:'values'});
 
 /*
 *  excel查询回填数据
@@ -79,3 +77,23 @@ export const templateSave = params =>
 */
 export const templateQuery = templateNo =>
   request.get(`ext/spreadjs/template/query?templateNo=${templateNo}`);
+
+/*
+*  用户组件查询
+*/
+export const queryAdmin = params =>
+  // request.post(`system/office/queryOfficeUserV2`, { type: "role", value: "97dffc6b-28a6-434c-8dd5-2ebee4779f07" });
+  request.post(`system/office/queryOfficeUserV2`, params);
+
+
+/*
+*  用户组件查询
+*/
+export const querySelsctAdmin = params =>
+  request.get(`/ext/plan/apply/queryUser?userId=${params}`);
+
+/*
+*  施工单位
+*/
+export const queryConstructionCompany = params =>
+  request.get(`/ext/plan/apply/queryConstructionCompany`);

@@ -5,6 +5,4 @@ import request from "./request";
  * @param id 资产ID
  *
  */
-export const queryAssetById = (id, count = 200) =>
-  request.post(`/asset/getAssetData?asset_id=${id}&count=${count}`, { filters: [] });
-
+export const queryAssetById = (id, count = 99999, dataForm) => request.post(`/asset/getAssetData?asset_id=${id}&count=${count}`, { filters: dataForm });

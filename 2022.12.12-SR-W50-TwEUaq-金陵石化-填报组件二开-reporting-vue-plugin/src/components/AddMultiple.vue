@@ -38,11 +38,11 @@ export default {
       this.data = [e, this.data[1]];
     },
   },
-  watch: {
-    data(newVal) {
-      this.customConfig.onChange(newVal);
-    },
-  },
+  // watch: {
+  //   data(newVal) {
+  //     this.customConfig.onChange(newVal);
+  //   },
+  // },
 };
 </script>
 

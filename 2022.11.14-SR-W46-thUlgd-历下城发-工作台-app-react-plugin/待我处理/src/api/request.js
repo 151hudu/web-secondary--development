@@ -2,7 +2,8 @@ import axios from "axios";
 import qs from "querystringify";
 
 if (process.env.NODE_ENV === "development") {
-   document.cookie = "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY3MDU4MDk3NjM1NywidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.IuZUcgkUfBn16vMo8OQRomITObhPNTVJQJhrtBHzOIQ";
+   document.cookie =
+      "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY3MjIzMTM0NDAxMiwidXNlcklkIjoiM2NkZWEzNTAtN2Q0Ny00YjVjLWJhMzYtODkzNWRlOGE4NGZlIn0.CYoIjG1o6F4-NZ97h0MwxxklBRjCr0tAmuIzjrK5cpY";
 }
 
 const instance = axios.create({

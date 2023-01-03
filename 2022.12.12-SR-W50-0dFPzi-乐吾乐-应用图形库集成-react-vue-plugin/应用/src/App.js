@@ -54,6 +54,7 @@ export default class App extends Component {
          "js/encryption/crypto-3.1.2.min.js",
          "/js/webVideoCtrl.js",
          "/js/rg.js",
+         "/js/stomp.min.js"
       ];
       // this.props?.customConfig?.componentId &&
       // window.componentCenter?.register(
@@ -79,9 +80,16 @@ export default class App extends Component {
       let viewId = this.props?.customConfig?.viewId || qs.parse(window.location.search).data_id || "f524024f2a8a40c1a66d2fd71cd2737d";
       let name = qs.parse(window.location.search).name;
       let type = qs.parse(window.location.search).viewType || "view";
+      // 插入 多个订阅的js, 不涉及多个topic的项目可以去掉
+      let urls = '/storage_area/devops/dataflow/secondary_dev/design/' + viewId + '/topic.js'
+      let script = document.createElement("script");
+      script.setAttribute("type", "text/javascript");
+      script.setAttribute("src", urls);
+      script.setAttribute("async", "");
+      document.getElementsByTagName("body")[0].appendChild(script);
       setTimeout(() => {
          sdTopology("#hyztest", { type: type, publicUrl: publicUrl, viewId, name: name });
-      }, 400);
+      }, 1000);
    }
 
    goToStudy = () => {

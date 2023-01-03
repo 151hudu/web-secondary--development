@@ -172,7 +172,7 @@
       "webpack-dev-server": "3.11.1",
       "webpack-manifest-plugin": "2.2.0",
       "workbox-webpack-plugin": "5.1.4",
-      "topology-sdata": "0.3.3"
+      "topology-sdata": "0.3.6"
    },
    "devDependencies": {
       "adm-zip": "^0.5.4",

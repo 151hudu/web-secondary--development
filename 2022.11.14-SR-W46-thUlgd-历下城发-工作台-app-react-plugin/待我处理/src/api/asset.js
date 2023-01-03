@@ -18,8 +18,8 @@ export const eventRevoke = (id) => request.get(`flow/v2/instance/revoke?id=${id}
 export const deleteEventRevoke = (id) => request.get(`flow/v2/instance/revoke/delete?id=${id}`);
 // 同意
 export const handleAndModify = (dataForm) => request.post(`flow/v2/instance/handleAndModify`, dataForm);
-// 拒绝
-export const unHandleAndModify = (dataForm) => request.post(`flow/v2/instance/handleAndModify`, dataForm);
+// 下拉按钮
+export const handleDropButton = (dataForm) => request.post(`/flow/custom/instance/handleAndModify`, dataForm);
 // 事件类型
 export const queryAllType = () => request.get(`flow/v2/queryAllType`);
 

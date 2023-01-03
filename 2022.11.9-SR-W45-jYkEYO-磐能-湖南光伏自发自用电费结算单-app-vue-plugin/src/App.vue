@@ -25,8 +25,8 @@
       <div class="top_Info" v-show="activeShow">
         <div style="width: 310px; color: #000" class="info-label">发电单位</div>
         <div style="width: 310px; color: #000">{{ this.excelAllData.generating_unit }}</div>
-        <div style="width: 310px; color: #000" class="info-label">电站名称</div>
-        <div style="width: 310px; color: #000">{{ this.excelAllData.power_station }}</div>
+        <div style="width: 310px; color: #000" class="info-label">发电单元名称</div>
+        <div style="width: 310px; color: #000">{{ this.excelAllData.power_cell_name }}</div>
         <div style="width: 310px; color: #000" class="info-label">结算方式</div>
         <div style="width: calc(100% - 1550px); color: #000" class="div_Right">
           {{ this.excelAllData.settlement_type }}
@@ -49,7 +49,7 @@
         <div style="width: 460px; color: #000">{{ this.excelAllData.generating_unit }}</div>
         <div style="width: 230px; color: #000" class="info-label">用电单位</div>
         <div style="width: 375px; color: #000">{{ this.excelAllData.electricity_user }}</div>
-        <div style="width: 115px; color: #000" class="info-label">电站名称</div>
+        <div style="width: 115px; color: #000" class="info-label">发电单元名称</div>
         <div style="width: calc(100% - 1430px); color: #000" class="div_Right">
           {{ this.excelAllData.power_cell_name }}
         </div>

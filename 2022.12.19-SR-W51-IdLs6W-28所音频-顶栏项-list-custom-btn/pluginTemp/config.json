@@ -1,0 +1,15 @@
+{
+  "id": "ad98f1a8-5806-4324-9bab-0a3da938a1b3",
+  "type": "app-top-custom",
+  "main": "main.96d7061b.js",
+  "baseVersion": "V8R4C50SPC210",
+  "version": "2",
+  "props": {
+    "styleArr": "[\"title\",\"height\",\"key\", \"eventCenterConfig\"]",
+    "columnStyle": "{title:'自定义'}",
+    "componentAttributes": "{\"style\":[\"title\",\"height\"],\"data\":[\"key\"],\"interaction\":[\"eventCenterConfig\"]}",
+    "assetColumnList": "[{\"col_name\":\"自定义\",\"col_datatype\":0}]"
+  },
+  "requirement-number": "28所音频下拉菜单",
+  "requirement-name": "SR-W51-IdLs6W"
+}

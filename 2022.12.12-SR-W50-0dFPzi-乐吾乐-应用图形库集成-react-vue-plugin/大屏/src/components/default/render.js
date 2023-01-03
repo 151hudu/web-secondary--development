@@ -149,6 +149,37 @@ function DefaultRender(props) {
       return data.path + "public";
    };
 
+   useEffect(() => {
+      const events = [
+         {
+            key: "boxOnload",
+            name: "容器加载完成",
+            payload: [
+               {
+                  name: "名称",
+                  dataType: "object",
+                  key: "name",
+               },
+            ],
+         },
+      ];
+      const actions = [
+         {
+            key: "randerBox",
+            name: "重新渲染容器",
+            params: [
+               {
+                  key: "value",
+                  name: "值",
+                  dataType: "string",
+               },
+            ],
+         },
+      ];
+      window.componentCenter?.register && window.componentCenter.register(props.componentId, "comp", { Event_Center_getName, do_EventCenter_randerBox }, { events, actions });
+      props?.updateProcess && props.updateProcess();
+   }, []);
+
    useEffect(async () => {
       let urls = "";
       // getUrl()
@@ -192,6 +223,7 @@ function DefaultRender(props) {
          "js/encryption/crypto-3.1.2.min.js",
          "/js/webVideoCtrl.js",
          "/js/rg.js",
+         "/js/stomp.min.js",
       ];
       const file_prefix = process.env.NODE_ENV === "development" ? "" : urls;
       scriptUrl.forEach((el) => {
@@ -203,10 +235,40 @@ function DefaultRender(props) {
       });
       let viewIds = viewId || qs.parse(window.location.search).data_id;
       let name = qs.parse(window.location.search).name;
+      // 插入 多个订阅的js, 不涉及多个topic的项目可以去掉
+      let newUrls = "/storage_area/devops/dataflow/secondary_dev/design/" + viewIds + "/topic.js";
+      let script = document.createElement("script");
+      script.setAttribute("type", "text/javascript");
+      script.setAttribute("src", newUrls);
+      script.setAttribute("async", "");
+      document.getElementsByTagName("body")[0].appendChild(script);
       setTimeout(() => {
          sdTopology("#" + componentId + "bigScreen-topology", { type: "view", publicUrl: publicUrl, viewId: viewIds, name: name });
-      }, 400);
+         randerOnload();
+      }, 1000);
    }, []);
+
+   const Event_Center_getName = () => {
+      let name = props.bigscreen.name || "乐吾乐图形库集成";
+      return name;
+   };
+
+   // 重新渲染动作
+   const do_EventCenter_randerBox = ({ value }) => {
+      console.log("重新渲染容器动作--->", value);
+      let name = qs.parse(window.location.search).name;
+      sdTopology("#" + componentId + "bigScreen-topology", { type: "view", publicUrl: publicUrl, viewId: value, name: name });
+      randerOnload();
+   };
+
+   // 容器渲染完成
+   const randerOnload = () => {
+      console.log("容器渲染完成");
+      setTimeout(() => {
+         window.eventCenter.triggerEvent(componentId, "boxOnload", {});
+      }, 1500);
+   };
+
    return <div id={componentId + "bigScreen-topology"} style={{ height: "100%" }}></div>;
 }
 

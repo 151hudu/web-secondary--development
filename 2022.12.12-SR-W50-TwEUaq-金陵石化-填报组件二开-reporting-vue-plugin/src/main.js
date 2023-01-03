@@ -49,6 +49,8 @@ if (process.env.NODE_ENV !== "production") {
     "applicant_date": "2022-12-23",
     "quality_record_number": "AWF323434",
     "mode_type": "Plan",
+    "whether_signature": '0',
+    "person_of_signature": [],
     "tasks": [{
       "data_id": "",
       "project_name": "任务aaa",
@@ -77,7 +79,7 @@ if (process.env.NODE_ENV !== "production") {
         "materials": [{
           "data_id": "",
           "parent_id": "",
-          "material_name": "物料Aad",
+          "material_name": "物料A1ad",
           "material_code": "ASF334",
           "standard_materials": "标准AB",
           "additional_note": "备注",
@@ -87,8 +89,44 @@ if (process.env.NODE_ENV !== "production") {
           "material_purchase_main": "",
           "material_purchase_auxiliary": "",
           "whether_workshop_supply": "",
-          "mode_type": "Material"
-        }]
+          "mode_type": "Material",
+          "demand_state":
+            "{\"purchase_auxiliary_state\":true,\"demand_state\":true,\"purchase_main_state\":true}"
+        }, {
+          "data_id": "",
+          "parent_id": "",
+          "material_name": "物料A2ad",
+          "material_code": "ASF334",
+          "standard_materials": "标准AB",
+          "additional_note": "备注",
+          "main_unit": "个",
+          "auxiliary_unit": "个",
+          "material_demand": "3",
+          "material_purchase_main": "",
+          "material_purchase_auxiliary": "",
+          "whether_workshop_supply": "",
+          "mode_type": "Material",
+          "demand_state":
+            "{\"purchase_auxiliary_state\":true,\"demand_state\":true,\"purchase_main_state\":true}"
+        },
+        {
+          "data_id": "",
+          "parent_id": "",
+          "material_name": "物料A3ad",
+          "material_code": "ASF334",
+          "standard_materials": "标准AB",
+          "additional_note": "备注",
+          "main_unit": "个",
+          "auxiliary_unit": "个",
+          "material_demand": "3",
+          "material_purchase_main": "",
+          "material_purchase_auxiliary": "",
+          "whether_workshop_supply": "",
+          "mode_type": "Material",
+          "demand_state":
+            "{\"purchase_auxiliary_state\":true,\"demand_state\":true,\"purchase_main_state\":true}"
+        }
+        ]
       }
       ]
     }]

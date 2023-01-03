@@ -22,29 +22,18 @@ export default {
   },
   mounted() {
     window.GC.Spread.Common.CultureManager.culture("zh-cn");
-    workbook = new window.GC.Spread.Sheets.Workbook(this.$refs.spreadRef, {
-      sheetCount: 1,
-      tabStripVisible: false,
-      newTabVisible: false,
-      scrollbarMaxAlign: true,
-    });
+    // workbook = new window.GC.Spread.Sheets.Workbook(this.$refs.spreadRef, {
+    //   sheetCount: 1,
+    //   tabStripVisible: false,
+    //   newTabVisible: false,
+    //   scrollbarMaxAlign: true,
+    // });
 
-    // workbookRef.current = workbook;
-    // registerFonts(workbook);
+    // // workbookRef.current = workbook;
+    // // registerFonts(workbook);
 
-    // let sheetsDesigner = window.GC.Spread.Sheets.Designer;
+    // // let sheetsDesigner = window.GC.Spread.Sheets.Designer;
 
-    var fontFamilyCmd = sheetsDesigner.getCommand('fontFamily');
-    var customCNFont = [
-      { value: '宋体', text: '宋体' },
-      { value: '微软雅黑', text: '微软雅黑' },
-      { value: '黑体', text: '黑体' },
-    ];
-    fontFamilyCmd.dropdownList = customCNFont.concat(
-      fontFamilyCmd.dropdownList
-    );
-
-    // const GC = window.GC;
     // var fontFamilyCmd = sheetsDesigner.getCommand('fontFamily');
     // var customCNFont = [
     //   { value: '宋体', text: '宋体' },
@@ -55,14 +44,25 @@ export default {
     //   fontFamilyCmd.dropdownList
     // );
 
-    // var ribbonConfig = sheetsDesigner.DefaultConfig;
-    // var designer = new sheetsDesigner.Designer(this.$refs.spreadRef);
-    // console.log('designer', designer);
-    // designer.setConfig(ribbonConfig);
-    // workbook = designer.getWorkbook();
+    const GC = window.GC;
+    var fontFamilyCmd = sheetsDesigner.getCommand('fontFamily');
+    var customCNFont = [
+      { value: '宋体', text: '宋体' },
+      { value: '微软雅黑', text: '微软雅黑' },
+      { value: '黑体', text: '黑体' },
+    ];
+    fontFamilyCmd.dropdownList = customCNFont.concat(
+      fontFamilyCmd.dropdownList
+    );
 
-    // workbook.options.scrollbarShowMax = true;
-    // workbook.options.scrollbarMaxAlign = true;
+    var ribbonConfig = sheetsDesigner.DefaultConfig;
+    var designer = new sheetsDesigner.Designer(this.$refs.spreadRef);
+    console.log('designer', designer);
+    designer.setConfig(ribbonConfig);
+    workbook = designer.getWorkbook();
+
+    workbook.options.scrollbarShowMax = true;
+    workbook.options.scrollbarMaxAlign = true;
 
     console.log('workbook: ', workbook);
 

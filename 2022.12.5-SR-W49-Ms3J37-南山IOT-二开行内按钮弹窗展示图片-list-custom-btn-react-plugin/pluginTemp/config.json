@@ -1,7 +1,7 @@
 {
-  "id": "0377aeed-5913-429b-94cb-f90cc36f5c41",
+  "id": "0357aeed-5913-429b-94cb-f90cc36f5c41",
   "type": "list-custom-btn",
-  "main": "main.6644c9b3.js",
+  "main": "main.45504b4e.js",
   "version": "2",
   "props": {
     "styleArr": "[\"title\",\"height\",\"key\", \"eventCenterConfig\"]",

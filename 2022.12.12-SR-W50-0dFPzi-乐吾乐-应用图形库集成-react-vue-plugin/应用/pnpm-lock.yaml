@@ -67,7 +67,7 @@ specifiers:
   source-map-explorer: ^2.5.2
   style-loader: 1.3.0
   terser-webpack-plugin: 4.2.3
-  topology-sdata: 0.3.3
+  topology-sdata: 0.3.6
   ts-pnp: 1.2.0
   typescript: ^4.4.3
   url-loader: 4.1.1
@@ -143,7 +143,7 @@ dependencies:
   source-map-explorer: 2.5.3
   style-loader: 1.3.0_webpack@4.44.2
   terser-webpack-plugin: 4.2.3_webpack@4.44.2
-  topology-sdata: 0.3.3
+  topology-sdata: 0.3.6
   ts-pnp: 1.2.0_typescript@4.8.4
   url-loader: 4.1.1_7hroj2mdu577asu2zyhaasbvae
   web-vitals: 1.1.2
@@ -13847,8 +13847,8 @@ packages:
     engines: {node: '>=0.6'}
     dev: false
 
-  /topology-sdata/0.3.3:
-    resolution: {integrity: sha512-jEL/0d4gmAr8L3csEmCfb7Xmij9Mp3/AEZ1r2lV3xwOenIugOefZvmyRQ8i3evkaq2Q2N5MYVa850kJBvOYIQA==}
+  /topology-sdata/0.3.6:
+    resolution: {integrity: sha512-D3xlXaY9LPa3Ka/18KYtEhzcaWcoBNrFS8YhI03eTVcbk5xILrnqdiZHEkTDpmM9Vn5kkmkS+cm/z+12sioduQ==}
     dependencies:
       '@topology/activity-diagram': 1.1.0_@topology+core@1.2.14
       '@topology/chart-diagram': 1.2.7_@topology+core@1.2.14

@@ -1,7 +1,7 @@
 {
-  "id": "7888ce53-f8ad-4e13-8c15-7d235381cae9",
+  "id": "4e293bb2-e633-487e-9db0-ee78eb8d159d",
   "type": "app",
-  "main": "app.3d8314d8.js",
+  "main": "app.452994e6.js",
   "version": "2",
   "props": {
     "type": "customize",
@@ -12,10 +12,10 @@
     "css_script": [],
     "customconf": [
       "id",
-      "type"
+      "asset_id"
     ]
   },
   "configuration": true,
-  "requirement-number": "SR-W51-0oZfK1",
-  "requirement-name": "新增对比分析"
+  "requirement-number": "SR-W51-6VHloe",
+  "requirement-name": "通讯录应用组件"
 }

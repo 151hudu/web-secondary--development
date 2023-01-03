@@ -1,0 +1,15 @@
+{
+  "id": "74b43438-6e58-4c94-baf0-516c9bc9c54e",
+  "type": "reporting",
+  "main": "app.b7469312.js",
+  "baseVersion": "V8R4C50SPC210",
+  "version": "2",
+  "props": {
+    "styleArr": "[\"title\",\"key\", \"eventCenterConfig\"]",
+    "columnStyle": "{title:'自定义'}",
+    "componentAttributes": "{\"style\":[\"title\"],\"data\":[\"key\"],\"interaction\":[\"eventCenterConfig\"]}",
+    "assetColumnList": "[{\"col_name\":\"自定义\",\"col_datatype\":0}]"
+  },
+  "requirement-number": "SR-W52-uW17bH",
+  "requirement-name": "列表支持设置复杂表头进行展示"
+}

@@ -1121,7 +1121,7 @@ export default {
             textStyle: {
               color: "#000",
             },
-            interval: 1,
+            interval: 2,
           },
         },
 

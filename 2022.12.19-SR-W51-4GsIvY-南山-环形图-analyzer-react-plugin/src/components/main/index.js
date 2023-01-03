@@ -121,7 +121,7 @@ export default class Main extends Component {
           },
           itemGap: 20,
           left: "center",
-          top: "40%",
+          top: "30%",
         },
       ],
       // legend: {
@@ -155,7 +155,7 @@ export default class Main extends Component {
           type: "pie",
           startAngle: 90,
           radius: ["60%", "80%"],
-          center: ["50%", "50%"],
+          center: ["50%", "38%"],
           data: echartData,
           hoverAnimation: false,
           z: 13,
@@ -174,7 +174,7 @@ export default class Main extends Component {
           z: 2,
           startAngle: 90 + (1 - result.rate) * 360,
           radius: ["63.5%", "76.5%"],
-          center: ["50%", "50%"],
+          center: ["50%", "38%"],
           data: echartData2,
           hoverAnimation: false,
           label: {
@@ -241,7 +241,7 @@ export default class Main extends Component {
     return (
       <div className="analyzer-secondary" style={{ width: this.state.width, height: this.state.height, display: "flex", background: this.图表背景颜色 }} id={this.state.id}>
         <div ref="nanshanhuanxingtu" style={{ width: "45%", height: "100%" }}></div>
-        <div className="echartsInfo" style={{ width: "53%", height: "100%" }}>
+        <div className="echartsInfo" style={{ width: "53%", height: "75%" }}>
           <div style={{ height: this.图例一高度, width: this.图例一宽度, background: this.图例背景颜色 }}>
             <div className="colorBox">
               <div style={{ background: this.图例一颜色 }}></div>

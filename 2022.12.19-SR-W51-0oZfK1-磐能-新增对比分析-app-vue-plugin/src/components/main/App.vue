@@ -1,28 +1,37 @@
 <template>
-  <div :id="id" :ref="id" style="width: 100%">
-    <el-date-picker
-      v-model="dataPicker"
-      type="daterange"
-      format="yyyy-MM-dd"
-      value-format="yyyy-MM-dd"
-      range-separator="至"
-      start-placeholder="开始日期"
-      end-placeholder="结束日期"
-      @change="dateChange"
-      :picker-options="pickerOptions"
-    >
-    </el-date-picker>
+  <div :id="id" :ref="id" style="width: 100%; background-color: #fff">
+    <div style="display: flex">
+      <span style="line-height: 80px; margin-right: 5px;margin-left: 15px;font-weight: 700;">日期选择:</span
+      ><el-date-picker
+        v-model="dataPicker"
+        type="daterange"
+        format="yyyy-MM-dd"
+        value-format="yyyy-MM-dd"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        @change="dateChange"
+        :picker-options="pickerOptions"
+      >
+      </el-date-picker>
+    </div>
     <p class="chartsTitle">等效时数对比图</p>
-    <div style="height: 500px; width: 100%" id="contrastCharts"></div>
-    <span>
-      {{ this.dataPicker[0] }}至 {{ this.dataPicker[1] }}时间段内
-      <br />
-      总等效时数最大的为【{{ this.allData.max_equivalent_hours_name }}】，总等效时数最大为【{{ this.allData.max_equivalent_hours }}】，
-      <br />
-      总等效时数最小的为【{{ this.allData.min_equivalent_hours_name }}】，总等效时数最大为【{{ this.allData.min_equivalent_hours }}】，
-      <br />
-      所有电站的平均等效时数最大为【{{ this.allData.maxAvg }}】
-    </span>
+    <div style="height: 400px; width: 100%" id="contrastCharts"></div>
+    <div class="info">
+      <span>
+        {{ this.dataPicker[0] }}至 {{ this.dataPicker[1] }}时间段内
+        <br />
+        总等效时数最大的为【{{ this.allData.max_equivalent_hours_name }}】，总等效时数最大为【{{
+          isNaN(Number(this.allData.max_equivalent_hours).toFixed(2)) ? "" : Number(this.allData.max_equivalent_hours).toFixed(2) + "h"
+        }}】，
+        <br />
+        总等效时数最小的为【{{ this.allData.min_equivalent_hours_name }}】，总等效时数最小为【{{
+          isNaN(Number(this.allData.min_equivalent_hours).toFixed(2)) ? "" : Number(this.allData.min_equivalent_hours).toFixed(2) + "h"
+        }}】，
+        <br />
+        所有电站的平均等效时数为【{{ isNaN(Number(this.allData.maxAvg).toFixed(2)) ? "" : Number(this.allData.maxAvg).toFixed(2) + "h" }}】
+      </span>
+    </div>
   </div>
 </template>
 
@@ -74,7 +83,7 @@ export default {
       name: [],
       yData: [],
       allData: {},
-      ids: "1,10,100",
+      ids: "",
       dataPicker: "",
       pickerOptions: {
         disabledDate(time) {
@@ -136,35 +145,46 @@ export default {
         endTime: this.dataPicker[1],
         ids: this.ids,
       };
-      compareAnalyse(message).then((res) => {
-        this.allData = res.data;
-        let message = res.data.data.sort();
-        message[message.length - 1].forEach((element) => {
-          this.xData.push(element.time);
-        });
-        res.data.data.forEach((item) => {
-          let info = [];
-          item.forEach((item2, index2) => {
-            if (this.xData[index2] == item2.time) {
-              info.push(item2.equivalent_hours_d);
-            } else {
-              info.push(0);
-            }
+      compareAnalyse(message)
+        .then((res) => {
+          this.xData = [];
+          this.name = [];
+          this.yData = [];
+          this.allData = res.data;
+          let message = res.data.data.sort();
+          message[message.length - 1].forEach((element) => {
+            this.xData.push(element.time);
           });
-          this.name.push(item[0]?.name);
-          this.yData.push(info);
+          res.data.data.forEach((item) => {
+            let info = [];
+            item.forEach((item2, index2) => {
+              if (this.xData[index2] == item2.time) {
+                info.push(Number(item2.equivalent_hours_d).toFixed(2));
+              } else {
+                info.push(0);
+              }
+            });
+            this.name.push(item[0]?.name);
+            this.yData.push(info);
+          });
+          this.initEcharts(this.xData, this.name, this.yData);
+        })
+        .catch((err) => {
+          this.xData = [];
+          this.name = [];
+          this.yData = [];
+          this.allData = {};
+          this.initEcharts(this.xData, this.name, this.yData);
         });
-        this.initEcharts(this.xData, this.name, this.yData);
-      });
     },
     initEcharts(xData, name, Ydata) {
       const myChart = echarts.init(document.getElementById("contrastCharts"));
       let xLabel = xData;
       let serise = [];
-      console.log(xData, name, Ydata);
       Ydata.forEach((item, index) => {
         serise.push({
-          name: name[index],
+          showName: name[index],
+          name: index,
           type: "line",
           symbol: "circle", // 默认是空心圆（中间是白色的），改成实心圆
           showAllSymbol: true,
@@ -177,32 +197,36 @@ export default {
         });
       });
       let options = {
+        backgroundColor: "#fff",
         tooltip: {
           trigger: "axis",
-          formatter: function (params) {
-            console.log(params);
+          formatter: (params) => {
             var relVal = params[0].name;
             for (var i = 0, l = params.length; i < l; i++) {
-              relVal += "<div>" + params[i].marker + params[i].seriesName + "&nbsp;&nbsp;&nbsp;" + "<span style='float:right'>" + params[i].value + "h" + "</span>" + "</div>";
+              relVal += "<div>" + params[i].marker + name[i] + "&nbsp;&nbsp;&nbsp;" + "<span style='float:right'>" + params[i].value + "h" + "</span>" + "</div>";
             }
             return relVal;
           },
         },
         grid: {
-          left: "3%",
-          right: "2%",
-          top: "10%",
+          left: "4%",
+          right: "3.5%",
+          top: "13%",
           bottom: "8%",
         },
         legend: {
           align: "left",
-          top: "10px",
+          top: "0px",
           textStyle: {
             color: "#000",
-            fontSize: 20,
+            fontSize: 13,
           },
-          itemGap: 25,
-          itemWidth: 50,
+          formatter: (params) => {
+            console.log(params);
+            return name[params] + "";
+          },
+          itemGap: 15,
+          itemWidth: 40,
         },
         xAxis: [
           {
@@ -239,11 +263,12 @@ export default {
             nameTextStyle: {
               color: "#000",
               fontSize: 12,
-              padding: 10,
+              padding: [0, 0, -15, 0],
             },
             splitLine: {
               show: false,
             },
+            max: null,
             min: 0,
             axisLine: {
               show: true,
@@ -299,12 +324,20 @@ export default {
      */
     do_EventCenter_searchInfoDuiBi(value) {
       console.log(value, 290);
-      var idsStr = value.charcoalId
+      let idsStr = "";
+      idsStr = value.charcoalId
         .map(function (obj, index) {
           return obj.id;
         })
         .join(",");
       this.ids = idsStr;
+      if (this.ids == "") {
+        this.xData = [];
+        this.name = [];
+        this.yData = [];
+        this.allData = {};
+        return this.initEcharts(this.xData, this.name, this.yData);
+      }
       this.initData();
     },
     triggerEvent(eventName, payload) {
@@ -328,9 +361,17 @@ export default {
 </script>
 <style lang="less" scoped>
 .chartsTitle {
-  font-size: 22px;
+  font-size: 14px;
   font-weight: 700;
-  margin-top: 50px;
+  margin-top: 10px;
+}
+.info {
+  margin-left: 4%;
+  margin-top: 15px;
+  background: "#fff";
+}
+/deep/.el-date-editor{
+  margin-top: 20px !important;
 }
 /deep/.el-range-separator {
   padding: 0;

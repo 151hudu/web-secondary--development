@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { Carousel, CarouselItem, Tree, Input, Button, Table, TableColumn, Pagination } from "element-ui";
+import { Carousel, CarouselItem, Tree, Input, Button, Table, TableColumn, Pagination, Card } from "element-ui";
 import Vue from "vue";
 import { Main, DesignConfiguration } from "@/components";
 import Options from "./Options.vue";
@@ -29,7 +29,8 @@ Vue.use(Input);
 Vue.use(Button);
 Vue.use(Table);
 Vue.use(TableColumn);
-Vue.use(Pagination );
+Vue.use(Pagination);
+Vue.use(Card);
 export default {
   name: "Development",
   components: {

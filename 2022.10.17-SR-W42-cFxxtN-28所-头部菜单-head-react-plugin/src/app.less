@@ -1,0 +1,572 @@
+@placholderColor: 'placeh.color';
+
+.herder {
+
+
+  .mainTop {
+    width: 100%;
+    // background-color: #313a52;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .leftInfo {
+      display: flex;
+
+      .logo {
+        height: 40px;
+        width: 40px;
+      }
+
+      .title {
+        margin-left: 10px;
+        width: auto;
+        height: 40px;
+        line-height: 40px;
+        font-size: 20px;
+        color: #ffffff;
+      }
+    }
+
+    .rightInfo {
+      display: flex;
+      align-items: center;
+      margin-right: 50px;
+
+      .ant-input {
+        border-radius: 15px 0px 0px 15px !important;
+        background: #ffffff00;
+        border-color: #efefef;
+        border-right-color: #ffffff00;
+      }
+
+      .ant-input:hover,
+      .ant-input:focus {
+        border-color: #d9d9d9;
+        border-right: 0px;
+        box-shadow: unset;
+      }
+
+      .ant-input-group-addon {
+        border-radius: 15px;
+        background: unset;
+      }
+
+      .ant-input-search-button {
+        border-radius: 0px 15px 15px 0px !important;
+        border-left: 0px;
+        background-color: #ffffff00;
+      }
+
+      .ant-input-search-button:hover {
+        border-color: #d9d9d9;
+      }
+
+      .setting {
+        svg {
+          margin-right: 15px;
+        }
+      }
+
+      .setting::after {
+        content: "";
+        width: 2px;
+        height: 15px;
+        position: absolute;
+        background: #d7d7d7;
+      }
+
+      .gongzuotai {
+        border-color: #40a9ff;
+        color: #40a9ff;
+        border-radius: 5px;
+      }
+
+      .gongzuotai::after {
+        content: "";
+        width: 2px;
+        height: 15px;
+        position: absolute;
+        background: #d7d7d7;
+        left: 108px;
+        top: 7px;
+      }
+
+      .user_info {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin: 0px 15px;
+
+        .shenfen {
+          min-width: 40px;
+          margin-right: 15px;
+          background: #f7ecde;
+          color: #d59448;
+          text-align: center;
+          border-radius: 5px;
+        }
+      }
+    }
+
+    .logout {
+      color: #ffffff;
+      margin-right: 50px;
+      cursor: pointer;
+    }
+
+    .lineRight {
+      display: flex;
+      align-items: center;
+      float: right;
+
+      .ant-input {
+        border-radius: 15px 0px 0px 15px !important;
+        background: #ffffff00;
+        border-color: #efefef;
+        border-right-color: #ffffff00;
+      }
+
+      .anticon-bell,
+      .anticon-search {
+        color: #ffffff !important;
+      }
+
+      // .ant-input::-webkit-input-placeholder {
+      //   color: #fff;
+      // }
+
+      .ant-input:hover,
+      .ant-input:focus {
+        border-color: #d9d9d9;
+        border-right: 0px;
+        box-shadow: unset;
+      }
+
+      .ant-input-group-addon {
+        border-radius: 15px;
+        background: unset;
+      }
+
+      .ant-input-search-button {
+        border-radius: 0px 15px 15px 0px !important;
+        border-left: 0px;
+        background-color: #ffffff00;
+      }
+
+      .ant-input-search-button:hover {
+        border-color: #d9d9d9;
+      }
+
+      .setting {
+        svg {
+          margin-right: 15px;
+        }
+      }
+
+      .setting::after {
+        content: "";
+        width: 2px;
+        height: 15px;
+        position: absolute;
+        background: #d7d7d7;
+      }
+
+      .gongzuotai {
+        border-color: #40a9ff;
+        color: #40a9ff;
+        border-radius: 5px;
+      }
+
+      .gongzuotai::after {
+        content: "";
+        width: 2px;
+        height: 15px;
+        position: absolute;
+        background: #d7d7d7;
+        left: 108px;
+        top: 7px;
+      }
+
+      .user_info {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin: 0px 15px;
+
+        .shenfen {
+          min-width: 40px;
+          margin-right: 15px;
+          background: #f7ecde;
+          color: #d59448;
+          text-align: center;
+          border-radius: 5px;
+        }
+      }
+    }
+  }
+
+  .secondLine {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .allButtons {
+      margin: 10px 0px 10px 20px;
+      max-width: 90%;
+      min-width: 40%;
+
+      .menubuttons {
+        margin: 0px 5px;
+        border: 0px;
+        box-shadow: none;
+        background: #ffffff00;
+      }
+
+      .menubuttons:hover {
+        color: unset;
+      }
+
+      .selectButton {
+        background-color: #313a52;
+        color: #f7ecde;
+        border-radius: 5px;
+        border-color: #ffffff00;
+      }
+    }
+  }
+}
+
+.custom-btn {
+  width: 200px;
+  height: 40px;
+  margin: 16px 0;
+  color: #333333;
+  font-size: 14px;
+  line-height: 40px;
+  text-align: center;
+  background-color: white;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.custom-config-title {
+  width: 100%;
+  margin-bottom: 6px;
+  color: #333333;
+  font-size: 14px;
+  font-weight: 500;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.custom-config-params-H {
+  padding: 40px;
+  padding-bottom: 0;
+  padding-top: 0;
+
+  .add {
+
+
+    width: 22px;
+    height: 32px;
+    font-size: 22px;
+    color: blue;
+    cursor: pointer;
+  }
+}
+
+.custom-config-title-H {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 6px;
+  color: #333333;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 30px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  .add {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 22px;
+    height: 32px;
+    font-size: 22px;
+    color: blue;
+    cursor: pointer;
+  }
+}
+
+.custom-config-line {
+  width: 100%;
+  margin-bottom: 16px;
+
+  .custom-config-btn {
+    width: 100%;
+    height: 40px;
+
+    .ant-image {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.custom-config-value {
+  width: 100%;
+  padding: 0 12px;
+  margin-bottom: 6px;
+  color: #444444;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.button-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 6px;
+  color: #333333;
+  font-size: 14px;
+  line-height: 30px;
+  font-weight: 500;
+  line-height: 32px;
+
+  .name,
+  .url {
+    .ant-input {
+      height: 32px;
+    }
+  }
+
+  .icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    height: 32px;
+  }
+
+  .add {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 22px;
+    height: 32px;
+    font-size: 22px;
+    color: blue;
+    cursor: pointer;
+  }
+
+  .icon-value {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #dddddd;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  .type {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 72px;
+    height: 32px;
+  }
+
+  .target {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+    height: 32px;
+  }
+
+  .target-value {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 32px;
+    padding: 4px;
+    border: 1px solid #dddddd;
+    border-radius: 2px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    cursor: pointer;
+  }
+
+  .delete {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 22px;
+    height: 32px;
+    font-size: 22px;
+    color: red;
+    cursor: pointer;
+  }
+}
+
+.button-line-params {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 6px;
+  color: #333333;
+  font-size: 14px;
+  line-height: 30px;
+  font-weight: 500;
+  line-height: 32px;
+  padding: 20px;
+  padding-top: 0;
+
+  padding-bottom: 5px;
+
+  .name,
+  .url {
+    .ant-input {
+      height: 32px;
+    }
+  }
+
+  .icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    height: 32px;
+  }
+
+  .add {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 22px;
+    height: 32px;
+    font-size: 22px;
+    color: blue;
+    cursor: pointer;
+  }
+
+  .icon-value {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #dddddd;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  .type {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 72px;
+    height: 32px;
+  }
+
+  .target {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+    height: 32px;
+  }
+
+  .target-value {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 32px;
+    padding: 4px;
+    border: 1px solid #dddddd;
+    border-radius: 2px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    cursor: pointer;
+  }
+
+  .delete {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 22px;
+    height: 32px;
+    font-size: 22px;
+    color: red;
+    cursor: pointer;
+  }
+}
+
+
+.custom-config-line-mult {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 16px;
+
+  .custom-config-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 6px;
+  }
+
+  .custom-config-value {
+    width: 100%;
+    padding: 0 12px;
+    margin-bottom: 6px;
+    color: #444444;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .custom-config-btn {
+    width: 100%;
+    height: 40px;
+
+    .ant-image {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+iframe {
+  display: none;
+}
+
+.empty_two {
+  background-color: #fff;
+
+  .ant-empty-normal {
+    padding: 10px;
+    margin: 0;
+    border-radius: 5px;
+  }
+}

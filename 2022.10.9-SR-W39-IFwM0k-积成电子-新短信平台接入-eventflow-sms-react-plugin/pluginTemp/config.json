@@ -1,0 +1,8 @@
+{
+  "id": "3519b44f-8f66-47ca-bdbf-75d656205b50",
+  "type": "eventflow-sms",
+  "main": "main.eec1fd5c.js",
+  "version": "2",
+  "language": "react",
+  "props": {}
+}

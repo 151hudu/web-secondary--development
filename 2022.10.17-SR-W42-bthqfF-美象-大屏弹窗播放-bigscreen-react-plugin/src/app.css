@@ -1,0 +1,18 @@
+.textList .ant-btn {
+  background: #fff;
+}
+
+.live_vedio .ant-modal-content {
+  height: 100%;
+}
+.live_vedio .ant-modal-content .react-player {
+  height: 100% !important;
+}
+
+.live_vedio_close {
+  cursor: pointer;
+  position: absolute;
+  bottom: -55px;
+  left: 50%;
+  transform: translateX(-50%);
+}

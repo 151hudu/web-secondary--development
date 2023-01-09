@@ -1,0 +1,30 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.ant-layout-header {
+  height: unset !important;
+}
+.application-block {
+  height: 100% !important;
+}
+.application-route {
+  overflow: auto !important;
+}
+.application-content-route{
+  height: unset !important;
+  overflow: hidden !important;
+}
+.application-content-view {
+  overflow: auto !important;
+  height: unset !important;
+  min-height: unset !important;
+}

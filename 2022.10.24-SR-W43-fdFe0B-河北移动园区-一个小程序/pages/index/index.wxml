@@ -1,0 +1,8 @@
+<!--index.wxml-->
+<view class="container">
+  
+ <image src="./image/yuyue.jpg"  class="userinfo-avatar"  bindtap='imgClickFn'  mode="cover"/>
+ 
+ 
+ <block>访客预约</block>
+</view>

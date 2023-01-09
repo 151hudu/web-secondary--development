@@ -31,6 +31,9 @@ export default {
       if(this.type == "insert"){
         return "Add"
       }
+      if(this.type == "Edit"){
+        return "Add"
+      }
       return this.type.slice(0, 1).toUpperCase() + this.type.slice(1);
     },
   },

@@ -1,0 +1,16 @@
+build/*
+node_modules/*
+dist/*
+scripts/*
+config/*
+webpack/*
+webpack.config.js
+
+src/common/G2/china-geo.js
+src/common/G2/jiangsu.geo.js
+src/common/G2/G2charts.js
+src/maintain/js/charts/echarts-liquidfill.js
+src/exchange/common/exchangeFun.js
+src/analysis/analysis_child/analysis_child.js
+src/dashboard/App.js
+src/common/Charts/od/map

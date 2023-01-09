@@ -175,6 +175,7 @@ export default {
     componentId: String,
     configuration: Object,
     options: Object,
+    updateProcess: Function,
     variable: Object
   },
   computed: {},
@@ -183,22 +184,25 @@ export default {
       handler(val) {
 
         if (this.provinceData.length == 0) return
+        if (!(Boolean(this.province) == false && Boolean(this.city) == false && Boolean(this.substationName) == false)) {
+          this.citySelect = {};
+          this.cityOption = [];
+          this.stationSelect = {};
+          this.stationOption = [];
 
-        this.citySelect = {};
-        this.cityOption = [];
-        this.stationSelect = {};
-        this.stationOption = [];
+          this.cityData.forEach((item, index) => {
+            if (item.province_name == val?.province_name) {
+              this.cityOption.push(item);
+            }
+          });
+          this.stationData.forEach((item, index) => {
+            if (item.province_name == val?.province_name) {
+              this.stationOption.push(item);
+            }
+          });
+        }
 
-        this.cityData.forEach((item, index) => {
-          if (item.province_name == val?.province_name) {
-            this.cityOption.push(item);
-          }
-        });
-        this.stationData.forEach((item, index) => {
-          if (item.province_name == val?.province_name) {
-            this.stationOption.push(item);
-          }
-        });
+
         if (!this.city && !this.substationName && this.province) this.searchTable()
       },
 
@@ -206,15 +210,17 @@ export default {
     },
     'citySelect': {
       handler(val) {
+        if (!(Boolean(this.province) == false && Boolean(this.city) == false && Boolean(this.substationName) == false)) {
+          this.stationSelect = {};
+          this.stationOption = [];
 
-        this.stationSelect = {};
-        this.stationOption = [];
+          this.stationData.forEach((item, index) => {
+            if (item.city_name == val?.city_name) {
+              this.stationOption.push(item);
+            }
+          });
+        }
 
-        this.stationData.forEach((item, index) => {
-          if (item.city_name == val?.city_name) {
-            this.stationOption.push(item);
-          }
-        });
 
         if (this.city && !this.substationName) this.searchTable()
       },
@@ -437,7 +443,7 @@ export default {
         this.legendData = [];
         this.flawNumData = [];
         this.probabilityData = [];
-
+        this.pageObj.currentPage = 1
         this.tableData = this.dataAll.slice(0, this.pageObj.currentPage * this.pageObj.pageSize)
         this.pageObj.total = this.dataAll.length
         this.dataAll.forEach(x => {
@@ -468,9 +474,13 @@ export default {
 
     tableToExcel(tableData) {
       const headArr = ['time', 'total', 'Execute', 'noExecute', 'probability']
+      let aTime = { 年: 'YYYY.MM', 月: 'YYYY.MM.DD', 周: 'YYYY.MM.DD' }
+      let st1 = aTime[this.titlePiod]
+
       let tableData2 = JSON.parse(JSON.stringify(tableData))
       tableData2.forEach((x, i) => {
         x.probability = x.total == 0 ? '--' : Number(x.probability).toFixed(2)
+        x.time = x.time ? moment(x.time).format(st1) : ''
       })
       const titleObj = { time: '日期', total: '任务执行次数', findFlawNum: '发现缺陷次数', flawNum: '缺陷数量', probability: '发现缺陷比率(%)' }
       // 要导出的json数据
@@ -496,14 +506,16 @@ export default {
       const uri = 'data:application/vnd.ms-excel;base64,';
 
       // 下载的表格模板数据
-      const template = `<html xmlns:o="urn:schemas-microsoft-com:office:office" 
-        xmlns:x="urn:schemas-microsoft-com:office:excel" 
+      const template = `<html
+             xmlns:o="urn:schemas-microsoft-com:office:office" 
+             xmlns:x="urn:schemas-microsoft-com:office:excel"
         xmlns="http://www.w3.org/TR/REC-html40">
-        <head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
-        <x:Name>${worksheet}</x:Name>
-        <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
-        </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
-        </head><body><table>${str}</table></body></html>`;
+      <head> <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+          <x:Name>${worksheet}</x:Name>
+          <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+          </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--> </head>
+    <body><table style="vnd.ms-excel.numberformat:@" >${str}</table></body>
+      </html>`;
       // 下载模板
       const base64 = function (s) {
         return window.btoa(unescape(encodeURIComponent(s)));
@@ -665,10 +677,10 @@ export default {
       };
 
       option && this.myChart.setOption(option);
-      const task = () => {
-        this.myChart.resize();
-      };
-      window.addEventListener("resize", debounce(task, 300));
+      // const task = () => {
+      //   this.myChart.resize();
+      // };
+      // window.addEventListener("resize", debounce(task, 300));
     },
     initEchartFnTwo() {
       if (this.myChartTwo !== null && this.myChartTwo !== "" && this.myChartTwo !== undefined) {
@@ -761,14 +773,19 @@ export default {
       };
 
       option && this.myChartTwo.setOption(option);
-      const tasks = () => {
-        this.myChartTwo.resize();
-      };
-      window.addEventListener("resize", debounce(tasks, 300));
+      // const tasks = () => {
+      //   this.myChartTwo.resize();
+      // };
+      // window.addEventListener("resize", debounce(tasks, 300));
     },
-    // Event_Center_getName: () => {
-    //   return this.id;
-    // }
+    do_EventCenter_setValue(value) {
+      this.myChart.resize();
+      this.myChartTwo.resize();
+
+    },
+    Event_Center_getName() {
+      return this.id;
+    }
   }
 };
 

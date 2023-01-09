@@ -186,6 +186,7 @@ export default {
     componentId: String,
     configuration: Object,
     options: Object,
+    updateProcess: Function,
     variable: Object
   },
   computed: {
@@ -242,24 +243,20 @@ export default {
     'paramsObj.province': {
       handler(val) {
         if (!this.totalArr.substationOp) return
-
-        let substationOp = this.totalArr.substationOp
-        this.substationOp = substationOp.filter((x, i) => {
-
-          let filed = String(x.id)
-          let strl = filed.length
-
-          return filed.substr(0, 2) == val
-        })
-
-        let cityOp = this.totalArr.cityOp
-        this.cityOp = cityOp.filter((x, i) => {
-
-          let filed = String(x.value)
-          let strl = filed.length
-
-          return filed.substr(0, strl - 2) == val
-        })
+        if (!(Boolean(this.province) == false && Boolean(this.city) == false && Boolean(this.substationName) == false)) {
+          let substationOp = this.totalArr.substationOp
+          this.substationOp = substationOp.filter((x, i) => {
+            let filed = String(x.id)
+            let strl = filed.length
+            return filed.substr(0, 2) == val
+          })
+          let cityOp = this.totalArr.cityOp
+          this.cityOp = cityOp.filter((x, i) => {
+            let filed = String(x.value)
+            let strl = filed.length
+            return filed.substr(0, strl - 2) == val
+          })
+        }
         if (!this.city && !this.substationName && this.province) this.queryTable()
       },
 
@@ -269,15 +266,17 @@ export default {
     'paramsObj.city': {
       handler(val) {
         if (!this.totalArr.substationOp) return
+        if (!(Boolean(this.province) == false && Boolean(this.city) == false && Boolean(this.substationName) == false)) {
+          let substationOp = this.totalArr.substationOp
+          this.substationOp = substationOp.filter((x, i) => {
+            let filed = String(x.id)
+            let l = x.statno.length
+            let strl = filed.length
 
-        let substationOp = this.totalArr.substationOp
-        this.substationOp = substationOp.filter((x, i) => {
-          let filed = String(x.id)
-          let l = x.statno.length
-          let strl = filed.length
+            return filed.substr(0, strl - l) == val
+          })
+        }
 
-          return filed.substr(0, strl - l) == val
-        })
         if (this.city && !this.substationName) this.queryTable()
       },
 
@@ -293,7 +292,7 @@ export default {
       deep: true
     },
   },
-  mounted() {
+  async mounted() {
 
 
 
@@ -342,8 +341,34 @@ export default {
     let id = this.options?.externalVariables?.id;
     this.id = id ? `secondary_analyzer_${id}` : `secondary_bigscreen_${Utils.generateUUID()}`;
     this.queryTable()
-    this.querySelect()
+    await this.querySelect()
+    this.province = this.variable?.default_value && JSON.parse(this.variable?.default_value).province_id || this.variable?.current_value && JSON.parse(this.variable?.current_value).province_id || ''
+    this.city = this.variable?.default_value && JSON.parse(this.variable?.default_value).city_id || this.variable?.current_value && JSON.parse(this.variable?.current_value).city_id || ''
+    this.substationName = this.variable?.default_value && JSON.parse(this.variable?.default_value).substation_no || this.variable?.current_value && JSON.parse(this.variable?.current_value).substation_no || ''
+    this.paramsObj.province = this.province == '' ? '' : Number(this.province)
+    this.paramsObj.city = this.city == '' ? '' : Number(this.city)
+    let substationOp = {}
+    let provinceOp = {}
+    let cityOp = {}
+    if (this.totalArr.substationOp) {
+      substationOp = this.totalArr.substationOp.find((x, i) => {
+        return x.statno == this.substationName
+      })
+    }
+    if (this.totalArr.provinceOp) {
+      provinceOp = this.totalArr.provinceOp.find((x, i) => {
+        return x.value == this.province
+      })
+    }
+    if (this.totalArr.cityOp) {
+      cityOp = this.totalArr.cityOp.find((x, i) => {
+        return x.value == this.city
+      })
+    }
 
+    this.paramsObj.substationName = substationOp?.value
+    this.paramsObj.province = provinceOp?.value
+    this.paramsObj.city = cityOp?.value
     // this.initEchartFn(this.tableData)
   },
   methods: {
@@ -383,7 +408,7 @@ export default {
           x.firstAlarm = x.firstAlarm ? moment(x.firstAlarm).format("YYYY-MM-DD hh:mm:ss") : ''
           x.lastAlarm = x.lastAlarm ? moment(x.lastAlarm).format("YYYY-MM-DD hh:mm:ss") : ''
         })
-
+        this.pageObj.currentPage = 1
         this.tableData = this.dataAll.slice(0, this.pageObj.currentPage * this.pageObj.pageSize)
         this.pageObj.total = this.dataAll.length
         this.initEchartFn(this.dataAll)
@@ -394,8 +419,8 @@ export default {
 
     },
     //下拉菜单数据
-    querySelect() {
-      queryDropDownBox().then(res => {
+    async querySelect() {
+      await queryDropDownBox().then(res => {
 
         let tempTotal = res.data
         let objArr = { provinceOp: [], cityOp: [], substationOp: [] }
@@ -414,33 +439,8 @@ export default {
         }
 
 
-        this.province = this.variable?.default_value && JSON.parse(this.variable?.default_value).province_id || this.variable?.current_value && JSON.parse(this.variable?.current_value).province_id || ''
-        this.city = this.variable?.default_value && JSON.parse(this.variable?.default_value).city_id || this.variable?.current_value && JSON.parse(this.variable?.current_value).city_id || ''
-        this.substationName = this.variable?.default_value && JSON.parse(this.variable?.default_value).substation_no || this.variable?.current_value && JSON.parse(this.variable?.current_value).substation_no || ''
-        this.paramsObj.province = this.province == '' ? '' : Number(this.province)
-        this.paramsObj.city = this.city == '' ? '' : Number(this.city)
-        let substationOp = {}
-        let provinceOp = {}
-        let cityOp = {}
-        if (this.totalArr.substationOp) {
-          substationOp = this.totalArr.substationOp.find((x, i) => {
-            return x.statno == this.substationName
-          })
-        }
-        if (this.totalArr.provinceOp) {
-          provinceOp = this.totalArr.provinceOp.find((x, i) => {
-            return x.value == this.province
-          })
-        }
-        if (this.totalArr.cityOp) {
-          cityOp = this.totalArr.cityOp.find((x, i) => {
-            return x.value == this.city
-          })
-        }
 
-        this.paramsObj.substationName = substationOp?.value
-        this.paramsObj.province = provinceOp?.value
-        this.paramsObj.city = cityOp?.value
+
       }).catch(err => {
         console.log(err);
       })
@@ -660,10 +660,10 @@ export default {
 
       this.Gechart = echarts.init(this.$refs.alarmt_echart);
       this.Gechart.setOption(options);
-      const task = () => {
-        this.Gechart.resize();
-      };
-      window.addEventListener("resize", debounce(task, 300));
+      // const task = () => {
+      //   this.Gechart.resize();
+      // };
+      // window.addEventListener("resize", debounce(task, 300));
     },
     //重置
     restFn() {
@@ -684,9 +684,16 @@ export default {
     },
     tableToExcel(tableData) {
       const headArr = Object.keys(tableData[0])
+      let aTime = { 年: 'YYYY.MM ', 月: 'YYYY.MM.DD', 周: 'YYYY.MM.DD' }
+      let st1 = aTime[this.paramsObj.period]
       const titleObj = { time: '日期', urgency: '紧急', significance: '重要', ordinary: '一般', hint: '提示', firstAlarm: '首次发生时间', lastAlarm: '最后发生时间' }
       // 要导出的json数据
       // 列标题
+      let tableData1 = JSON.parse(JSON.stringify(tableData))
+      tableData1.forEach((x, i) => {
+        x.firstAlarm = x.firstAlarm ? moment(x.firstAlarm).format("YYYY.MM.DD HH:mm:ss") : ''
+        x.lastAlarm = x.lastAlarm ? moment(x.lastAlarm).format("YYYY.MM.DD HH:mm:ss") : ''
+      })
       const head = Object.keys(titleObj)
       let str = "<tr>"
 
@@ -697,16 +704,16 @@ export default {
 
       })
       // 循环遍历，每行加入tr标签，每个单元格加td标签
-      for (let i = 0; i < tableData.length; i++) {
+      for (let i = 0; i < tableData1.length; i++) {
         str += '<tr>';
         for (const key of head) {
           // 增加\t为了不让表格显示科学计数法或者其他格式
           if (key == 'firstAlarm' || key == 'lastAlarm') {
-            str += `<td>${tableData[i][key] || '' + '\t'}</td>`;
+            str += `<td>${tableData1[i][key] || '' + '\t'}</td>`;
           } else if (key == 'time') {
-            str += `<td>${tableData[i][key] ? moment(tableData[i][key]).format("YYYY-MM") : '' + '\t'}</td>`;
+            str += `<td>${tableData1[i][key] ? String(moment(tableData1[i][key]).format(st1)) : '' + '\t'}</td>`;
           } else {
-            str += `<td>${tableData[i][key] || 0 + '\t'}</td>`;
+            str += `<td>${tableData1[i][key] || 0 + '\t'}</td>`;
           }
 
         }
@@ -725,7 +732,7 @@ export default {
           <x:Name>${worksheet}</x:Name>
           <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
           </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--> </head>
-    <body><table>${str}</table></body>
+    <body><table style="vnd.ms-excel.numberformat:@" >${str}</table></body>
       </html>`;
       // 下载模板
       console.log(str, '====date数据');
@@ -746,7 +753,7 @@ export default {
     do_EventCenter_setValue(value) {
       this.Gechart.resize();
     },
-    Event_Center_getName: () => {
+    Event_Center_getName() {
       return this.id;
     }
   }

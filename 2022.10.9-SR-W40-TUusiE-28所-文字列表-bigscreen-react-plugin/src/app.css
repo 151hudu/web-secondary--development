@@ -1,0 +1,11 @@
+.textList {
+  padding: 15px;
+  overflow-y: auto;
+  background: rgba(17, 64, 122, 0.8);
+}
+
+.textRow {
+  width: 100%;
+  word-wrap:break-word; 
+  word-break:break-all; 
+}

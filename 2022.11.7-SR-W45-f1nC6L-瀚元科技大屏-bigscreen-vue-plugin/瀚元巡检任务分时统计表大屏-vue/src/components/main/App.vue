@@ -192,6 +192,7 @@ export default {
     bigscreen: Object,
     configuration: Object,
     options: Object,
+    updateProcess: Function,
     variable: Object
   },
   computed: {
@@ -248,24 +249,20 @@ export default {
     'paramsObj.province': {
       handler(val) {
         if (!this.totalArr.substationOp) return
-
-        let substationOp = this.totalArr.substationOp
-        this.substationOp = substationOp.filter((x, i) => {
-
-          let filed = String(x.id)
-          let strl = filed.length
-
-          return filed.substr(0, 2) == val
-        })
-
-        let cityOp = this.totalArr.cityOp
-        this.cityOp = cityOp.filter((x, i) => {
-
-          let filed = String(x.value)
-          let strl = filed.length
-
-          return filed.substr(0, strl - 2) == val
-        })
+        if (!(Boolean(this.province) == false && Boolean(this.city) == false && Boolean(this.substationName) == false)) {
+          let substationOp = this.totalArr.substationOp
+          this.substationOp = substationOp.filter((x, i) => {
+            let filed = String(x.id)
+            let strl = filed.length
+            return filed.substr(0, 2) == val
+          })
+          let cityOp = this.totalArr.cityOp
+          this.cityOp = cityOp.filter((x, i) => {
+            let filed = String(x.value)
+            let strl = filed.length
+            return filed.substr(0, strl - 2) == val
+          })
+        }
         if (!this.city && !this.substationName && this.province) this.queryTable()
       },
 
@@ -275,15 +272,17 @@ export default {
     'paramsObj.city': {
       handler(val) {
         if (!this.totalArr.substationOp) return
+        if (!(Boolean(this.province) == false && Boolean(this.city) == false && Boolean(this.substationName) == false)) {
+          let substationOp = this.totalArr.substationOp
+          this.substationOp = substationOp.filter((x, i) => {
+            let filed = String(x.id)
+            let l = x.statno.length
+            let strl = filed.length
 
-        let substationOp = this.totalArr.substationOp
-        this.substationOp = substationOp.filter((x, i) => {
-          let filed = String(x.id)
-          let l = x.statno.length
-          let strl = filed.length
+            return filed.substr(0, strl - l) == val
+          })
+        }
 
-          return filed.substr(0, strl - l) == val
-        })
         if (this.city && !this.substationName) this.queryTable()
       },
 
@@ -299,7 +298,7 @@ export default {
       deep: true
     },
   },
-  mounted() {
+  async mounted() {
     // this.$nextTick(() => {
     //   this.tableHeight = this.$refs.alarmt_main_three.offsetHeight;
     //   console.log('this.tableHeight', this.tableHeight);
@@ -355,7 +354,34 @@ export default {
     this.queryTable()
     // })
 
-    this.querySelect()
+    await this.querySelect()
+    this.province = this.variable?.default_value && JSON.parse(this.variable?.default_value).province_id || this.variable?.current_value && JSON.parse(this.variable?.current_value).province_id || ''
+    this.city = this.variable?.default_value && JSON.parse(this.variable?.default_value).city_id || this.variable?.current_value && JSON.parse(this.variable?.current_value).city_id || ''
+    this.substationName = this.variable?.default_value && JSON.parse(this.variable?.default_value).substation_no || this.variable?.current_value && JSON.parse(this.variable?.current_value).substation_no || ''
+    this.paramsObj.province = this.province == '' ? '' : Number(this.province)
+    this.paramsObj.city = this.city == '' ? '' : Number(this.city)
+    let substationOp = {}
+    let provinceOp = {}
+    let cityOp = {}
+    if (this.totalArr.substationOp) {
+      substationOp = this.totalArr.substationOp.find((x, i) => {
+        return x.statno == this.substationName
+      })
+    }
+    if (this.totalArr.provinceOp) {
+      provinceOp = this.totalArr.provinceOp.find((x, i) => {
+        return x.value == this.province
+      })
+    }
+    if (this.totalArr.cityOp) {
+      cityOp = this.totalArr.cityOp.find((x, i) => {
+        return x.value == this.city
+      })
+    }
+
+    this.paramsObj.substationName = substationOp?.value
+    this.paramsObj.province = provinceOp?.value
+    this.paramsObj.city = cityOp?.value
 
     // this.initEchartFn(this.tableData)
   },
@@ -434,8 +460,8 @@ export default {
       })
     },
     //下拉菜单数据
-    querySelect() {
-      queryDropDownBox().then(res => {
+    async querySelect() {
+      await queryDropDownBox().then(res => {
         console.log(res.data);
         let tempTotal = res.data
         let objArr = { provinceOp: [], cityOp: [], substationOp: [] }
@@ -455,33 +481,7 @@ export default {
 
 
 
-        this.province = this.variable?.default_value && JSON.parse(this.variable?.default_value).province_id || this.variable?.current_value && JSON.parse(this.variable?.current_value).province_id || ''
-        this.city = this.variable?.default_value && JSON.parse(this.variable?.default_value).city_id || this.variable?.current_value && JSON.parse(this.variable?.current_value).city_id || ''
-        this.substationName = this.variable?.default_value && JSON.parse(this.variable?.default_value).substation_no || this.variable?.current_value && JSON.parse(this.variable?.current_value).substation_no || ''
-        this.paramsObj.province = this.province == '' ? '' : Number(this.province)
-        this.paramsObj.city = this.city == '' ? '' : Number(this.city)
-        let substationOp = {}
-        let provinceOp = {}
-        let cityOp = {}
-        if (this.totalArr.substationOp) {
-          substationOp = this.totalArr.substationOp.find((x, i) => {
-            return x.statno == this.substationName
-          })
-        }
-        if (this.totalArr.provinceOp) {
-          provinceOp = this.totalArr.provinceOp.find((x, i) => {
-            return x.value == this.province
-          })
-        }
-        if (this.totalArr.cityOp) {
-          cityOp = this.totalArr.cityOp.find((x, i) => {
-            return x.value == this.city
-          })
-        }
 
-        this.paramsObj.substationName = substationOp?.value
-        this.paramsObj.province = provinceOp?.value
-        this.paramsObj.city = cityOp?.value
       }).catch(err => {
         console.log(err);
       })
@@ -652,11 +652,11 @@ export default {
 
       this.Gechart.setOption(option);
 
-      const task = () => {
-        this.Gechart.resize();
+      // const task = () => {
+      //   this.Gechart.resize();
 
-      };
-      window.addEventListener("resize", debounce(task, 300));
+      // };
+      // window.addEventListener("resize", debounce(task, 300));
     },
     //重置
     restFn() {
@@ -679,7 +679,7 @@ export default {
     },
     tableToExcel(tableData) {
       const headArr = ['time', 'Execute', 'noExecute', 'probability', 'total']
-      const titleObj = { time: '日期', Execute: '任务执行次数', noExecute: '未执行次数', probability: '任务执行率', total: '任务总次数', }
+      const titleObj = { time: '时间', Execute: '任务执行次数', noExecute: '未执行次数', probability: '任务执行率', total: '任务总次数', }
       // 要导出的json数据
       // 列标题
       let str = "<tr>"
@@ -693,7 +693,11 @@ export default {
         str += '<tr>';
         for (const key of headArr) {
           // 增加\t为了不让表格显示科学计数法或者其他格式
-          str += `<td>${tableData[i][key] + '\t'}</td>`;
+          if (key == 'time') {
+            str += `<td>${tableData[i][key] + '\t'}</td>`;
+          } else {
+            str += `<td>${tableData[i][key] + '\t'}</td>`;
+          }
         }
         str += '</tr>';
       }
@@ -710,7 +714,7 @@ export default {
           <x:Name>${worksheet}</x:Name>
           <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
           </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--> </head>
-    <body><table>${str}</table></body>
+    <body><table style="vnd.ms-excel.numberformat:@" >${str}</table></body>
       </html>`;
       // 下载模板
 
@@ -728,7 +732,12 @@ export default {
       a.download = "巡检任务分时统计表" + ".xls";
       a.click();
     },
-    Event_Center_getName: () => {
+    do_EventCenter_setValue(value) {
+      this.Gechart.resize();
+      // this.GechartE2.resize();
+
+    },
+    Event_Center_getName() {
       return this.id;
     }
   }

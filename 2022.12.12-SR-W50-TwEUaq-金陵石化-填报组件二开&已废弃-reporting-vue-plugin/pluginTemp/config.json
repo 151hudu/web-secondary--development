@@ -1,0 +1,15 @@
+{
+  "id": "5f66a22f-af0e-4b75-9c47-e885b3c1d777",
+  "type": "reporting",
+  "main": "app.02660f00.js",
+  "version": "2",
+  "props": {
+    "styleArr": "[\"title\",\"key\", \"eventCenterConfig\"]",
+    "columnStyle": "{title:'自定义'}",
+    "componentAttributes": "{\"style\":[\"title\"],\"data\":[\"key\"],\"interaction\":[\"eventCenterConfig\"]}",
+    "assetColumnList": "[{\"col_name\":\"自定义\",\"col_datatype\":0}]",
+    "isSpreadJs": "true"
+  },
+  "requirement-number": "金陵石油申报计划",
+  "requirement-name": "SR-W50-TwEUaq"
+}

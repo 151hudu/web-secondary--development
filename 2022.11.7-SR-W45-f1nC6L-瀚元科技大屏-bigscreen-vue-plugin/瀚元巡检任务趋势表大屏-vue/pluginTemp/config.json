@@ -1,8 +1,10 @@
 {
-  "id": "a40a9ee0-8685-4bd6-a8e5-1b025b4722f9",
+  "id": "c239c51f-eb07-4bdf-8b1d-13a1d62d579b",
   "type": "bigscreen",
-  "main": "app.a5b8ba10.js",
+  "main": "app.e8940da1.js",
   "version": "2",
+  "requirement-number": "",
+  "requirement-name": "巡检任务趋势",
   "props": {
     "img": "APP_0001.png",
     "disableimg": "disabled_custom_table.png",

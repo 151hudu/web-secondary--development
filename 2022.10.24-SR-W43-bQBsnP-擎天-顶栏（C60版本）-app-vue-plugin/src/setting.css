@@ -1,0 +1,146 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+.ant-tabs-tab-btn:focus {
+  color: #333;
+}
+
+.ant-tabs-left > .ant-tabs-nav .ant-tabs-ink-bar {
+  width: 5px !important;
+  border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
+}
+
+.ant-tabs-left > .ant-tabs-content-holder,
+.ant-tabs-left > div > .ant-tabs-content-holder {
+  margin: 0;
+  border-left: none !important;
+}
+
+.plugin .ant-tabs-tab {
+  height: 33%;
+  width: 10%;
+  padding: 2px 10px !important;
+}
+
+.upload-picture {
+  width: 120px;
+  height: 120px;
+  position: relative;
+}
+
+.upload-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  background: #fafafa;
+  border: 1px dashed #dedfe0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition-property: border-color;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+  transition-delay: 0s;
+}
+
+.ant-upload.ant-upload-select.ant-upload-select-text {
+  width: 120px;
+  height: 120px;
+}
+
+.upload-wrapper:hover {
+  border-color: #2e7bff;
+}
+
+.ant-upload-drag-icon {
+  font-size: 60px;
+  color: #7da7f0;
+}
+
+.removeImgIcon {
+  position: absolute;
+  top: 20px;
+  left: 40px;
+  display: none;
+}
+
+.removeImgIcon:hover {
+  display: block;
+}
+
+.backgroundImg {
+  width: 60px;
+  height: 60px;
+  position: absolute;
+  transform: translate(50%, 50%);
+  left: 0;
+  top: 0;
+}
+
+.backgroundImg:hover + .removeImgIcon {
+  display: block;
+}
+
+.rowtitle {
+  margin-right: 14px;
+  font-size: 14px;
+  line-height: 20px;
+  color: #555;
+}
+
+.nameselect {
+  width: 100%;
+}
+
+.detail-btn {
+  width: 100%;
+  height: 32px;
+  font-size: 14px;
+  line-height: 32px;
+  color: #0454f2;
+  text-align: center;
+  cursor: pointer;
+  background: #fff;
+  border-radius: 4px;
+}
+
+.plugin_deleteIcon {
+  width: 120px;
+  line-height: 120px;
+  height: 120px;
+  position: absolute;
+  z-index: 2;
+  font-size: 24px;
+  top: 0;
+  left: 0;
+  transform: translate(0, 0);
+}
+
+.plugin_deleteIcon .removeIcon {
+  display: none;
+}
+
+.plugin_deleteIcon:hover .removeIcon {
+  display: block;
+}
+
+.removeIcon {
+  color: #ccc;
+  cursor: pointer;
+}

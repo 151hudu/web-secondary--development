@@ -1,0 +1,12 @@
+{
+  "id": "12b6fbf7-0e3c-44c6-8dff-e9d9575e7d2a",
+  "type": "reporting",
+  "main": "app.0c8ec786.js",
+  "version": "2",
+  "props": {
+    "styleArr": "[\"title\",\"key\", \"eventCenterConfig\"]",
+    "columnStyle": "{title:'自定义'}",
+    "componentAttributes": "{\"style\":[\"title\"],\"data\":[\"key\"],\"interaction\":[\"eventCenterConfig\"]}",
+    "assetColumnList": "[{\"col_name\":\"自定义\",\"col_datatype\":0}]"
+  }
+}

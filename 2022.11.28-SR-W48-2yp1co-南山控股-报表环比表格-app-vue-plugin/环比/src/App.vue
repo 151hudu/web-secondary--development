@@ -28,24 +28,16 @@
 
       </div>
 
-
-
-
-
-
-      <el-table :data="tableData" style="width: 100%" stripe tooltip-effect="dark"
+      <el-table :data="tableData" style="width: 100%" tooltip-effect="dark"
         :header-cell-style="{ padding: 0 + 'px', fontSize: '12px', fontWeight: 400 }"
-        :header-row-style="{ height: '30px' }">
+        :header-row-style="{ height: '30px' }" :row-class-name="rowClassNameFn">
         <el-table-column type="index" label="序列" width="55">
         </el-table-column>
         <el-table-column prop="ammeter_name" label="回路名称" min-width="180">
         </el-table-column>
         <el-table-column :prop="x.prop" :label="x.label" min-width="180" v-for="(x, i) in columnData" :key="i">
         </el-table-column>
-
-
         <el-table-column prop="linkRelativeRatio" label="环比(%)">
-
           <template slot-scope="scope">
             <div class="huanbi"> <span>{{ scope.row.linkRelativeRatio + '%' }}</span>
               <span v-if="scope.row.linkRelativeRatio == 0" class="iconfont"> –</span>
@@ -55,10 +47,8 @@
           </template>
         </el-table-column>
       </el-table>
-
       <div class="developer_pagination">
         <div class="developer_pagination_total">共{{ total }}条 </div>
-
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
           class="two_pagination" :page-sizes="[10, 20, 30, 40]" :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper" :total="total">
@@ -95,7 +85,7 @@ Vue.use(Table)
 Vue.use(Pagination)
 Vue.use(Dialog)
 Vue.use(TableColumn)
-
+const level = ['level_one', 'level_two', 'level_three']
 export default {
   //这里写组件英文名称，容器dom的id及事件中心命名均用到这个name，请认真填写
   name: "ButtonChange",
@@ -165,7 +155,17 @@ export default {
       currentPage: 1,
       pageSize: 10,
       dialogVisible: false,
-      dataIds: [] || ["1a4951bf9eb2410db9c2e275e92f15f9", "369d394991744386a3862c8db1fd67bb"]
+      dataIds: [
+        "1a4951bf9eb2410db9c2e275e92f15f9",
+        "39bfdc3d633e437abb14b0c2a1b8c1ed",
+        "b8eca611955b48e7a053d046fabc47fa",
+        "7c7ded26b9c446379832738e0e7de6bc",
+        "28eca611955b48e7a053d046fabc47fa",
+        "38eca611955b48e7a053d046fabc47fa",
+        "39bfdc3d633e437abb14b0c2a1b8c1e1",
+        "60cd34be53f24dd1a1c1bc0f71693e24",
+        "6589ab5d84af44a3b8824c66b49f7d2d"
+      ] || []
     }
   },
   mounted() {
@@ -189,8 +189,10 @@ export default {
     this.handleValueChange()
   },
   methods: {
-    timeStartFn() {
+    //定义类名
+    rowClassNameFn({ row, rowIndex }) {
 
+      return level[row.level - 1]
     },
     //改变页数大小
     handleSizeChange(val) {
@@ -565,9 +567,32 @@ export default {
     }
   }
 
+
+
+
+  /deep/.el-table td.el-table__cell {
+    border-bottom: none;
+  }
+
   /deep/.el-table--enable-row-hover .el-table__body tr:hover>td.el-table__cell {
     background: rgba(239, 246, 255, 1);
     ;
+  }
+
+  /deep/ .el-table__body tr.level_one>td.el-table__cell {
+    background: rgba(26, 121, 255, 0.1);
+  }
+
+  //一级颜色
+
+  /deep/ .el-table__body tr.level_two>td.el-table__cell {
+    background: rgba(21, 144, 85, 0.06);
+  }
+
+  //二级颜色
+
+  /deep/ .el-table__body tr.level_three>td.el-table__cell {
+    background: rgba(102, 102, 204, 0.05);
   }
 
   /deep/.el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {

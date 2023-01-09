@@ -1,0 +1,35 @@
+{
+  "id": "8b8aa388-c155-4eee-92cb-54ca4036acd3",
+  "type": "analyzer",
+  "main": "main.bb4b9328.js",
+  "version": "2",
+  "configuration": true,
+  "props": {
+    "img": "custom_table.png",
+    "type": "qoiwu23fo3",
+    "disableimg": "disabled_custom_table.png",
+    "name": "时间轴",
+    "process": true,
+    "domId": "ex_46fbe360-daa5-42af-8ca0-2ec3066ef216",
+    "lib": [],
+    "cssDep": [],
+    "vars": [
+      "时间字段",
+      "信息字段",
+      "分类字段",
+      "上方",
+      "卡片背景色",
+      "卡片边框色",
+      "卡片字体",
+      "卡片字号",
+      "卡片文字颜色",
+      "时间字体",
+      "时间字号",
+      "时间文字颜色",
+      "时间格式",
+      "消息框宽度",
+      "时间点间距"
+    ],
+    "optionModules": []
+  }
+}

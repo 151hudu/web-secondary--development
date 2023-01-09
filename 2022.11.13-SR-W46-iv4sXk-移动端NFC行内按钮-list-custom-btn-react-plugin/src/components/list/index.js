@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 // import vConsole from '../../utils/vconsole'
-import { Button } from "antd";
+import { Button, message } from "antd";
 import { queryAssetById } from './../../api/asset';
 // import Rsa from "../../utils/rsa"
 import './index.less';
@@ -19,9 +19,11 @@ const List = ({
   const checkKey = customParams?.checkKey || 'product_id'; 
   const infoUrl = customParams?.infoUrl || '';
   const dataIdKey = customParams?.dataId || 'dataId';
+  const dataIdKeyName = customParams?.dataIdKey || 'dataId';
   const [dialogVisible, setDialogVisible] = useState(false);
   const [tipVisible, setTipVisible] = useState(false);
   const [phonePowers, setPhonePowers] = useState('');
+  const [messageApi] = message.useMessage();
 
   useEffect(() => {
     if (window.IotJSInterface) {
@@ -49,7 +51,7 @@ const List = ({
     }
   }, [])
 
-  const putNFCResult = async (pointName) => {
+  const putNFCResult = (pointName) => {
     // Rsa.decrypt(pointName) // 解密
     console.log('NFCRes', pointName);
     let params = [
@@ -60,21 +62,40 @@ const List = ({
         compareObj: pointName
       }
     ]
-    let { data } = await queryAssetById(checkAssetsId, params)
-    if (data[2] > 0) {
-      let urlA = infoUrl.indexOf('?')
-      if (urlA != "-1") {
-        // alert(`${window.location.origin}${infoUrl}&${dataIdKey}=${dataId}&pointName=${pointName}`)
-        window.location.href = `${window.location.origin}${infoUrl}&${dataIdKey}=${dataId}`;
+    queryAssetById(checkAssetsId, params).then( ({ data }) => {
+      // console.log(data);
+      let keys = data[0],
+        values = data[1],
+        obj = {};
+      values.forEach(x => {
+        keys.forEach((y, yIndex) => {
+          obj[y.col_name] = x[yIndex]
+        });
+      });
+      if (data[2] > 0) {
+        if (obj[dataIdKeyName] != dataId) {
+          messageApi.open({
+            type: 'warning',
+            content: '扫描结果与当前数据不匹配',
+          })
+        } else {
+          let urlA = infoUrl.indexOf('?')
+          diaLogClose()
+          if (urlA != "-1") {
+            // alert(`${window.location.origin}${infoUrl}&${dataIdKey}=${dataId}&pointName=${pointName}`)
+            window.location.href = `${window.location.origin}${infoUrl}&${dataIdKey}=${dataId}`;
+          } else {
+            // alert(`${window.location.origin}${infoUrl}?${dataIdKey}=${dataId}&pointName=${pointName}`)
+            window.location.href = `${window.location.origin}${infoUrl}?${dataIdKey}=${dataId}`;
+          }
+        }
       } else {
-        // alert(`${window.location.origin}${infoUrl}?${dataIdKey}=${dataId}&pointName=${pointName}`)
-        window.location.href = `${window.location.origin}${infoUrl}?${dataIdKey}=${dataId}`;
+        setDialogVisible(false)
+        setTipVisible(true)
       }
-    }else {
-      setTipVisible(true)
-    }
-    console.log(data);
-    diaLogClose()
+    }).catch( err => {
+      diaLogClose()
+    })
   }
   const openCode = () => {
     switch (phonePowers) {

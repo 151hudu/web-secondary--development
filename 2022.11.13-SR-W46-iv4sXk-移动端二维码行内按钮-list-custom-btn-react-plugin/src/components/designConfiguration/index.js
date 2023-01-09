@@ -39,6 +39,9 @@ const DesignConfiguration = ({ changeConfiguration, configuration }) => {
         <Form.Item label="详情页路由主键变量名：" name="dataId">
           <Input />
         </Form.Item>
+        <Form.Item label="资产主键变量名：" name="dataIdKey">
+          <Input />
+        </Form.Item>
       </Form>
     </>
   );

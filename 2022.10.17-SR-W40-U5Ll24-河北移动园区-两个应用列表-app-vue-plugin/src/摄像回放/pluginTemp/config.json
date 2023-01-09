@@ -1,0 +1,26 @@
+{
+  "id": "1b0fdcd0-31a5-4765-9cc4-e5fea1969ca6",
+  "type": "app",
+  "main": "app.42dbccbb.js",
+  "version": "2",
+  "props": {
+    "type": "customize",
+    "img": "APP_0001.png",
+    "name": "应用二开_vue",
+    "loadStyle": 0,
+    "lib": [],
+    "css_script": [],
+    "customconf": [
+      "id",
+      "catalogueAssetId",
+      "catalogueName",
+      "catalogueParentId",
+      "catalogueId",
+      "cameraAssetId",
+      "cameraId",
+      "cameraChannelId",
+      "cameraName",
+      "parent_id"
+    ]
+  }
+}

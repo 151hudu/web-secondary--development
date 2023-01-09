@@ -6,16 +6,16 @@ const glob = require("glob");
 const AdmZip = require("adm-zip");
 const yParser = require("yargs-parser");
 const args = yParser(process.argv.slice(2));
-const sourceMap = args.source || false;
+const sourceMap = args.source || true;
 
 function printZip(zip) {
   let zipEntries = zip.getEntries(); // an array of ZipEntry records
-  zipEntries.forEach(function(zipEntry) {
+  zipEntries.forEach(function (zipEntry) {
     console.log(zipEntry.name || zipEntry.entryName); // outputs zip entries information
   });
 }
 
-Date.prototype.Format = function(fmt) {
+Date.prototype.Format = function (fmt) {
   var o = {
     "M+": this.getMonth() + 1, //月份
     "d+": this.getDate(), //日
@@ -29,8 +29,8 @@ Date.prototype.Format = function(fmt) {
   for (var k in o) {
     if (new RegExp("(" + k + ")").test(fmt)) {
       fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1)
-                                   ? (o[k])
-                                   : (("00" + o[k]).substr(("" + o[k]).length)));
+        ? (o[k])
+        : (("00" + o[k]).substr(("" + o[k]).length)));
     }
   }
   return fmt;
@@ -44,6 +44,7 @@ glob.sync(path.resolve(__dirname, "../pluginTemp/js/*")).map(file => {
 console.log("老文件已删除");
 
 // copy js
+
 let mainFileName = "";
 glob.sync(path.resolve(__dirname, "../dist/js/*")).map((file) => {
   let fileName = path.basename(file);
@@ -76,10 +77,12 @@ console.log("config.json 修改完成", configJson);
 console.log("打包中...");
 
 let zip = new AdmZip();
+const requirementNumber = configJson["requirement-number"] || "plugin";
+const requirementName = configJson["requirement-name"] || "";
 zip.addLocalFolder(path.resolve(__dirname, "../pluginTemp"));
 let pluginPath = path.resolve(
   __dirname,
-  `../plugin-${new Date().Format("yyyy年MM月dd日 HH时mm分ss秒")}.zip`
+  `../${requirementNumber}-${requirementName}-${new Date().Format("yyyy-MM-dd HH时mm分")}.zip`
 );
 zip.writeZip(pluginPath);
 fs.writeFileSync(path.resolve(__dirname, "../temp"), pluginPath, "utf-8");

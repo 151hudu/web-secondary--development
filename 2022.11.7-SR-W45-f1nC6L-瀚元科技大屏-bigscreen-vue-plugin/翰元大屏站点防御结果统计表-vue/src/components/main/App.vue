@@ -54,7 +54,7 @@
       <el-table-column prop="total" label="防御总次数" width="100"> </el-table-column>
       <el-table-column prop="successNum" label="防御成功次数" width="100"> </el-table-column>
       <el-table-column prop="failedNum" label="防御失败次数" width="100"> </el-table-column>
-      <el-table-column prop="probability" label="防御成功率" width="110"> </el-table-column>
+      <el-table-column prop="probability" label="防御成功率(%)" width="110"> </el-table-column>
       <el-table-column prop="firstAlarm" label="首次发生时间" width="160"> </el-table-column>
       <el-table-column prop="lastAlarm" label="最后发生时间" width="160"> </el-table-column>
     </el-table>
@@ -97,15 +97,15 @@ export default {
       levelOption: [
         {
           value: "1",
-          label: "1级",
+          label: "一级",
         },
         {
           value: "2",
-          label: "2级",
+          label: "二级",
         },
         {
           value: "3",
-          label: "3级",
+          label: "三级",
         },
 
       ],
@@ -136,42 +136,44 @@ export default {
       handler(val) {
 
         if (this.provinceData.length == 0) return
+        if (!(Boolean(this.province) == false && Boolean(this.city) == false && Boolean(this.substationName) == false)) {
+          this.citySelect = {};
+          this.cityOption = [];
+          this.stationSelect = {};
+          this.stationOption = [];
 
-        this.citySelect = {};
-        this.cityOption = [];
-        this.stationSelect = {};
-        this.stationOption = [];
+          this.cityData.forEach((item, index) => {
+            if (item.province_name == val?.province_name) {
+              this.cityOption.push(item);
+            }
+          });
+          this.stationData.forEach((item, index) => {
+            if (item.province_name == val?.province_name) {
+              this.stationOption.push(item);
+            }
+          });
+        }
 
-        this.cityData.forEach((item, index) => {
-          if (item.province_name == val?.province_name) {
-            this.cityOption.push(item);
-          }
-        });
-        this.stationData.forEach((item, index) => {
-          if (item.province_name == val?.province_name) {
-            this.stationOption.push(item);
-          }
-        });
 
         if (!this.city && !this.substationName && this.province) this.searchTable()
       },
 
-      // immediate: true,
       deep: true
     },
     'citySelect': {
       handler(val) {
+        if (!(Boolean(this.province) == false && Boolean(this.city) == false && Boolean(this.substationName) == false)) {
+          this.stationSelect = {};
+          this.stationOption = [];
+
+          this.stationData.forEach((item, index) => {
+            if (item.city_name == val?.city_name) {
+              this.stationOption.push(item);
+            }
+          });
+        }
 
 
-
-        this.stationSelect = {};
-        this.stationOption = [];
-
-        this.stationData.forEach((item, index) => {
-          if (item.city_name == val?.city_name) {
-            this.stationOption.push(item);
-          }
-        });
         if (this.city && !this.substationName) this.searchTable()
       },
 
@@ -342,7 +344,7 @@ export default {
         this.tableData.forEach((item, index) => {
           item.firstAlarm = item.firstAlarm ? this.formatDate(item.firstAlarm) : '';
           item.lastAlarm = item.lastAlarm ? this.formatDate(item.lastAlarm) : '';
-          item.probability = item.total == 0 ? '--' : Number(item.probability).toFixed(2) + '%'
+          item.probability = item.total == 0 ? '--' : Number(item.probability).toFixed(2)
         });
         this.total = res.data.total;
       });
@@ -401,7 +403,7 @@ export default {
             item = "防御失败次数";
             break;
           case "probability":
-            item = "防御成功率";
+            item = "防御成功率(%)";
             break;
           case "firstAlarm":
             item = "首次发生时间";
@@ -435,7 +437,7 @@ export default {
           <x:Name>${worksheet}</x:Name>
           <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
           </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--> </head>
-    <body><table>${str}</table></body>
+    <body><table style="vnd.ms-excel.numberformat:@" >${str}</table></body>
       </html>`;// 下载模板 // 输出base64编码
       const base64 = function (s) {
         return window.btoa(unescape(encodeURIComponent(s)));

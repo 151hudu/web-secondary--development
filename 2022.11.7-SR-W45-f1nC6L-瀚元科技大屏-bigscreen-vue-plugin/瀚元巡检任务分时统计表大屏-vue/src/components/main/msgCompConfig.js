@@ -4,16 +4,15 @@ export const events = [];
 // 组件可接收事件
 export const actions = [
   {
-    key: "changeColor",
-    name: "改变颜色",
+    key: "setValue",
+    name: "图表渲染",
     params: [
       {
-        key: "color",
-        name: "颜色",
+        key: "value",
+        name: "值",
         dataType: "string"
       }
-    ],
-    hasReturn: false
+    ], Return: false
     // // hasReturn为false则不用写returns选项
     // returns: [
     //   {

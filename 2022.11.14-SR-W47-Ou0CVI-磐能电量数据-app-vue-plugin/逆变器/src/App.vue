@@ -97,7 +97,7 @@
                   :header-cell-style="{ padding: 0 + 'px' }"
                   :cell-style="{ padding: 0 + 'px', color: '#000000', height: '32px' }"
                   :header-row-style="{ height: '35px' }">
-                  <el-table-column label="单向交流输出" align="center">
+                  <el-table-column label="单相交流输出" align="center">
                     <el-table-column prop="phase" label="相位" align="center" min-width="134" max-width="196">
                     </el-table-column>
                     <el-table-column prop="AC_voltage" label="电压(V)" :formatter="oneFixed" align="center"
@@ -106,7 +106,7 @@
                     <el-table-column prop="current" label="电流(A)" :formatter="oneFixed" align="center" min-width="134"
                       max-width="185">
                     </el-table-column>
-                    <el-table-column prop="AC_power_zb" label="单项有功率(kW)" :formatter="oneFixed" align="center"
+                    <el-table-column prop="AC_power_zb" label="单相有功率(kW)" :formatter="oneFixed" align="center"
                       max-width="191" min-width="130">
                     </el-table-column>
                   </el-table-column>
@@ -513,8 +513,11 @@ export default {
       realDataT: {},
       realDataB: [],
       //逆变器id
+      // equipmentId: null ||
+      //   1999117999234,
       equipmentId: null ||
-        1999116999240,
+        //   1999116999232,
+        1999116999232
     }
   },
   mounted() {
@@ -531,8 +534,6 @@ export default {
     let componentName = this.$vnode.tag.split("-").pop().toLowerCase()
     this.id = id ? `secondary_${componentName}_${id}` : `secondary_${componentName}_${Utils.generateUUID()}`
     //用于定义接收用户输入
-    // this.buttons = JSON.parse(buttons).data;
-    // this.defaultValue = JSON.parse(buttons).defaultValue;
     //业务代码
     if (this.defaultValue) {
       this.selected = this.defaultValue
@@ -553,14 +554,10 @@ export default {
   },
   methods: {
     testView(e) {
-
       this.timeStart = e
-
     },
-
     //合并单元格
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-
       if (columnIndex >= 4) {
         if (rowIndex == 0) {
           return {
@@ -609,15 +606,11 @@ export default {
       } else {
         return cellValue || cellValue == 0 ? Number(Math.round(cellValue * 100) / 100).toFixed(2) : cellValue
       }
-
-
     },
     oneFixedStatus(row, column, cellValue, index) {
-
       let poper = column.property
       let status = { voltage_MPPT: 'statusM', current_MPPT: 'statusM', capacity: 'status', voltage: 'status', current: 'status', capacity2: 'status2', voltage2: 'status2', current2: 'status2' }
       let colName = column.label
-
       if (colName.indexOf('功率') != -1) {
         return (row[status[poper]] == 0 || !row[status[poper]]) ? '-' : (cellValue || cellValue == 0 ? Number(Math.round(cellValue * 1000) / 1000).toFixed(3) : cellValue)
       } else if (colName.indexOf('电压') != -1) {
@@ -625,12 +618,9 @@ export default {
       } else {
         return (row[status[poper]] == 0 || !row[status[poper]]) ? '-' : (cellValue || cellValue == 0 ? Number(Math.round(cellValue * 100) / 100).toFixed(2) : cellValue)
       }
-
-
     },
     lsFixed(row, column, cellValue, index) {
       let colName = column.label
-
       if (colName.indexOf('功率') != -1) {
         return cellValue != "-" && (cellValue == 0 || cellValue) ? Number(Math.round(cellValue * 1000) / 1000).toFixed(3) : cellValue
       } else if (colName.indexOf('电压') != -1) {
@@ -644,11 +634,9 @@ export default {
     renderFn(h, { column, $index }) {
       return h("span", {}, column.label);
     },
-
     //顶部表述查询
     descriQuery() {
       queryInverterData(this.equipmentId).then(res => {
-
         this.equipmentInfo = res.data
       }).catch(err => {
         console.log(err);
@@ -657,21 +645,16 @@ export default {
       })
       queryIndexCard(this.equipmentId).then(res => {
         this.detail_info = res.data
-
-
       }).catch(err => {
         console.log(err);
       }).catch(err => {
         console.log(err);
       })
-
-
     },
     //实时查询
     shisquery() {
       this.loading.ss = true
       realTimeData(this.equipmentId).then(res => {
-
         let { MPPT, PV, leftTop, rightTop } = res.data
         let relBtm = []
         let tempPV = []
@@ -682,12 +665,9 @@ export default {
           obj.status = x.status
           let tempObj = {}
           for (const key in x) {
-
             if (key.indexOf(obj.NAME + 'A') != -1 || key.indexOf(obj.NAME + 'U') != -1) {
               let valueK = key.indexOf('A') != -1 ? 'current' : 'voltage'
-
               tempObj[valueK] = x[key]
-
             }
           }
           obj = { ...obj, ...tempObj }
@@ -699,7 +679,6 @@ export default {
         realLeftTop[0] = { phase: 'A', AC_voltage: leftTop[0].AcUa, current: leftTop[0].Ia, AC_power_zb: leftTop[0].A }
         realLeftTop[1] = { phase: 'B', AC_voltage: leftTop[0].AcUb, current: leftTop[0].Ib, AC_power_zb: leftTop[0].B }
         realLeftTop[2] = { phase: 'C', AC_voltage: leftTop[0].AcUc, current: leftTop[0].Ic, AC_power_zb: leftTop[0].C }
-
         temp.forEach(x => {
           let obj = {}
           for (const key in x) {
@@ -708,7 +687,6 @@ export default {
           PV2.push(obj)
         })
         let a
-
         MPPT.forEach((x, i) => {
           if (!x.MPPT) a = MPPT.splice(i, 1)
         })
@@ -716,34 +694,24 @@ export default {
         MPPT.sort(function (a, b) {
           return a.MPPT.replace('MPPT', '') - b.MPPT.replace('MPPT', '')
         })
-
         let tempMppt = []
         MPPT.forEach(x => {
           let obj = {}
           obj.MPPT = x.MPPT
-
           obj.status = x.status
           let tempObj = {}
-
           for (const key in x) {
-
             if (key.indexOf(obj.MPPT + 'A') != -1 || key.indexOf(obj.MPPT + 'U') != -1) {
               let valueK = key.indexOf('A') != -1 ? 'current_MPPT' : 'voltage_MPPT'
-
               tempObj[valueK] = x[key]
-
             }
           }
-
-
-
           obj = { ...obj, ...tempObj }
           tempMppt.push(obj)
         })
 
         MPPT = [...tempMppt]
         MPPT.splice(12)
-
 
         MPPT.forEach((x, i) => {
           x.statusM = x.status
@@ -752,7 +720,6 @@ export default {
           relBtm.push({ ...x, ...y, ...z })
         })
         this.realDataB = relBtm
-
 
 
         this.realDataT.left = realLeftTop
@@ -774,16 +741,12 @@ export default {
         return newArr;
       }, []);
       return arr
-
-
     },
 
     //发电量echarts图初始化方法
     async initElectricity() {
-
       const colors = ['#5470C6', '#91CC75', '#EE6666'];
       let initialize = { date: 'YYYY-MM-DD', month: 'YYYY-MM', year: 'YYYY' }//日期格式
-
       let fieldP = {
         date: ['sub_time', 'power_output_h', 'theory_power_output_h', 'equivalent_hours_h', 'PR_h'],
         month: ['sub_time', 'poweroutput_d', 'theory_power_output_d', 'equivalent_hours_d', 'PR_d'],
@@ -800,18 +763,13 @@ export default {
       let PR = []
       let xUnit = this.pickerType == 'total' ? '单位：万kWh' : '单位：kWh'
       let uint = this.pickerType == 'total' ? ['万kWh', '万kWh', 'h', '%'] : ['kWh', 'kWh', 'h', '%']
-
       let xAxis = data.map(x => {
         this.pickerType == 'total' ? power_output.push((x[fieldP[this.pickerType][1]] / 10000).toFixed(2)) : power_output.push(Number(x[fieldP[this.pickerType][1]] || 0).toFixed(2))
         this.pickerType == 'total' ? theory_power_output.push((x[fieldP[this.pickerType][2]] / 10000).toFixed(2)) : theory_power_output.push(Number(x[fieldP[this.pickerType][2]] || 0).toFixed(2))
         equivalent_hours.push(Number(x[fieldP[this.pickerType][3]] || 0).toFixed(2))
         PR.push(Number(x[fieldP[this.pickerType][4]] || 0).toFixed(2))
-
-
         return x[fieldP[this.pickerType][0]]
       })
-
-
       let options = {
         color: colors,
         tooltip: {
@@ -822,7 +780,6 @@ export default {
               color: 'rgba(28, 124, 196, .6)'
             },
           },
-
           formatter: function (params, ticket, callback) {
             var htmlStr = '';
             for (var i = 0; i < params.length; i++) {
@@ -849,24 +806,20 @@ export default {
           bottom: '5%',
           // containLabel: true
         },
-
         legend: {
           data: ['发电量', '理论发电量', '等效时数', 'PR'],
           itemHeight: 8,
           itemWidth: 12,
-
           textStyle: {
             fontSize: 10
           }
         },
         xAxis: [
           {
-
             axisTick: {
               alignWithLabel: true,
               show: false
             },
-
             // prettier-ignore
             data: xAxis
           }
@@ -879,9 +832,7 @@ export default {
             alignTicks: true,
             axisLine: {
               show: true,
-
             },
-
           },
           {
             type: 'value',
@@ -891,9 +842,7 @@ export default {
             offset: 40,
             axisLine: {
               show: true,
-
             },
-
           },
           {
             type: 'value',
@@ -902,9 +851,7 @@ export default {
             alignTicks: true,
             axisLine: {
               show: true,
-
             },
-
           }
         ],
         series: [
@@ -913,7 +860,6 @@ export default {
             type: 'bar',
             yAxisIndex: 2,
             data: power_output,
-
             barMaxWidth: 60,
             itemStyle: {
               color: 'rgb(89,204,117)'
@@ -932,7 +878,6 @@ export default {
           {
             name: '等效时数',
             type: 'line',
-
             symbol: 'circle',
             data: equivalent_hours,
             itemStyle: {
@@ -1016,11 +961,6 @@ export default {
     <body><table>${str}</table></body>
       </html>`;
       // 下载模板
-
-
-
-
-
       let blob = new Blob([template], { type: "application/vnd.ms-excel" })
       const a = document.createElement("a");
       // a.href = uri + base64(format(template));
@@ -1043,28 +983,22 @@ export default {
     },
     //更改页数大小
     handleSizeChange(val) {
-
       this.pageSize = val
       this.historyQueryData()
-
     },
     //更改页数
     handleCurrentChange(val) {
-
       this.pageNum = val
       this.historyQueryData()
     },
     hisotryStartFn(e) {
       this.hiostyTime = e
       this.historyQueryData()
-
     },
     exportHisotryFn() {
       let time = moment(this.hiostyTime).format('YYYY-MM-DD')
-
       exportFn({
         equipment_id: this.equipmentId, date: time,
-
       }).then(res => {
         var blob = res.data;
         //  FileReader主要用于将文件内容读入内存
@@ -1107,7 +1041,6 @@ export default {
       param.time = moment(this.timeStart).format('YYYY-MM-DD')
       param.type = this.value
       let { data } = await queryOperationCurve(param)
-
       const seriesKey = { pvdy: "PV", pvdl: "PV", mpptdy: "MPPT", mpptdl: "MPPT" }
       const ex = { pvdy: "U", pvdl: "A", mpptdy: "U", mpptdl: "A" }
       const key = seriesKey[this.fdField]
@@ -1121,12 +1054,23 @@ export default {
           }
         })
         serData[this.fdField] = showList;
+        if (showList[0]?.indexOf('MPPT') >= 0) {
+          let tempData = []
+          let aRoun = showList.length
+          data.forEach((x, i) => {
+            if (x.MPPT == 'MPPT1') tempData.push(x)
+          })
+          data = tempData
+        }
+        if (showList[0]?.indexOf('PV') >= 0) {
+          let tempData = []
+          let aRoun = showList.length
+          data.forEach((x, i) => {
+            if (i % aRoun == 0) tempData.push(x)
+          })
+          data = tempData
+        }
       }
-
-
-
-
-
       let eachartData = {}
       let seriesData = []
       data.forEach((x, i) => {
@@ -1135,44 +1079,26 @@ export default {
         }
       })
       let tempLength
-
       serData[this.fdField].forEach(x => {
         if (!eachartData[x]) {
-
           eachartData[x] = []
           for (let i = 0; i < tempLength; i++) {
             eachartData[x].push(null)
           }
           eachartData[x][0] = 0
-
         } else {
           tempLength = eachartData[x].length
         }
       })
-      let time = []
-      eachartData.sub_time.forEach((x, i) => {
-
-        if (time.indexOf(x) == -1) {
-          time.push(x)
-          console.log(x,);
-        }
-
-      })
-
       serData[this.fdField].forEach(x => {
         if (eachartData[x].length < tempLength) {
-
           eachartData[x] = []
           for (let i = 0; i < tempLength; i++) {
             eachartData[x].push(null)
           }
           eachartData[x][0] = 0
-
         }
       })
-
-
-
       serData[this.fdField].forEach((x, i) => {
         let st = i % 5 == 4 ? "triangle" : symbolR[i % 5]
         let rotae = i % 5 == 4 ? 180 : 0
@@ -1180,21 +1106,17 @@ export default {
         let dataA = []
         let yAxi = name == '日辐射量' ? 1 : (name == '光伏组件温度' ? 2 : 0)
         eachartData[x] = eachartData[x] ? eachartData[x] : [0]
-
         if (name.indexOf('功率') != -1) {
           eachartData[x].map(x => {
             dataA.push(!x ? x : Number(x).toFixed(3))
           })
-
         } else if (name.indexOf('U') != -1) {
           eachartData[x].map(x => {
             dataA.push(!x ? x : Number(x).toFixed(1))
           })
         } else {
           eachartData[x].map(x => {
-
             dataA.push(!x ? x : Number(x).toFixed(2))
-
           })
         }
         seriesData.push({
@@ -1211,14 +1133,11 @@ export default {
           }
         })
       })
-
       let options = {
-
         tooltip: {
           trigger: 'axis',
           confine: true,
           className: 'two_tooltips',
-
           formatter: function (params, ticket, callback) {
             let htmlStr = '';
             for (let i = 0; i < params.length; i++) {
@@ -1228,24 +1147,13 @@ export default {
               let value = param.value;//y轴值
               if (!value) {
                 if (xName.indexOf('功率') != -1) {
-
                   value = Number(0).toFixed(3)
-
-
                 } else if (xName.indexOf('U') != -1) {
-
                   value = Number(0).toFixed(1)
-
-
                 } else {
-
-
                   value = Number(0).toFixed(2)
-
-
                 }
               }
-
               let color = param.color;//图例颜色
               if (i === 0) {
                 htmlStr += xName + '<br/>';//x轴的名称
@@ -1257,16 +1165,12 @@ export default {
             }
             return htmlStr;
           },
-          // alwaysShowContent: true,
-
-
           enterable: true
         },
         legend: {
           data: serName[this.fdField],
           itemHeight: 8,
           itemWidth: 12,
-
           textStyle: {
             fontSize: 10
           }
@@ -1275,23 +1179,17 @@ export default {
           left: '4%',
           right: '6%',
           bottom: '5%',
-          // containLabel: true
         },
-
         xAxis: {
           type: 'category',
           boundaryGap: false,
           axisTick: {
             show: false,
-
           },
           axisLabel: {
             interval: 11
           },
-
-
-          // data: eachartData.sub_time
-          data: time//过滤时间数据
+          data: eachartData.sub_time
         },
         yAxis: [
           {
@@ -1341,14 +1239,9 @@ export default {
         ],
         series: seriesData
       };
-      if (['pvdy', 'pvdl', 'mpptdy', 'mpptdl'].includes(this.fdField)) {
-        delete options.xAxis.axisLabel;
-      }
 
       this.Gechart2 = echarts.init(this.$refs.echart_curve);
       this.Gechart2.setOption(options, { notMerge: true });
-      // this.Gechart2.setOption(options);
-      // this.Gechart2.resize()
 
 
     },

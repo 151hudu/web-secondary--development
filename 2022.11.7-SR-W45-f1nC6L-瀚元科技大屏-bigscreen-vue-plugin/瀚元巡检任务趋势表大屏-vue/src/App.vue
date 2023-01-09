@@ -25,6 +25,7 @@ export default {
     notifyVariable: Function,
     type: String,
     mode: String,
+    updateProcess: Function,
     pubSub: Object, variable: Object
 
   },

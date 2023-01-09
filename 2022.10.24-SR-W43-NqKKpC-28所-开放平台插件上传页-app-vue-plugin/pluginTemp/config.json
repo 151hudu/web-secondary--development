@@ -1,0 +1,15 @@
+{
+  "id": "d957494d-d354-43bf-ae29-b104e605e75d",
+  "type": "app",
+  "main": "main.9ea3369c.js",
+  "version": "2",
+  "props": {
+    "type": "customize",
+    "img": "APP_0001.png",
+    "name": "dsadq",
+    "loadStyle": 0,
+    "lib": [],
+    "css_script": [],
+    "customconf": []
+  }
+}

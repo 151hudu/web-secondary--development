@@ -23,8 +23,6 @@
                 class="el-icon-arrow-right"></i> </button>
           </div>
         </div>
-
-
         <div class="southern_tab_buttonGroup_end">
           <button class="southern_buttons_item" @click='queryTable(dateType)'><i class="el-icon-search "></i>
             查询</button>
@@ -32,14 +30,9 @@
             <div class="ehartImageItem">生成图表</div>
           </button>
         </div>
-
       </div>
-
-
-
-
-      <el-table :data="tableData" row-key="ammeter_name" stripe style="width: 100%" tooltip-effect="dark"
-        @selection-change="handleSelectionChange"
+      <el-table :data="tableData" row-key="ammeter_name" style="width: 100%" tooltip-effect="dark"
+        @selection-change="handleSelectionChange" :row-class-name="rowClassNameFn"
         :header-cell-style="{ padding: 0 + 'px', fontSize: '12px', fontWeight: 400 }"
         :header-row-style="{ height: '30px' }">
         <el-table-column type="selection" :reserve-selection="true" width="55" fixed="left">
@@ -65,11 +58,6 @@
           layout="total, sizes, prev, pager, next, jumper" :total="total">
         </el-pagination>
       </div>
-
-
-
-
-
     </div>
 
     <el-dialog title="用能折线图" :visible.sync="dialogVisible" custom-class="two_dialog" width="1100px">
@@ -101,7 +89,7 @@ Vue.use(Table)
 Vue.use(Dialog)
 Vue.use(Pagination)
 Vue.use(TableColumn)
-
+const level = ['level_one', 'level_two', 'level_three']
 export default {
   //这里写组件英文名称，容器dom的id及事件中心命名均用到这个name，请认真填写
   name: "ButtonChange",
@@ -169,7 +157,18 @@ export default {
       Gechart: null,
       total: 9,
       dialogVisible: false,
-      dataIds: [] || ["1a4951bf9eb2410db9c2e275e92f15f9", "369d394991744386a3862c8db1fd67bb"]
+      dataIds: [] || ["39bfdc3d633e437abb14b0c2a1b8c1ed", "b8eca611955b48e7a053d046fabc47fa", "7c7ded26b9c446379832738e0e7de6bc", "28eca611955b48e7a053d046fabc47fa", "38eca611955b48e7a053d046fabc47fa",
+        "39bfdc3d633e437abb14b0c2a1b8c1e1",
+        "709d52a39ff9498691d317633701111",
+        "b8eca611955b48e7a05sd46fabc47fa",
+        "60cd34be53f24dd1a1c1bc0f71693e24",
+        "709d52a39ff9498691d3sd337013922",
+        "709d52a39ff9498691daw6337013911",
+        "6589ab5d84af44a3b8824c66b49f7d2d",
+        "28eca611955b48e7a05df046fabc47fa",
+        "38eca611955b48e7a05fd046fabc47f1"
+      ]
+
     }
   },
   mounted() {
@@ -197,10 +196,24 @@ export default {
     }
     this.handleValueChange()
     //业务代码
-    this.dataIds = ["1a4951bf9eb2410db9c2e275e92f15f9", "369d394991744386a3862c8db1fd67bb"]
-    this.queryReportModel()
+    this.dataIds = ["39bfdc3d633e437abb14b0c2a1b8c1ed", "b8eca611955b48e7a053d046fabc47fa", "7c7ded26b9c446379832738e0e7de6bc", "28eca611955b48e7a053d046fabc47fa", "38eca611955b48e7a053d046fabc47fa",
+      "39bfdc3d633e437abb14b0c2a1b8c1e1",
+      "709d52a39ff9498691d317633701111",
+      "b8eca611955b48e7a05sd46fabc47fa",
+      "60cd34be53f24dd1a1c1bc0f71693e24",
+      "709d52a39ff9498691d3sd337013922",
+      "709d52a39ff9498691daw6337013911",
+      "6589ab5d84af44a3b8824c66b49f7d2d",
+      "28eca611955b48e7a05df046fabc47fa",
+      "38eca611955b48e7a05fd046fabc47f1"
+    ]
+    // this.queryReportModel()
   },
   methods: {
+    //定义类名
+    rowClassNameFn({ row, rowIndex }) {
+      return level[row.level - 1]
+    },
     timeStartFn() {
 
     },
@@ -450,10 +463,14 @@ export default {
         let a = []
         this.tableData.forEach(x => {
           a.push(Object.keys(x).length)
+
         })
         let FastLength = a.indexOf(Math.max(...a))
         this.columnData = Object.keys(this.tableData[FastLength])
+        console.log(this.columnData, '=');
         this.columnData.splice(this.columnData.indexOf('ammeter_name'), 1)
+        this.columnData.splice(this.columnData.indexOf('ammeter_id'), 1)
+        this.columnData.splice(this.columnData.indexOf('level'), 1)
         this.columnData.sort(function (a, b) {
           return a - b
         })
@@ -470,10 +487,12 @@ export default {
 
     //表格选择框事件
     handleSelectionChange(selection) {
-      console.log(selection, '====');
       this.echartsData = []
-      this.echartsData = [...selection]
-
+      this.echartsData = JSON.parse(JSON.stringify(selection))
+      this.echartsData.forEach((x) => {
+        delete x.ammeter_id
+        delete x.level
+      })
     },
 
     //  图表按钮
@@ -710,13 +729,34 @@ export default {
     }
   }
 
+  // /deep/ .level_one {
+  //   background: rgba(26, 121, 255, 0.1);
+  // }
+
   /deep/.el-table--enable-row-hover .el-table__body tr:hover>td.el-table__cell {
     background: rgba(239, 246, 255, 1);
     ;
   }
 
-  /deep/.el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {
-    background: #F3F4F5;
+  /deep/ .el-table__body tr.level_one>td.el-table__cell {
+    background: rgba(26, 121, 255, 0.1);
+  }
+
+  //一级颜色
+
+  /deep/ .el-table__body tr.level_two>td.el-table__cell {
+    background: rgba(21, 144, 85, 0.06);
+  }
+
+  //二级颜色
+
+  /deep/ .el-table__body tr.level_three>td.el-table__cell {
+    background: rgba(102, 102, 204, 0.05);
+  }
+
+
+  /deep/.el-table td.el-table__cell {
+    border-bottom: none;
   }
 
   /deep/.el-table th.el-table__cell {

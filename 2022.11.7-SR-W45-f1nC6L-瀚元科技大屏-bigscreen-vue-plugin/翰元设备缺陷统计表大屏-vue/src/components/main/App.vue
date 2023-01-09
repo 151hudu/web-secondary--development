@@ -49,6 +49,7 @@
       <el-table-column type="index" width="50" label="序号"> </el-table-column>
       <el-table-column prop="province_name" label="所在省份" width="140"> </el-table-column>
       <el-table-column prop="city_name" label="所在市区" width="140"> </el-table-column>
+      <el-table-column prop="substation_name" label="站点名称" width="140"> </el-table-column>
       <el-table-column prop="substation_level" label="重点目标等级" width="170" :formatter="levelFn"> </el-table-column>
       <el-table-column prop="device_type" label="设备类型" max-width="150"> </el-table-column>
       <el-table-column prop="device_unit_type" label="部件类型" max-width="150"> </el-table-column>
@@ -96,15 +97,15 @@ export default {
       levelOption: [
         {
           value: "1",
-          label: "1级",
+          label: "一级",
         },
         {
           value: "2",
-          label: "2级",
+          label: "二级",
         },
         {
           value: "3",
-          label: "3级",
+          label: "三级",
         },
 
       ],
@@ -135,42 +136,44 @@ export default {
       handler(val) {
 
         if (this.provinceData.length == 0) return
+        if (!(Boolean(this.province) == false && Boolean(this.city) == false && Boolean(this.substationName) == false)) {
+          this.citySelect = {};
+          this.cityOption = [];
+          this.stationSelect = {};
+          this.stationOption = [];
 
-        this.citySelect = {};
-        this.cityOption = [];
-        this.stationSelect = {};
-        this.stationOption = [];
+          this.cityData.forEach((item, index) => {
+            if (item.province_name == val?.province_name) {
+              this.cityOption.push(item);
+            }
+          });
+          this.stationData.forEach((item, index) => {
+            if (item.province_name == val?.province_name) {
+              this.stationOption.push(item);
+            }
+          });
+        }
 
-        this.cityData.forEach((item, index) => {
-          if (item.province_name == val?.province_name) {
-            this.cityOption.push(item);
-          }
-        });
-        this.stationData.forEach((item, index) => {
-          if (item.province_name == val?.province_name) {
-            this.stationOption.push(item);
-          }
-        });
 
         if (!this.city && !this.substationName && this.province) this.searchTable()
       },
 
-      // immediate: true,
       deep: true
     },
     'citySelect': {
       handler(val) {
+        if (!(Boolean(this.province) == false && Boolean(this.city) == false && Boolean(this.substationName) == false)) {
+          this.stationSelect = {};
+          this.stationOption = [];
+
+          this.stationData.forEach((item, index) => {
+            if (item.city_name == val?.city_name) {
+              this.stationOption.push(item);
+            }
+          });
+        }
 
 
-
-        this.stationSelect = {};
-        this.stationOption = [];
-
-        this.stationData.forEach((item, index) => {
-          if (item.city_name == val?.city_name) {
-            this.stationOption.push(item);
-          }
-        });
         if (this.city && !this.substationName) this.searchTable()
       },
 
@@ -331,7 +334,7 @@ export default {
       let message = {
         province: this.provinceSelect?.province_id || this.province || "", //省
         city: this.citySelect?.city_id || this.city || "", //市
-        substationName: this.stationSelect?.substation_name || this.substationName || "", //电站名称
+        substationName: this.stationSelect?.substation_no || this.substationName || "", //电站名称
         level: this.levelSelect.value || "", //等级
         startTime: this.searchDate[0] || "",
         endTime: this.searchDate[1] || "",
@@ -355,50 +358,67 @@ export default {
     tableToExcel(tableData) {
       const headArr = Object.keys(tableData[0]); // 要导出的json数据 // 列标题
       let str = "<tr>";
-      headArr[0] = "province_name";
-      headArr[1] = "city_name";
-      headArr[2] = "substation_level";
-      headArr[3] = "device_type";
-      headArr[4] = "device_unit_type";
-      headArr[5] = "defect_level";
-      headArr[6] = "findFlawNum";
-      headArr[7] = "firstTime";
-      headArr[8] = "lastTime";
-      headArr.forEach((item, index) => {
-        switch (item) {
-          case "province_name":
-            item = "省";
-            break;
-          case "city_name":
-            item = "市";
-            break;
-          case "substation_level":
-            item = "重点目标等级";
-            break;
-          case "device_type":
-            item = "设备类型";
-            break;
-          case "device_unit_type":
-            item = "部件类型";
-            break;
-          case "defect_level":
-            item = "缺陷类型";
-            break;
-          case "findFlawNum":
-            item = "缺陷次数";
-            break;
-          case "firstTime":
-            item = "首次发现日期";
-            break;
-          case "lastTime":
-            item = "最后发现日期";
-            break;
-        }
-        str += index == headArr.length - 1 ? `<td>${item}</td></tr>` : `<td>${item}</td>`;
+      const titleObj = {
+        province_name: '省',
+        city_name: '市',
+        substation_name: '告警站名称',
+        substation_level: '重点目标等级',
+        device_type: '设备类型',
+        device_unit_type: '部件类型',
+        defect_level: '缺陷类型',
+        findFlawNum: '缺陷次数',
+        firstTime: '首次发现日期',
+        lastTime: '最后发现日期',
+      }
+      const head = Object.keys(titleObj)
+      // headArr[0] = "province_name";
+      // headArr[1] = "city_name";
+      // headArr[2] = "substation_name";
+      // headArr[3] = "substation_level";
+      // headArr[4] = "device_type";
+      // headArr[5] = "device_unit_type";
+      // headArr[6] = "defect_level";
+      // headArr[7] = "findFlawNum";
+      // headArr[8] = "firstTime";
+      // headArr[9] = "lastTime";
+      head.forEach((item, index) => {
+        // switch (item) {
+        //   case "province_name":
+        //     item = "省";
+        //     break;
+        //   case "city_name":
+        //     item = "市";
+        //     break;
+        //   case "substation_name":
+        //     item = "站点名称";
+        //     break;
+        //   case "substation_level":
+        //     item = "重点目标等级";
+        //     break;
+        //   case "device_type":
+        //     item = "设备类型";
+        //     break;
+        //   case "device_unit_type":
+        //     item = "部件类型";
+        //     break;
+        //   case "defect_level":
+        //     item = "缺陷类型";
+        //     break;
+        //   case "findFlawNum":
+        //     item = "缺陷次数";
+        //     break;
+        //   case "firstTime":
+        //     item = "首次发现日期";
+        //     break;
+        //   case "lastTime":
+        //     item = "最后发现日期";
+        //     break;
+        // }
+        str += (index == (head.length - 1)) ? `<td>${titleObj[item]}</td></tr>` : `<td>${titleObj[item]}</td>`
       }); // 循环遍历，每行加入tr标签，每个单元格加td标签
       for (let i = 0; i < tableData.length; i++) {
         str += "<tr>";
-        for (const key of headArr) {
+        for (const key of head) {
           // 增加\t为了不让表格显示科学计数法或者其他格式
           if (key == 'substation_level') {
             str += `<td>${levelTemp[tableData[i][key] - 1] + "\t"}</td>`;
@@ -419,7 +439,7 @@ export default {
           <x:Name>${worksheet}</x:Name>
           <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
           </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--> </head>
-    <body><table>${str}</table></body>
+    <body><table style="vnd.ms-excel.numberformat:@" >${str}</table></body>
       </html>`;// 下载模板 // 输出base64编码
       const base64 = function (s) {
         return window.btoa(unescape(encodeURIComponent(s)));

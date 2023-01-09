@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 // import vConsole from '../../utils/vconsole'
-import { Button } from "antd";
+import { message } from "antd";
 import { queryAssetById } from './../../api/asset';
 import { decrypt } from "../../utils/rsa"
 import { newJSBridge } from "../../utils/tgJSBridge"
@@ -16,12 +16,15 @@ const List = ({
   dataId,
   deleteData
 }) => {
+  
   const checkAssetsId = customParams?.checkAssetsId || '4d0c2c48-7c54-b20f-b406-977745e50847';
   const checkKey = customParams?.checkKey || 'product_id';
   const dataIdKey = customParams?.dataId || 'dataId';
+  const dataIdKeyName = customParams?.dataIdKey || 'dataId';
   const infoUrl = customParams?.infoUrl || 'https://blog.csdn.net/Mybabyying/article/details/107930743?dataId=123';
   const [phonePowers, setPhonePowers] = useState('');
   const [dialogVisible, setDialogVisible] = useState(false);
+  const [messageApi] = message.useMessage();
 
   useEffect(() => {
     // 判断当前系统是ios还是安卓
@@ -77,14 +80,29 @@ const List = ({
     ]
     let { data } = await queryAssetById(checkAssetsId, params)
     // console.log('data', data);
+    let keys = data[0],
+        values = data[1],
+        obj = {};
+    values.forEach(x=>{
+      keys.forEach((y,yIndex)=>{
+        obj[y.col_name] = x[yIndex]
+      });
+    });
     if (data[2] > 0) {
-      let urlA = infoUrl.indexOf('?')
-      if (urlA != "-1") {
-        // alert(`${window.location.origin}${infoUrl}&${dataIdKey}=${dataId}&pointName=${decryptPointName}`)
-        window.location.href = `${window.location.origin}${infoUrl}&${dataIdKey}=${dataId}`;
+      if (obj[dataIdKeyName] != dataId) {
+        messageApi.open({
+          type: 'warning',
+          content: '扫描结果与当前数据不匹配',
+        })
       } else {
-        // alert(`${window.location.origin}${infoUrl}?${dataIdKey}=${dataId}&pointName=${decryptPointName}`)
-        window.location.href = `${window.location.origin}${infoUrl}?${dataIdKey}=${dataId}`;
+        let urlA = infoUrl.indexOf('?')
+        if (urlA != "-1") {
+          // alert(`${window.location.origin}${infoUrl}&${dataIdKey}=${dataId}&pointName=${decryptPointName}`)
+          window.location.href = `${window.location.origin}${infoUrl}&${dataIdKey}=${dataId}`;
+        } else {
+          // alert(`${window.location.origin}${infoUrl}?${dataIdKey}=${dataId}&pointName=${decryptPointName}`)
+          window.location.href = `${window.location.origin}${infoUrl}?${dataIdKey}=${dataId}`;
+        }
       }
     }else {
       setDialogVisible(true)

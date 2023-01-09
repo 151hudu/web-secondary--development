@@ -1,0 +1,20 @@
+{
+  "id": "7e3a4483-73e1-46d9-a523-48bd6b2da55c",
+  "type": "app",
+  "main": "app.f19599bc.js",
+  "version": "2",
+  "props": {
+    "type": "customize",
+    "img": "APP_0001.png",
+    "name": "应用二开_vue",
+    "loadStyle": 0,
+    "lib": [],
+    "css_script": [],
+    "customconf": [
+      "id"
+    ]
+  },
+  "configuration": true,
+  "requirement-number": "SR-W51-Wi20vb",
+  "requirement-name": "斑马智慧城市蜂巢导航"
+}

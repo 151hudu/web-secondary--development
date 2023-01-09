@@ -1,0 +1,79 @@
+.analyzer-timeline-wrapper {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+.analyzer-timeline-wrapper .analyzer-timeline {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.analyzer-timeline-wrapper .analyzer-timeline .ant-timeline {
+  transform: rotate(270deg);
+  padding-inline-start: 80px;
+}
+.analyzer-timeline-wrapper .analyzer-timeline .ant-timeline .ant-timeline-item {
+  width: 80px;
+  padding-bottom: 0;
+  text-align: center;
+}
+.analyzer-timeline-wrapper .analyzer-timeline .ant-timeline .ant-timeline-item .ant-timeline-item-content {
+  transform: rotate(90deg);
+  padding-left: 0;
+  top: -95px;
+}
+.analyzer-timeline-wrapper .analyzer-timeline .ant-timeline .ant-timeline-item .ant-timeline-item-content .timeline-item-info {
+  height: 72px;
+  border-radius: 4px;
+  overflow: hidden;
+  word-break: break-all;
+}
+.analyzer-timeline-wrapper .analyzer-timeline .ant-timeline .ant-timeline-item .ant-timeline-item-content .timeline-item-info .timeline-item-scroll {
+  height: 100%;
+  padding: 5px 7px;
+  overflow-y: scroll;
+}
+.analyzer-timeline-wrapper .analyzer-timeline .ant-timeline .ant-timeline-item .ant-timeline-item-content .timeline-item-info::-webkit-scrollbar {
+  width: 6px;
+}
+.analyzer-timeline-wrapper .analyzer-timeline .ant-timeline .ant-timeline-item .ant-timeline-item-content .timeline-item-info::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+.analyzer-timeline-wrapper .analyzer-timeline .ant-timeline .ant-timeline-item .ant-timeline-item-content .timeline-item-info::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+.analyzer-timeline-wrapper .analyzer-timeline .ant-timeline .ant-timeline-item .ant-timeline-item-content .timeline-item-time {
+  min-width: 164px;
+}
+.analyzer-timeline-wrapper .analyzer-timeline .ant-timeline .ant-timeline-item-last {
+  height: 100px;
+}
+.analyzer-timeline-wrapper .analyzer-timeline .ant-timeline .ant-timeline-item-last .ant-timeline-item-tail {
+  display: block;
+}
+.analyzer-timeline-wrapper .analyzer-timeline .ant-timeline .above-item .ant-timeline-item-content {
+  left: 20px;
+}
+.analyzer-timeline-wrapper .analyzer-timeline .ant-timeline .above-item .timeline-item-time {
+  margin-top: 5px;
+}
+.analyzer-timeline-wrapper .analyzer-timeline .ant-timeline .below-item .ant-timeline-item-content {
+  right: 108px;
+}
+.analyzer-timeline-wrapper .analyzer-timeline .ant-timeline .below-item .ant-timeline-item-content .timeline-item-time {
+  padding-top: 0;
+  margin-bottom: 5px;
+}
+.analyzer-timeline-wrapper .analyzer-timeline .ant-timeline .occupy-item {
+  height: 100px;
+}
+.analyzer-timeline-wrapper .analyzer-timeline .ant-timeline .occupy-item .ant-timeline-item-head {
+  display: none;
+}
+.analyzer-timeline-wrapper .analyzer-timeline .ant-timeline .occupy-item .ant-timeline-item-content .timeline-item-info {
+  display: none;
+}

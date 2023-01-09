@@ -1,0 +1,26 @@
+{
+  "id": "5466b5fc-2581-48f5-8636-922014343724",
+  "type": "app",
+  "main": "app.fcff9aa9.js",
+  "version": "2",
+  "props": {
+    "type": "customize",
+    "img": "APP_0001.png",
+    "name": "应用二开_vue",
+    "loadStyle": 0,
+    "lib": [],
+    "css_script": [],
+    "customconf": [
+      "assetId",
+      "speedTime",
+      "imgField",
+      "titleField",
+      "videoField",
+      "timeField",
+      "height"
+    ]
+  },
+  "configuration": true,
+  "requirement-number": "SR-W53-iZ5c4L",
+  "requirement-name": "历下轮播组件"
+}

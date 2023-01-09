@@ -1,8 +1,10 @@
 {
-  "id": "51c21e9a-ee07-4fec-b5ab-e063e2014589",
+  "id": "1bf01098-de39-427b-a3da-d3be15b8828b",
   "type": "bigscreen",
-  "main": "app.1a035963.js",
+  "main": "app.31832c6b.js",
   "version": "2",
+  "requirement-number": "",
+  "requirement-name": "告警趋势",
   "props": {
     "img": "APP_0001.png",
     "disableimg": "disabled_custom_table.png",

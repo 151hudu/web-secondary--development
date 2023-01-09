@@ -1,0 +1,130 @@
+.header-notice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+
+  /* color: #fff !important; */
+  padding: 0 15px;
+  font-size: 12px;
+  color: #fff;
+  cursor: pointer;
+
+  .ant-badge {
+    /* margin-top: 7px; */
+    padding-top: 0;
+    text-align: center;
+
+    sup {
+      top: 5px;
+      width: 8px;
+      height: 8px;
+      box-shadow: none;
+    }
+  }
+
+  .right-icon {
+    width: 40px;
+    height: 40px;
+    margin: 0 12px;
+    border-radius: 20px;
+  }
+
+  .notice-center {
+    cursor: pointer;
+    // background: url('./images/header_notice.png');
+    background-color: rgba(0, 0, 0, 0.1);
+    background-repeat: no-repeat;
+    background-position: 10px;
+    // &:hover {
+    //   background: url('../images/v2/header_notice_hover.png');
+    // }
+  }
+
+  .notice-centers {
+    cursor: pointer;
+    // background: url("./images/header_notices.png");
+    background-color: rgba(0, 0, 0, 0.1);
+    background-repeat: no-repeat;
+    background-position: 10px;
+    // &:hover {
+    //   background: url('../images/v2/header_notice_hover.png');
+    // }
+  }
+}
+
+.notice-popover {
+
+  .notice-popover-content {
+    width: 260px;
+    // padding: 0 4px;
+    color: black;
+  }
+
+  .notice-list {
+    max-height: 340px;
+    overflow-y: auto;
+    // padding: 0 10px;
+  }
+
+  .notice-title {
+    color: #0c0d0e;
+    font-size: 14px;
+    margin: 12px 0 8px;
+    display: flex;
+    justify-content: space-between;
+    text-align: left;
+
+    .notice-num {
+      background: #0454f2;
+      border-radius: 19px;
+      color: #fff;
+      font-size: 12px;
+      height: 20px;
+      text-align: center;
+      width: 24px;
+    }
+  }
+
+  .empty-img {
+    padding: 16px 0px;
+    width: 100%;
+  }
+
+  .all-notice-button {
+    border-top: 1px solid #eee;
+    color: #999;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 16px 0 4px;
+    text-align: center;
+  }
+}
+
+/* .header-notice:hover {
+  background-color: #fff;
+  color: #5182E4 !important;
+} */
+
+// .header-notice:hover .header-notice-name {
+//   color: #ffffff !important;
+// }
+
+.index-notify-hover {
+  padding: 10px;
+  border-radius: 5px;
+  line-height: 1;
+  transition: background-color .3s;
+
+  &:hover {
+    background-color: #f1f8fe;
+  }
+}
+
+
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  white-space: nowrap;
+}

@@ -26,6 +26,7 @@ export default {
     type: String,
     mode: String,
     pubSub: Object,
+    updateProcess: Function,
     variable: Object
   },
   data() {

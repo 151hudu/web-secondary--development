@@ -1,8 +1,10 @@
 {
-  "id": "71a733ca-b7e3-4dc8-b203-d58cc47439f5",
+  "id": "ed9e6ca5-9c0e-4eb7-b321-23eaf1b55f3c",
   "type": "bigscreen",
-  "main": "app.6fa8d397.js",
+  "main": "app.00b4ee72.js",
   "version": "2",
+  "requirement-number": "",
+  "requirement-name": "防御结果",
   "props": {
     "img": "APP_0001.png",
     "disableimg": "disabled_custom_table.png",

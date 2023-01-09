@@ -60,7 +60,7 @@
       <el-table-column prop="total" label="任务总次数" width="170"> </el-table-column>
       <el-table-column prop="EXECUTE" label="任务执行次数" width="170"> </el-table-column>
       <el-table-column prop="noExecute" label="未执行次数" width="170"> </el-table-column>
-      <el-table-column prop="probability" label="任务执行率" width="230">
+      <el-table-column prop="probability" label="任务执行率(%)" width="230">
       </el-table-column>
     </el-table>
     <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNo"
@@ -102,15 +102,15 @@ export default {
       levelOption: [
         {
           value: "1",
-          label: "1级",
+          label: "一级",
         },
         {
           value: "2",
-          label: "2级",
+          label: "二级",
         },
         {
           value: "3",
-          label: "3级",
+          label: "三级",
         },
 
       ],
@@ -142,42 +142,44 @@ export default {
       handler(val) {
 
         if (this.provinceData.length == 0) return
+        if (!(Boolean(this.province) == false && Boolean(this.city) == false && Boolean(this.substationName) == false)) {
+          this.citySelect = {};
+          this.cityOption = [];
+          this.stationSelect = {};
+          this.stationOption = [];
 
-        this.citySelect = {};
-        this.cityOption = [];
-        this.stationSelect = {};
-        this.stationOption = [];
+          this.cityData.forEach((item, index) => {
+            if (item.province_name == val?.province_name) {
+              this.cityOption.push(item);
+            }
+          });
+          this.stationData.forEach((item, index) => {
+            if (item.province_name == val?.province_name) {
+              this.stationOption.push(item);
+            }
+          });
+        }
 
-        this.cityData.forEach((item, index) => {
-          if (item.province_name == val?.province_name) {
-            this.cityOption.push(item);
-          }
-        });
-        this.stationData.forEach((item, index) => {
-          if (item.province_name == val?.province_name) {
-            this.stationOption.push(item);
-          }
-        });
 
         if (!this.city && !this.substationName && this.province) this.searchTable()
       },
 
-      // immediate: true,
       deep: true
     },
     'citySelect': {
       handler(val) {
+        if (!(Boolean(this.province) == false && Boolean(this.city) == false && Boolean(this.substationName) == false)) {
+          this.stationSelect = {};
+          this.stationOption = [];
+
+          this.stationData.forEach((item, index) => {
+            if (item.city_name == val?.city_name) {
+              this.stationOption.push(item);
+            }
+          });
+        }
 
 
-
-        this.stationSelect = {};
-        this.stationOption = [];
-
-        this.stationData.forEach((item, index) => {
-          if (item.city_name == val?.city_name) {
-            this.stationOption.push(item);
-          }
-        });
         if (this.city && !this.substationName) this.searchTable()
       },
 
@@ -352,7 +354,7 @@ export default {
       stationPollingStatistics(message).then((res) => {
         this.tableData = res.data.data;
         this.tableData.forEach((item, index) => {
-          item.probability = item.total == 0 ? '--' : Number(item.probability).toFixed(2) + '%'
+          item.probability = item.total == 0 ? '--' : Number(item.probability).toFixed(2)
         })
         this.total = res.data.total;
       });
@@ -397,7 +399,7 @@ export default {
             item = "未执行次数";
             break;
           case "probability":
-            item = "任务执行率";
+            item = "任务执行率(%)";
             break;
         }
         str += index == headArr.length - 1 ? `<td>${item}</td></tr>` : `<td>${item}</td>`;
@@ -425,7 +427,7 @@ export default {
           <x:Name>${worksheet}</x:Name>
           <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
           </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--> </head>
-    <body><table>${str}</table></body>
+    <body><table style="vnd.ms-excel.numberformat:@" >${str}</table></body>
       </html>`;// 下载模板 // 输出base64编码
       const base64 = function (s) {
         return window.btoa(unescape(encodeURIComponent(s)));

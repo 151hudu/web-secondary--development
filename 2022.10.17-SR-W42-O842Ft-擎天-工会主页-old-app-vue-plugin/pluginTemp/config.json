@@ -1,0 +1,26 @@
+{
+  "code": "97dffe29-22f6-4ec3-95e0-6e2a439ca070",
+  "type": "customize",
+  "img": "APP_0001.png",
+  "name": "dome",
+  "lib": [],
+  "css_script": [],
+  "js_script": "app.15eb87cd.js",
+  "loadStyle": 0,
+  "customconf": [
+    "社会组织服务",
+    "社会组织服务更多",
+    "工会项目",
+    "工会项目更多",
+    "职工需求",
+    "职工需求更多",
+    "工作动态",
+    "工作动态更多",
+    "政策法规",
+    "政策法规更多",
+    "公告通知",
+    "公告通知更多"
+  ],
+  "main": "app.15eb87cd.js",
+  "id": "77a49dd2-6c36-41e3-9a45-be0c0478fb50"
+}

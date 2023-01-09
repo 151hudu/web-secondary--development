@@ -1,10 +1,10 @@
 {
-  "id": "432adc3b-22d5-401d-a7bd-1d3a7de71536",
+  "id": "91056d1a-e828-40bf-912e-c99bdc78f04a",
   "type": "bigscreen",
-  "main": "app.0663fba2.js",
+  "main": "app.8d676495.js",
   "version": "2",
   "requirement-number": "",
-  "requirement-name": "",
+  "requirement-name": "巡检分时",
   "props": {
     "img": "APP_0001.png",
     "disableimg": "disabled_custom_table.png",

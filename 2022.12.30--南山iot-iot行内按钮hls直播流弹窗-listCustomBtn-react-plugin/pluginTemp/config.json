@@ -1,0 +1,14 @@
+{
+  "id": "0ac69fce-3664-408b-a585-389242f5bdf1",
+  "type": "list-custom-btn",
+  "main": "main.0f8989dc.js",
+  "version": "2",
+  "props": {
+    "styleArr": "[\"title\",\"height\",\"key\", \"eventCenterConfig\"]",
+    "columnStyle": "{title:'自定义'}",
+    "componentAttributes": "{\"style\":[\"title\",\"height\"],\"data\":[\"key\"],\"interaction\":[\"eventCenterConfig\"]}",
+    "assetColumnList": "[{\"col_name\":\"自定义\",\"col_datatype\":0}]"
+  },
+  "requirement-number": "SR-W51-k4KkDB",
+  "requirement-name": "适配IOS"
+}

@@ -1,19 +1,20 @@
 import axios from "axios";
 import qs from "querystringify";
 
+// const apiContextPath = "http://192.168.1.240:43214";
 let apiContextPath = "";
 if (process.env.NODE_ENV === "development") {
   document.cookie =
-    "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY3MjcxNDYyMDE4MSwidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.oBBkfvocQHAQLP4uRGWlpcaFVwrXuoLmzaYtN2QPTpQ";
+    "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY3MjI4MjE3MTUwNSwidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.bL7xqMTP_JPgYqVh7WBjCES-3nUt7ZCxxSc4CYy7eYM";
   document.cookie =
-    "refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY0NjcyMjI2ODY4Nn0.TEVE_nopHNZlvSQM_RUZrLcCzkaERiHo8nz0q-ksL3E";
+    "refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY3MjI4MjE3MTUyMH0.Kj7iZRnf6phSNtzMmaF6BFoeO9N1smJvSnQoUHKDFJA";
   document.cookie = "username=admin";
   document.cookie = "windowOnline=true";
   apiContextPath = "/api";
 }
 
 const instance = axios.create({
-  baseURL: `${apiContextPath}/dtyq/pngf/sdata/rest`,
+  baseURL: `${apiContextPath}/sdata/rest`,
   timeout: 60000,
   validateStatus: function (status) {
     return status >= 200 && status < 300; // default
@@ -28,7 +29,7 @@ const instance = axios.create({
 instance.defaults.headers.post["Content-Type"] = "application/json";
 
 instance.interceptors.response.use(
-  response => {
+  (response) => {
     let { data } = response;
     if (typeof data === "string") {
       data = JSON.parse(data);
@@ -44,7 +45,7 @@ instance.interceptors.response.use(
     response.data = data && data.result;
     return response;
   },
-  error => {
+  (error) => {
     if (error.response && error.response.status === 401) {
       return;
     }

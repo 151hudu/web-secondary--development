@@ -89,6 +89,23 @@ const App = (props) => {
       ],
     });
     setInfoCount(res.totalCount);
+    if (window.localStorage.getItem("wanningInfoTop")) {
+      console.log(window.localStorage.getItem("wanningInfoTop"), JSON.stringify(res.totalCount));
+      if (JSON.stringify(res.totalCount) !== window.localStorage.getItem("wanningInfoTop")) {
+        window.localStorage.setItem("wanningInfoTop", JSON.stringify(res.totalCount));
+        if (!infoModalVisible && res.totalCount > 0) {
+          setInfoModalVisible(true);
+        }
+        console.log("onmessage,弹窗状态:", infoCount, infoModalVisible, "95-------------------------");
+      }
+    } else {
+      window.localStorage.setItem("wanningInfoTop", JSON.stringify(res.totalCount));
+      if (!infoModalVisible && res.totalCount > 0) {
+        setInfoModalVisible(true);
+      }
+      console.log("onmessage,弹窗状态:", infoCount, infoModalVisible, "95-------------------------");
+    }
+
     let dataSource = [];
     console.log(Date.parse(new Date()));
     res.results.map((data, index) => {
@@ -129,14 +146,13 @@ const App = (props) => {
       websocket.onopen = function () {
         console.log("连接成功");
         timer = setInterval(() => {
-            console.log('心跳');
-            let ping = { type: "ping" };
-            websocket.send(JSON.stringify(ping));
+          console.log("心跳");
+          let ping = { type: "ping" };
+          websocket.send(JSON.stringify(ping));
         }, 5000);
       };
       websocket.onmessage = function (event) {
-        console.log(event);
-        if (!infoModalVisible) setInfoModalVisible(true);
+        console.log(event, "event", 142142142142142142142142);
         getInfoData();
       };
       window.onbeforeunload = function () {
@@ -147,7 +163,7 @@ const App = (props) => {
         console.log("websocket 断开: " + e.code + " " + e.reason + " " + e.wasClean);
         timer = null;
         if (e.code * 1 === 1000 || e.code * 1 === 1006) {
-          console.log("尝试重连")
+          console.log("尝试重连");
           connectWS();
         }
       };
@@ -158,7 +174,7 @@ const App = (props) => {
     } catch (error) {
       console.log("e", error);
     }
-  }
+  };
 
   useEffect(() => {
     // ReportingService.setCookie(Cookie);
@@ -168,7 +184,7 @@ const App = (props) => {
       console.log("res.results: ", res.results);
       setList(res.results);
     });
-    
+
     connectWS();
   }, []);
   const [form] = Form.useForm();
@@ -205,7 +221,7 @@ const App = (props) => {
     localStorage.getItem("externalPassword");
     return () => {
       timer = null;
-    }
+    };
   }, []);
 
   const toggleCollapsed = () => {

@@ -140,7 +140,6 @@ const Workbench = (props) => {
                }}
             />
          </Sider>
-         {/* 右侧区域 */}
          {mentChecked == "0" && <InitiateFlow />}
          {mentChecked == "1" && <PendingHandle {...props} />}
          {mentChecked == "2" && <AlreadyHandle {...props} />}

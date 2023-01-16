@@ -4,8 +4,7 @@
       <div class="header_box">
          <!-- 日期选择器 -->
          <div class="datepicker_button">
-            <el-date-picker v-model="datePicke" type="daterange" size="small" start-placeholder="开始日期"
-               end-placeholder="结束日期" @change="changeDatePicker" :clearable="false"></el-date-picker>
+            <el-date-picker v-model="datePicke" type="daterange" size="small" start-placeholder="开始日期" end-placeholder="结束日期" @change="changeDatePicker" :clearable="false"></el-date-picker>
             <img class="export_button" src="./assets/export.png" @click="exportEcharts()" />
          </div>
          <!-- 导出 -->
@@ -20,41 +19,47 @@
       <div class="ehcarts_box" v-if="pageType == 'echarts'">
          <div ref="echartsBar" id="pn_echarts_bar" style="width: 100%; height: 100%"></div>
          <div style="margin-top: 50px">
-            组串电流偏差率高：
+            逆变器等效时数偏差率高：
             <span v-if="!remindInfo">无</span>
             <span v-if="remindInfo">{{ remindInfo }}</span>
          </div>
       </div>
       <!-- 表格 -->
       <div class="table_box" v-if="pageType == 'table'">
-         <el-table ref="tableData" :data="tableData" border :cell-style="tableRowClassName"
-            :header-cell-style="{ background: '#ECF5FF' }" height="100%">
-            <el-table-column class-name="first_column" prop="time" label="时间" width="160" sortable fixed
-               align="center"></el-table-column>
-            <el-table-column class-name="second_column" prop="dispersion_rate" label="离散率（%）" min-width="120" fixed
-               align="center"></el-table-column>
-            <el-table-column class-name="third_column" prop="equivalent_hours" label="平均等效时数" min-width="105" fixed
-               align="center"></el-table-column>
+         <el-table ref="tableData" :data="tableData" border :cell-style="tableRowClassName" :header-cell-style="{ background: '#ECF5FF' }" height="100%">
+            <el-table-column class-name="first_column" prop="time" label="时间" width="160" sortable fixed align="center"></el-table-column>
+            <el-table-column class-name="second_column" prop="dispersion_rate" label="离散率（%）" min-width="120" fixed align="center"></el-table-column>
+            <el-table-column class-name="third_column" label="平均等效时数" min-width="110" fixed align="center">
+               <template slot-scope="scope">
+                  <div>{{ Number(scope.row.equivalent_hours).toFixed(2) }}</div>
+               </template>
+            </el-table-column>
             <template>
-               <el-table-column v-for="(item, i) in columnData" :key="i" class-name="dynamic_column" min-width="65"
-                  :label="item" :prop="item" align="center">
+               <el-table-column v-for="(item, i) in columnData" :key="i" class-name="dynamic_column" min-width="90" :label="item" :prop="item" align="center">
                   <!-- <template slot="header">
                      <div>
-                      
                         <span>{{ i }}</span>
                         <span>#</span>
                         <span>逆变器</span>
                      </div>
                   </template> -->
-                  <!-- <template slot-scope="scope">
-                     <div :class="dispersionStyle(scope.row, i)">{{ scope.row[`PV${i}`] }}</div>
-                  </template> -->
+                  <template slot-scope="scope">
+                     <div>{{ Number(scope.row[item]).toFixed(2) }}</div>
+                  </template>
                </el-table-column>
             </template>
          </el-table>
-         <el-pagination class="table_pagination" background @size-change="handlePageSizeChange"
-            @current-change="handlePageChange" :current-page="page" :page-sizes="[15, 30, 50, 100]"
-            :page-size="pageSize" layout="total, prev, pager, next, sizes, jumper" :total="total">
+         <el-pagination
+            class="table_pagination"
+            background
+            @size-change="handlePageSizeChange"
+            @current-change="handlePageChange"
+            :current-page="page"
+            :page-sizes="[15, 30, 50, 100]"
+            :page-size="pageSize"
+            layout="total, prev, pager, next, sizes, jumper"
+            :total="total"
+         >
          </el-pagination>
       </div>
    </div>
@@ -129,7 +134,7 @@ export default {
 
       if (process.env.NODE_ENV !== "production") {
          // this.do_EventCenter_getIds({ value: "d1ae9ab0-2678-e6db-5ced-0b01bd3eec61" });
-         this.do_EventCenter_getIds({ value: "119" });
+         this.do_EventCenter_getIds({ value: "2" });
       }
    },
 
@@ -357,6 +362,8 @@ export default {
 
       // 获取Echarts图表数据
       getEchartsData() {
+         this.seriesData = [];
+
          let _startTime = this.datePicke[0];
          let _endTime = this.datePicke[1];
 
@@ -383,6 +390,9 @@ export default {
 
       // 获取表格数据
       getTabelData() {
+         this.tableData = [];
+         this.columnData = [];
+
          let _startTime = this.datePicke[0];
          let _endTime = this.datePicke[1];
 
@@ -391,21 +401,20 @@ export default {
 
          queryAssetByTime(this.ids, this.page, this.pageSize, _startTime, _endTime).then((res) => {
             let resData = JSON.parse(JSON.stringify(res.data.results));
-            console.log(res.data.results[0], /^(?=.*[a-zA-Z])(?=.*\d).+$/, /^[a-zA-Z]+$/, '======data');
-            let AB1 = /^(?=.*[a-zA-Z])(?=.*\d).+$/
-            let AB = /^[a-zA-Z]+$/
-            let head = Object.keys(res.data.results[0])
 
-            head.splice(head.indexOf('time'), 1)
-            head.splice(head.indexOf('equivalent_hours_avg'), 1)
-            head.splice(head.indexOf('equivalent_hours'), 1)
-            head.splice(head.indexOf('dispersion_rate'), 1)
-            let headCopy = JSON.parse(JSON.stringify(head))
+            let head = Object.keys(res.data.results[0]);
+
+            head.splice(head.indexOf("time"), 1);
+            head.splice(head.indexOf("equivalent_hours_avg"), 1);
+            head.splice(head.indexOf("equivalent_hours"), 1);
+            head.splice(head.indexOf("dispersion_rate"), 1);
+            let headCopy = JSON.parse(JSON.stringify(head));
             head = headCopy.filter((x, i) => {
-               if (x.substring(0, 2) != 'PV') return x
-            })
+               if (x.substring(0, 2) != "PV") return x;
+            });
 
-            this.columnData = head
+            this.columnData = head;
+
             resData.forEach((item) => {
                if (item.time) {
                   let times = Date.parse(new Date(item.time));
@@ -414,7 +423,6 @@ export default {
             });
             this.$nextTick(() => {
                this.tableData = resData;
-               console.log('tableData', this.tableData);
                this.$forceUpdate();
             });
          });
@@ -629,7 +637,6 @@ export default {
 
    // 表格头部
    .el-table__header {
-
       // 头部单元格
       .el-table__cell {
          padding: 14px 0;
@@ -651,7 +658,6 @@ export default {
 
    // 表格行
    .el-table__row {
-
       // 头部单元格
       .el-table__cell {
          padding: 0 !important;
@@ -682,7 +688,7 @@ export default {
    // 表格内竖线颜色
    .el-table--border td,
    .el-table--border th,
-   .el-table__body-wrapper .el-table--border.is-scrolling-left~.el-table__fixed {
+   .el-table__body-wrapper .el-table--border.is-scrolling-left ~ .el-table__fixed {
       border-right: 1px solid #d0dae4;
    }
 

@@ -550,7 +550,6 @@ const App = (props) => {
    const { componentId } = props?.customConfig || {};
 
    useEffect(() => {
-      // 注册事件
       const events = [];
       // 注册动作
       const actions = [];

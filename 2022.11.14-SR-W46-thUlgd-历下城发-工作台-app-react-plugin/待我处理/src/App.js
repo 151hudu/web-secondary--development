@@ -793,7 +793,6 @@ const PendingHandle = (props) => {
                   </Button>
                </Dropdown>
             )}
-            {/* 弹窗 */}
             <Modal title="审批意见" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} className="approval_moadl">
                <Form initialValues={{ remember: true }} form={approvalForm}>
                   <Form.Item name="approval">

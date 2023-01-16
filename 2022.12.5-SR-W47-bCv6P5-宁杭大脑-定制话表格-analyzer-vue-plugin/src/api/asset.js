@@ -10,4 +10,4 @@ export const queryAssetById = (id, count = 200) =>
 
 
 export const sectionDischarge = (param) =>
-  request.post(`/ninghang/potal/sectionDischarge`, param);
+  request.post(`/ext/ninghang/potal/sectionDischarge`, param);

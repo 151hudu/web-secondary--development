@@ -1,0 +1,22 @@
+{
+  "id": "3a33acc8-9cfc-48a0-957d-cc09a40fa000",
+  "type": "bigscreen",
+  "main": "app.8d9ac2a9.js",
+  "version": "2",
+  "requirement-number": "SR-W45-f1nC6L",
+  "requirement-name": "无人机频次",
+  "props": {
+    "img": "APP_0001.png",
+    "disableimg": "disabled_custom_table.png",
+    "name": "Vue版本的演示Demo",
+    "className": "className-demo",
+    "configuration": [
+      "style",
+      "data",
+      "other"
+    ],
+    "vars": [
+      "id"
+    ]
+  }
+}

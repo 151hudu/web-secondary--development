@@ -1,0 +1,23 @@
+.two_options {
+    background: linear-gradient(180deg, rgba(8, 57, 87, 0.9) 0%, rgba(9, 24, 39, 0.9) 100%);
+    border: 1px solid rgba(21, 154, 255, 0.7)
+}
+
+.two_options.el-popper[x-placement^=bottom] .popper__arrow {
+    border-bottom-color: rgba(21, 154, 255, 0.7);
+}
+
+.two_options.el-popper[x-placement^=bottom] .popper__arrow::after {
+    border-bottom-color: rgba(21, 154, 255, 0.7);
+}
+
+.two_options .el-select-dropdown__item {
+    color: #99AFCC;
+}
+
+.two_options .el-select-dropdown__item.hover,
+.el-select-dropdown__item:hover {
+    background: linear-gradient(270deg, rgba(91, 222, 218, 0.3) -7.2%, rgba(23, 82, 101, 0.5) 100%);
+    color: #D0DEEE;
+
+}

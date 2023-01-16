@@ -19,3 +19,9 @@ export const queryAssetById = id =>
 //报表环比接口
 export const reportModelTwo = params =>
   request.post(`/ext/NKTableReport/reportModelTwo`, params);
+
+//导出接口
+
+
+export const linkRelativeRatioExport = params =>
+  request.post(`ext/NKTableReport/linkRelativeRatioExport`, params, { responseType: 'blob' });

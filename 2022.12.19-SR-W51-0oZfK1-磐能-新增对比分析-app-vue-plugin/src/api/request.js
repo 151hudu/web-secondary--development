@@ -4,7 +4,11 @@ import qs from "querystringify";
 let apiContextPath = "";
 if (process.env.NODE_ENV === "development") {
   document.cookie =
+<<<<<<< HEAD
     "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY3MjcxNDYyMDE4MSwidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.oBBkfvocQHAQLP4uRGWlpcaFVwrXuoLmzaYtN2QPTpQ";
+=======
+    "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY3MzU5OTU5MzA0MSwidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.E7TF9Jk5Md8vYXYB8bz7P-L9KYqXcS5X2up7Ogbw7d8";
+>>>>>>> 69eb67e03c216fa71c95da16445a144fb956b746
   document.cookie =
     "refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY0NjcyMjI2ODY4Nn0.TEVE_nopHNZlvSQM_RUZrLcCzkaERiHo8nz0q-ksL3E";
   document.cookie = "username=admin";
@@ -20,7 +24,7 @@ const instance = axios.create({
   },
   headers:
     (window.location.search && qs.parse(window.location.search).token) ||
-    window.token
+      window.token
       ? { token: qs.parse(window.location.search).token || window.token }
       : {},
 });
@@ -40,7 +44,6 @@ instance.interceptors.response.use(
       response.data = data;
       return response;
     }
-
     response.data = data && data.result;
     return response;
   },

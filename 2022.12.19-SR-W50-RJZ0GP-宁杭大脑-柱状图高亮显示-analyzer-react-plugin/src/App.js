@@ -11,7 +11,14 @@ export default class App extends Component {
       let external = props.options?.externalVariables ? props.options.externalVariables : {};
 
       // 背景颜色
+      // this.backgroundColor = external["背景颜色"] || "#111";
       this.backgroundColor = external["背景颜色"] || "transparent";
+
+      // 图表边距
+      this.gridTop = external["图表上边距"] || "6%";
+      this.gridBottom = external["图表下边距"] || "3%";
+      this.gridLeft = external["图表左边距"] || "2%";
+      this.gridRight = external["图表右边距"] || "2%";
 
       // 悬浮配置
       this.tooltipBackGround = external["悬浮背景渐变颜色"] || "#33BBFF00-#33BBFF55";
@@ -45,7 +52,7 @@ export default class App extends Component {
       this.barTooltipLabelFontFamily = external["柱体悬浮字体系列"] || "";
 
       // 柱体悬浮配置
-      this.barTooltipLabelOffset = external["柱体悬浮文字整体偏移位置"] || [0, -10];
+      this.barTooltipLabelOffset = external["柱体悬浮文字整体偏移位置"] || "0,-10";
       this.barTooltipLabelLineHeight = external["柱体悬浮文字与图标距离"] || "40";
       this.barTooltipImageWidth = external["柱体悬浮图标宽度"] || "27";
       this.barTooltipImageHeight = external["柱体悬浮图标高度"] || "12";
@@ -88,6 +95,9 @@ export default class App extends Component {
       let myChart = echarts.init(this.refs["nhdn_outermost"]);
       let option = {};
 
+      let _offset = this.barTooltipLabelOffset.split(",");
+      console.log("offset--->", _offset);
+
       option = {
          backgroundColor: this.backgroundColor,
          // 图例配置
@@ -106,7 +116,6 @@ export default class App extends Component {
          // 悬浮框样式
          tooltip: {
             trigger: "axis",
-            axisPointer: { type: "shadow" },
             show: true,
             // 背景色
             axisPointer: {
@@ -130,10 +139,10 @@ export default class App extends Component {
          },
          // 整体大小
          grid: {
-            left: "2%",
-            right: "2%",
-            bottom: "3%",
-            top: "6%",
+            top: this.gridTop,
+            bottom: this.gridBottom,
+            left: this.gridLeft,
+            right: this.gridRight,
             containLabel: true,
             show: false,
          },
@@ -212,17 +221,19 @@ export default class App extends Component {
                      fontWeight: "bolder",
                      fontSize: this.barTooltipLabelFontSize,
                      fontFamily: this.barTooltipLabelFontFamily,
-                     offset: this.barTooltipLabelOffset,
+                     offset: [Number(_offset[0]), Number(_offset[1])],
                      position: "outside",
                      formatter: (params) => {
                         return `{a|${params.value}}\n{b|}`;
                      },
                      rich: {
-                        a: { lineHeight: this.barTooltipLabelLineHeight },
+                        a: {
+                           width: Number(this.barTooltipImageWidth),
+                           lineHeight: this.barTooltipLabelLineHeight,
+                           align: "center",
+                        },
                         b: {
-                           backgroundColor: {
-                              image: triangle,
-                           },
+                           backgroundColor: { image: triangle },
                            width: Number(this.barTooltipImageWidth),
                            height: Number(this.barTooltipImageHeight),
                         },

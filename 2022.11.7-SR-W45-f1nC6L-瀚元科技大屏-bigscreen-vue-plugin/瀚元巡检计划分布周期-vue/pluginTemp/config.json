@@ -1,0 +1,22 @@
+{
+  "id": "c1243d17-0c5c-44c9-b624-96253f40f921",
+  "type": "bigscreen",
+  "main": "app.a1c25af1.js",
+  "requirement-number": "",
+  "requirement-name": "巡检计划分布周期",
+  "version": "2",
+  "props": {
+    "img": "APP_0001.png",
+    "disableimg": "disabled_custom_table.png",
+    "name": "Vue版本的演示Demo",
+    "className": "className-demo",
+    "configuration": [
+      "style",
+      "data",
+      "other"
+    ],
+    "vars": [
+      "id"
+    ]
+  }
+}

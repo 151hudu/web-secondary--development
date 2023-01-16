@@ -7,8 +7,8 @@
         <div class="southern_tab_buttonGroup_start">
           <div class="southern_tab_radio">
             <el-radio-group v-model="radio2" size="medium" @change="radioChange">
-              <el-radio-button label="日"></el-radio-button>
               <el-radio-button label="月"></el-radio-button>
+              <el-radio-button label="年"></el-radio-button>
               <!-- <el-radio-button label="年"></el-radio-button> -->
             </el-radio-group>
           </div>
@@ -23,21 +23,28 @@
                 class="el-icon-arrow-right"></i> </button>
           </div>
         </div>
-        <button class="southern_buttons_item" @click='queryTable(dateType)'><i class="el-icon-search "></i>
-          查询</button>
-
+        <div class="flex_end">
+          <el-select v-model="tableType" size="small" placeholder="请选择">
+            <el-option label="环比增加值" value="zeng"></el-option>
+            <el-option label="环比百分比" value="bai"></el-option>
+          </el-select>
+          <button class="southern_buttons_item left_button" @click='queryTable(dateType)'><i
+              class="el-icon-search "></i>
+            查询</button>
+          <button class="southern_buttons_item" @click='exportTable(dateType)'>
+            导出</button>
+        </div>
       </div>
-
-      <el-table :data="tableData" style="width: 100%" tooltip-effect="dark"
+      <el-table v-if="tableType == 'zeng'" :data="tableData" style="width: 100%" tooltip-effect="dark"
         :header-cell-style="{ padding: 0 + 'px', fontSize: '12px', fontWeight: 400 }"
         :header-row-style="{ height: '30px' }" :row-class-name="rowClassNameFn">
-        <el-table-column type="index" label="序列" width="55">
+        <el-table-column type="index" label="序列" width="55" fixed="left">
         </el-table-column>
-        <el-table-column prop="ammeter_name" label="回路名称" min-width="180">
+        <el-table-column prop="ammeter_name" label="回路名称" min-width="180" fixed="left">
         </el-table-column>
-        <el-table-column :prop="x.prop" :label="x.label" min-width="180" v-for="(x, i) in columnData" :key="i">
+        <el-table-column :prop="x" :label="x" min-width="73" v-for="(x, i) in columnData" :key="i">
         </el-table-column>
-        <el-table-column prop="linkRelativeRatio" label="环比(%)">
+        <!-- <el-table-column prop="linkRelativeRatio" label="环比(%)">
           <template slot-scope="scope">
             <div class="huanbi"> <span>{{ scope.row.linkRelativeRatio + '%' }}</span>
               <span v-if="scope.row.linkRelativeRatio == 0" class="iconfont"> –</span>
@@ -45,7 +52,27 @@
                 :class="`iconfont  ${scope.row.linkRelativeRatio > 0 ? 'icon-xiangshangjiantou ' : 'icon-xiangxiajiantou'}`"></span>
             </div>
           </template>
+        </el-table-column> -->
+      </el-table>
+
+      <el-table v-else :data="ratioData" style="width: 100%" tooltip-effect="dark"
+        :header-cell-style="{ padding: 0 + 'px', fontSize: '12px', fontWeight: 400 }"
+        :header-row-style="{ height: '30px' }" :row-class-name="rowClassNameFn">
+        <el-table-column type="index" label="序列" width="55" fixed="left">
         </el-table-column>
+        <el-table-column prop="ammeter_name" label="回路名称" min-width="180" fixed="left">
+        </el-table-column>
+        <el-table-column :prop="x" :label="x" min-width="85" v-for="(x, i) in columnData" :key="i">
+        </el-table-column>
+        <!-- <el-table-column prop="linkRelativeRatio" label="环比(%)">
+          <template slot-scope="scope">
+            <div class="huanbi"> <span>{{ scope.row.linkRelativeRatio + '%' }}</span>
+              <span v-if="scope.row.linkRelativeRatio == 0" class="iconfont"> –</span>
+              <span v-else
+                :class="`iconfont  ${scope.row.linkRelativeRatio > 0 ? 'icon-xiangshangjiantou ' : 'icon-xiangxiajiantou'}`"></span>
+            </div>
+          </template>
+        </el-table-column> -->
       </el-table>
       <div class="developer_pagination">
         <div class="developer_pagination_total">共{{ total }}条 </div>
@@ -54,29 +81,26 @@
           layout="total, sizes, prev, pager, next, jumper" :total="total">
         </el-pagination>
       </div>
-
-
     </div>
-
-
-
   </div>
 </template>
 
 <script>
 import eventActionDefine from "./components/msgCompConfig";
 import {
-  RadioButton,
+  RadioButton, Select, Option,
   RadioGroup, Tabs, TabPane, DatePicker, Button, Table, TableColumn, Dialog, Pagination
 } from "element-ui";
 import Vue from "vue"
 import moment from "moment";
 // import * as echarts from "echarts";
-import { reportModelTwo } from './api/asset';
+import { reportModelTwo, linkRelativeRatioExport } from './api/asset';
 import Utils from "./utils";
 
 Vue.use(RadioGroup)
 Vue.use(RadioButton)
+Vue.use(Select)
+Vue.use(Option)
 Vue.use(Tabs)
 Vue.use(TabPane)
 Vue.use(Button)
@@ -86,6 +110,14 @@ Vue.use(Pagination)
 Vue.use(Dialog)
 Vue.use(TableColumn)
 const level = ['level_one', 'level_two', 'level_three']
+const year = [
+  '1月', '2月', '3月',
+  '4月', '5月', '6月',
+  '7月', '8月', '9月',
+  '10月', '11月', '12月',
+]
+
+
 export default {
   //这里写组件英文名称，容器dom的id及事件中心命名均用到这个name，请认真填写
   name: "ButtonChange",
@@ -142,18 +174,20 @@ export default {
       month: new Date(),
       year: new Date(),
       activeName: '1',
-      dateType: 'date',
-      radio2: '日',
+      dateType: 'month',
+      radio2: '月',
       tableData: [],
+      ratioData: [],
       echartsData: [],
       Gechart: null,
       columnData: [
-
       ],
+      tableType: 'zeng',
       dataAll: [],
       total: 9,
       currentPage: 1,
       pageSize: 10,
+      runBoolean: (new Date().getFullYear() % 4 == 0 && new Date().getFullYear() % 100 != 0) || new Date().getFullYear() % 400 == 0,
       dialogVisible: false,
       dataIds: [
         "1a4951bf9eb2410db9c2e275e92f15f9",
@@ -161,7 +195,7 @@ export default {
         "b8eca611955b48e7a053d046fabc47fa",
         "7c7ded26b9c446379832738e0e7de6bc",
         "28eca611955b48e7a053d046fabc47fa",
-        "38eca611955b48e7a053d046fabc47fa",
+        "272d7fe769ce483a8a011891e1893221",
         "39bfdc3d633e437abb14b0c2a1b8c1e1",
         "60cd34be53f24dd1a1c1bc0f71693e24",
         "6589ab5d84af44a3b8824c66b49f7d2d"
@@ -191,7 +225,6 @@ export default {
   methods: {
     //定义类名
     rowClassNameFn({ row, rowIndex }) {
-
       return level[row.level - 1]
     },
     //改变页数大小
@@ -209,9 +242,6 @@ export default {
       this.tableData = this.dataAll.slice((pageNum - 1) * pageSize, (pageNum - 1) * pageSize + pageSize)
       // this.initEchartFn(this.tableData)
     },
-
-
-
     //图表弹框
     showEchartsFn() {
       this.dialogVisible = true
@@ -221,8 +251,6 @@ export default {
 
     },
     //图例渲染
-
-
     //-------------
     //按钮事件 上一
     previousHandler(type) {
@@ -230,31 +258,21 @@ export default {
       switch (type) {
         case 'date':
           last = new Date(this.year.getTime() - (60 * 60 * 24 * 1000))
-
           break;
         case 'month':
           last = new Date(this.year)
           last.setMonth(this.year.getMonth())
           last.setDate(0);
-
           break;
         case 'year':
           last = new Date(new Date().setFullYear(this.year.getFullYear() - 1))
-
           break;
         default:
           break;
       }
       this.year = new Date(last)
-      // this.day = new Date(this.day.getTime() - (60 * 60 * 24 * 1000))
-      // let lastMonth = this.day
-      // lastMonth.setMonth(lastMonth.getMonth())
-      // lastMonth.setDate(0);
-
       this.queryTable(type)
-
       // 
-
     },
     //下一
     nextHandler(type) {
@@ -301,28 +319,84 @@ export default {
     },
 
     queryreportModeTwo(time) {
-      let cl = {
-        date: [{ label: '当日用电/kW.h', prop: 'electric_power_today' }, { prop: 'electric_power_yesterday', label: '昨日用电/kW.h' }, { prop: 'increase', label: '增加值' }],
-        month: [{ label: '当月用电/kW.h', prop: 'electric_power_current_month' }, { prop: 'electric_power_last_month', label: '上月用电/kW.h' }, { prop: 'increase', label: '增加值' }],
-
+      // let cl = {
+      //   date: [{ label: '当日用电/kW.h', prop: 'electric_power_today' }, { prop: 'electric_power_yesterday', label: '昨日用电/kW.h' }, { prop: 'increase', label: '增加值' }],
+      //   month: [{ label: '当月用电/kW.h', prop: 'electric_power_current_month' }, { prop: 'electric_power_last_month', label: '上月用电/kW.h' }, { prop: 'increase', label: '增加值' }],
+      // }
+      let dataCl = []
+      let unit = '日'
+      if (this.dateType == 'month') {
+        unit = '日'
+        let a = time.split('-')[1]
+        let days = 30
+        switch (a) {
+          case '01':
+          case '03':
+          case '05':
+          case '07':
+          case '08':
+          case '10':
+          case '12':
+            days = 31
+            break;
+          case '04':
+          case '06':
+          case '09':
+          case '11':
+            days = 30
+            break;
+          case '02':
+            days = this.runBoolean ? 29 : 28
+            break;
+          default:
+            break;
+        }
+        for (let i = 1; i <= days; i++) {
+          dataCl.push(i + '日')
+        }
+      } else {
+        unit = '月'
+        dataCl = year
       }
-
+      let cl = []
       reportModelTwo({ time, ids: this.dataIds }).then(res => {
         let temp = []
-        this.dataAll = [...res.data]
-        this.dataAll.forEach(x => {
-          let a = x[cl[this.dateType][0].prop]
-          let c = x[cl[this.dateType][1].prop]
-          x.increase = a - c
-          x.linkRelativeRatio = c != 0 ? x.increase / c * 100 : 0
-          temp.push(x)
+        let temp2 = []
+        this.dataAll = { ...res.data }
+        for (const key in this.dataAll) {
+          let x = this.dataAll[key]
+          let obj = { ammeter_name: x[0]?.ammeter_name, level: x[0]?.level }
+          let obj2 = { ammeter_name: x[0]?.ammeter_name, level: x[0]?.level }
+          x.forEach((item, i) => {
+            obj2[Number(item.reportTime) + unit] = String(item.linkRelativeRatio).indexOf('.') != -1 ? item.linkRelativeRatio + '%' : Number(item.linkRelativeRatio).toFixed(2) + '%'
+            obj[Number(item.reportTime) + unit] = item.increase
+            if (cl.indexOf(Number(item.reportTime) + unit) == -1) cl.push(Number(item.reportTime) + unit)
+          })
+          temp.push(obj)
+          temp2.push(obj2)
+        }
+        // this.dataAll.forEach(x => {
+        //   // let a = x[cl[this.dateType][0].prop]
+        //   // let c = x[cl[this.dateType][1].prop]
+        //   // x.increase = a - c
+        //   // x.linkRelativeRatio = c != 0 ? x.increase / c * 100 : 0
+        //   let obj = { ammeter_name: x[0]?.ammeter_name, level: x[0]?.level }
+        //   x.forEach((item, i) => {
+        //     obj[item.reportTime + '月'] = item.linkRelativeRatio
+        //     cl.push(item.reportTime + '月')
+        //   })
+        //   temp.push(obj)
 
-        })
+        // })
+        this.currentPage = 1
         this.dataAll = [...temp]
+        this.dataAllR = [...temp2]
         this.total = this.dataAll.length
         this.tableData = this.dataAll.slice(0, this.currentPage * this.pageSize)
-        this.columnData = cl[this.dateType]
-
+        this.ratioData = this.dataAllR.slice(0, this.currentPage * this.pageSize)
+        this.columnData = dataCl
+        // this.columnData = cl
+        // console.log(this.tableData, this.columnData, '====data');
 
       }).catch(err => {
         this.dataAll = []
@@ -331,6 +405,33 @@ export default {
       })
     },
 
+    //  导出接口
+    exportTable(type2) {
+      let timeType = { date: 'YYYY-MM-DD', month: 'YYYY-MM', year: 'YYYY' }
+      let time = moment(this.year).format(timeType[type2])
+      let type = this.tableType == 'zeng' ? 'increase' : 'linkRelativeRatio'
+      linkRelativeRatioExport({ time, ids: this.dataIds, type }).then(res => {
+        var blob = res.data;
+        //  FileReader主要用于将文件内容读入内存
+        var reader = new FileReader();
+        reader.readAsDataURL(blob);
+        // onload当读取操作成功完成时调用
+        reader.onload = function (e) {
+          var a = document.createElement("a");
+          // 获取文件名fileName
+          var fileName = res.headers["content-disposition"].split("=");
+          fileName = fileName[fileName.length - 1];
+          fileName = decodeURI(fileName).replace(/\%23/g, "#");
+          a.download = fileName;
+          a.href = e.target.result;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        };
+      }).catch(err => {
+        console.log(err);
+      })
+    },
     //--------------------------=================
 
     //表格选择框事件
@@ -350,8 +451,8 @@ export default {
 
     //单选按钮组
     radioChange(value) {
-      let tabsObj = { 日: '1', 月: '2', 年: '3' }
-      let date = ['date', 'month', 'year']
+      let tabsObj = { 月: '1', 年: '2' }
+      let date = ['month', 'year']
       this.activeName = tabsObj[value]
       this.dateType = date[this.activeName - 1]
 
@@ -442,6 +543,10 @@ export default {
       cursor: pointer;
     }
 
+    .left_button {
+      margin-right: 10px;
+    }
+
     .ehartImage {
       width: 124px;
       display: flex;
@@ -456,7 +561,34 @@ export default {
 
     .date_group {
       display: flex;
-      margin-left: 40px
+      margin-left: 40px;
+
+      /deep/.el-input__inner {
+        border-radius: 0px;
+        border-left: none;
+        border-right: none;
+        text-align: center;
+        height: 32px;
+        // width: calc(100% - 53px);
+        padding: 0px;
+
+        &:hover {
+          border-color: #DCDFE6;
+        }
+
+        &:focus {
+          border-color: #DCDFE6;
+        }
+      }
+    }
+
+    .flex_end {
+      display: flex;
+
+      .el-select {
+        width: 120px;
+        margin-right: 10px;
+      }
     }
 
     .itemButton {
@@ -506,23 +638,7 @@ export default {
       }
     }
 
-    /deep/.el-input__inner {
-      border-radius: 0px;
-      border-left: none;
-      border-right: none;
-      text-align: center;
-      height: 32px;
-      // width: calc(100% - 53px);
-      padding: 0px;
 
-      &:hover {
-        border-color: #DCDFE6;
-      }
-
-      &:focus {
-        border-color: #DCDFE6;
-      }
-    }
   }
 
   /deep/ .el-tabs__nav-wrap {

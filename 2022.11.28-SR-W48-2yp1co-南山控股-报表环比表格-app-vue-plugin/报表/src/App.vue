@@ -29,9 +29,11 @@
           <button class="southern_buttons_item  ehartImage" @click="showEchartsFn">
             <div class="ehartImageItem">生成图表</div>
           </button>
+          <button class="southern_buttons_item" @click='exportTable(dataAll, dateType)'>
+            导出</button>
         </div>
       </div>
-      <el-table :data="tableData" row-key="ammeter_name" style="width: 100%" tooltip-effect="dark"
+      <el-table :data="tableData" row-key="ammeter_name" style="width: 100%" tooltip-effect="dark" ref="multipleTable"
         @selection-change="handleSelectionChange" :row-class-name="rowClassNameFn"
         :header-cell-style="{ padding: 0 + 'px', fontSize: '12px', fontWeight: 400 }"
         :header-row-style="{ height: '30px' }">
@@ -41,14 +43,8 @@
         </el-table-column>
         <el-table-column prop="ammeter_name" min-width="180" label="回路名称/kWh" fixed="left">
         </el-table-column>
-
-
-
-        <el-table-column :prop="item" :label="item" v-for="item in columnData " min-width="73"
-          :render-header="(e, { column, $index }) => { return renderheader(e, { column, $index }, dateType) }"
-          :key="item">
+        <el-table-column :prop="item" :label="item" v-for="item in columnData " min-width="85" :key="item">
         </el-table-column>
-
       </el-table>
       <div class="developer_pagination">
         <div class="developer_pagination_total">共{{ total }}条 </div>
@@ -90,6 +86,12 @@ Vue.use(Dialog)
 Vue.use(Pagination)
 Vue.use(TableColumn)
 const level = ['level_one', 'level_two', 'level_three']
+const year = [
+  '1月', '2月', '3月',
+  '4月', '5月', '6月',
+  '7月', '8月', '9月',
+  '10月', '11月', '12月',
+]
 export default {
   //这里写组件英文名称，容器dom的id及事件中心命名均用到这个name，请认真填写
   name: "ButtonChange",
@@ -157,18 +159,18 @@ export default {
       Gechart: null,
       total: 9,
       dialogVisible: false,
-      dataIds: [] || ["39bfdc3d633e437abb14b0c2a1b8c1ed", "b8eca611955b48e7a053d046fabc47fa", "7c7ded26b9c446379832738e0e7de6bc", "28eca611955b48e7a053d046fabc47fa", "38eca611955b48e7a053d046fabc47fa",
+      dataIds: [] || [
+        "1a4951bf9eb2410db9c2e275e92f15f9",
+        "39bfdc3d633e437abb14b0c2a1b8c1ed",
+        "b8eca611955b48e7a053d046fabc47fa",
+        "7c7ded26b9c446379832738e0e7de6bc",
+        "28eca611955b48e7a053d046fabc47fa",
+        "272d7fe769ce483a8a011891e1893221",
         "39bfdc3d633e437abb14b0c2a1b8c1e1",
-        "709d52a39ff9498691d317633701111",
-        "b8eca611955b48e7a05sd46fabc47fa",
         "60cd34be53f24dd1a1c1bc0f71693e24",
-        "709d52a39ff9498691d3sd337013922",
-        "709d52a39ff9498691daw6337013911",
-        "6589ab5d84af44a3b8824c66b49f7d2d",
-        "28eca611955b48e7a05df046fabc47fa",
-        "38eca611955b48e7a05fd046fabc47f1"
-      ]
-
+        "6589ab5d84af44a3b8824c66b49f7d2d"
+      ],
+      runBoolean: (new Date().getFullYear() % 4 == 0 && new Date().getFullYear() % 100 != 0) || new Date().getFullYear() % 400 == 0,
     }
   },
   mounted() {
@@ -196,18 +198,38 @@ export default {
     }
     this.handleValueChange()
     //业务代码
-    this.dataIds = ["39bfdc3d633e437abb14b0c2a1b8c1ed", "b8eca611955b48e7a053d046fabc47fa", "7c7ded26b9c446379832738e0e7de6bc", "28eca611955b48e7a053d046fabc47fa", "38eca611955b48e7a053d046fabc47fa",
-      "39bfdc3d633e437abb14b0c2a1b8c1e1",
-      "709d52a39ff9498691d317633701111",
-      "b8eca611955b48e7a05sd46fabc47fa",
-      "60cd34be53f24dd1a1c1bc0f71693e24",
-      "709d52a39ff9498691d3sd337013922",
-      "709d52a39ff9498691daw6337013911",
-      "6589ab5d84af44a3b8824c66b49f7d2d",
-      "28eca611955b48e7a05df046fabc47fa",
-      "38eca611955b48e7a05fd046fabc47f1"
+
+    this.dataIds = [
+      "",
+      "1da785016a40425fb168c1029880d017",
+      "2791416d904442bba6785413961a8418",
+      "2bc6135f8c0e49b2823f02f24b4e97f3",
+      "30052e4ea2674f98af293a0101089461",
+      "35d12c3a923241df8e94cb791d1285cc",
+      "431111338ef346b49053ca847614d73f",
+      "4d89c648667846e0bd2689396be358d9",
+      "5489ba57bc56446bad971256366c6cc2",
+      "558f0ceb74444f70907d54b9824f5b3e",
+      "584414a68e294976b4dda0a7831bb680",
+      "64e99a8f792e48a5996e2b0f73e5bd77",
+      "6e6ece27a4054faca20bfb8ed9eb6aca",
+      "78feb4ab8e1744948b98469200329f01",
+      "88fe63a406f64b45a946a49223c0c412",
+      "8b4693efd8404c2c8060ebd420d7093d",
+      "aacc708e454346de8b574a9ecd5ee0b3",
+      "b9a4289b5e124009958637bf1833e2fe",
+      "ba39a733fdf84f5ab48da5a34416084a",
+      "bc14cff01ce24a45a615bbd1b11991e8",
+      "dd5e3ace15414aa689ef146be132dc80",
+      "ddea3e9a1f204f5188f9c19477a0ef67",
+      "e0854eb86d21449a8d9d57b1e4306479",
+      "e511f13fd6dd40adbed43ecf8e13eb2f",
+      "ed461ad9740a41689c52e066fc76d665",
+      "ee85dd305cc845ffbe30cb3e7e5ea966",
+      "f34415e9ed46487e8d319be5b1007c60",
+      "f9a9d32aef754476ab6cb97e3895c03b"
     ]
-    // this.queryReportModel()
+    this.queryReportModel()
   },
   methods: {
     //定义类名
@@ -236,7 +258,6 @@ export default {
 
     renderheader(h, { column, $index }, type) {
       let unit = { month: '日', year: '月' }
-
       return h("span", Number(column.label) + unit[type])
     },
     //图表弹框
@@ -245,7 +266,6 @@ export default {
       this.$nextTick(() => {
         this.initEcharts()
       })
-
     },
     //图例渲染
     initEcharts() {
@@ -255,51 +275,38 @@ export default {
       let reg = /^[0-9]*$/;//正则表达式
       let numIs = new RegExp(reg)
       //纯数据就是true
+      let unit = { month: '日', year: '月' }
+      let key2 = unit[this.dateType]
       this.echartsData.forEach((x, i) => {
         for (const key in x) {
-          if (numIs.test(x[key])) {
-            console.log(Boolean(dataArr[i]));
+          if (numIs.test(key.split(key2)[0])) {
             dataArr[i] = dataArr[i] ? [...dataArr[i], x[key]] : [x[key]]
           } else {
             dataName.push(x[key])
-
           }
         }
       })
 
-
-      let unit = { month: '日', year: '月' }
-      let key = unit[this.dateType]
-
-
-
-      let xAxis = this.columnData.map(x => {
-        return Number(x) + key
-      })
-
-
-
+      let xAxis = this.columnData
+      // let xAxis = this.columnData.map(x => {
+      //   return Number(x) + key
+      // })
       dataName.forEach((x, i) => {
-
         seriesData.push({
           name: x,
           type: 'line',
           symbol: 'circle',
           itemStyle: {
             normal: {
-
               borderColor: 'rgba(255, 255, 255)', //圆点透明 边框
               borderWidth: 1,
             },
           },
-
           data: dataArr[i],
-
         })
       })
-
+      console.log(dataArr, dataName, seriesData, '====数据');
       let options = {
-
         tooltip: {
           trigger: 'axis',
           show: this.echartsData.length > 10 ? false : true
@@ -320,14 +327,12 @@ export default {
           bottom: '3%',
           containLabel: true
         },
-
         xAxis: {
           type: 'category',
           // boundaryGap: false,
           axisTick: {
             show: false
           },
-
           data: xAxis
         },
         yAxis: [
@@ -339,7 +344,6 @@ export default {
             show: true,
             axisLine: {
               show: false,
-
             },
             lineStyle: {
               color: '#A1A7B3',
@@ -353,25 +357,12 @@ export default {
               }
             },
           },
-
-
-
-
-
-
         ],
         series: seriesData
       };
-
-
       this.Gechart = echarts.init(this.$refs.southern_echarts);
       this.Gechart.setOption(options, { notMerge: true });
-
-
-
-
     },
-
     //-------------
     //按钮事件 上一
     previousHandler(type) {
@@ -379,17 +370,14 @@ export default {
       switch (type) {
         case 'date':
           last = new Date(this.year.getTime() - (60 * 60 * 24 * 1000))
-
           break;
         case 'month':
           last = new Date(this.year)
           last.setMonth(this.year.getMonth())
           last.setDate(0);
-
           break;
         case 'year':
           last = new Date(new Date().setFullYear(this.year.getFullYear() - 1))
-
           break;
         default:
           break;
@@ -399,11 +387,8 @@ export default {
       // let lastMonth = this.day
       // lastMonth.setMonth(lastMonth.getMonth())
       // lastMonth.setDate(0);
-
       this.queryTable(type)
-
       // 
-
     },
     //下一
     nextHandler(type) {
@@ -425,13 +410,9 @@ export default {
             last.setMonth(this.year.getMonth() + 2)
             last.setDate(0);
           }
-
-
-
           break;
         case 'year':
           last = new Date(new Date().setFullYear(this.year.getFullYear() + 1))
-
           break;
         default:
           break;
@@ -444,7 +425,8 @@ export default {
     queryTable(type) {
       let timeType = { date: 'YYYY-MM-DD', month: 'YYYY-MM', year: 'YYYY' }
       let time = moment(this.year).format(timeType[type])
-      console.log(time, type, '=======d');
+      this.echartsData = []
+      this.$refs.multipleTable.clearSelection();
       this.queryReportModel(time)
       //接口
     },
@@ -454,28 +436,74 @@ export default {
         time,
         "ids": this.dataIds
       }).then(res => {
-
         this.dataAll = [...res.data]
         // this.dataAll.forEach(x => {
         //   x.data_id = Utils.generateUUID()
         // })
-        this.tableData = this.dataAll.slice(0, this.currentPage * this.pageSize)
+        let dataCl = []
+        let unit = '日'
+        if (this.dateType == 'month') {
+          unit = '日'
+          let a = time.split('-')[1]
+          let days = 30
+          switch (a) {
+            case '01':
+            case '03':
+            case '05':
+            case '07':
+            case '08':
+            case '10':
+            case '12':
+              days = 31
+              break;
+            case '04':
+            case '06':
+            case '09':
+            case '11':
+              days = 30
+              break;
+            case '02':
+              days = this.runBoolean ? 29 : 28
+              break;
+            default:
+              break;
+          }
+          for (let i = 1; i <= days; i++) {
+            dataCl.push(i + '日')
+          }
+        } else {
+          unit = '月'
+          dataCl = year
+        }
+        let cl = []
         let a = []
-        this.tableData.forEach(x => {
-          a.push(Object.keys(x).length)
+        this.dataAll.forEach(x => {
+          let obj = { ammeter_name: x.ammeter_name, level: x.level }
+          for (const key in x) {
 
+            // console.log(x, isNaN(Number(key)), Number(key), '====');
+            if (!isNaN(Number(key))) {
+              obj[Number(key) + unit] = String(x[key]).indexOf('.') != -1 ? Number(x[key]).toFixed(2) : x[key]
+            }
+          }
+          a.push(obj)
         })
-        let FastLength = a.indexOf(Math.max(...a))
-        this.columnData = Object.keys(this.tableData[FastLength])
-        console.log(this.columnData, '=');
-        this.columnData.splice(this.columnData.indexOf('ammeter_name'), 1)
-        this.columnData.splice(this.columnData.indexOf('ammeter_id'), 1)
-        this.columnData.splice(this.columnData.indexOf('level'), 1)
-        this.columnData.sort(function (a, b) {
-          return a - b
-        })
+        this.dataAll = [...a]
+        this.currentPage = 1
+        this.tableData = this.dataAll.slice(0, this.currentPage * this.pageSize)
+
+        // let FastLength = a.indexOf(Math.max(...a))
+        // this.columnData = Object.keys(this.tableData[FastLength])
+        // this.columnData.splice(this.columnData.indexOf('ammeter_name'), 1)
+        // this.columnData.indexOf('ammeter_id') != -1 && this.columnData.splice(this.columnData.indexOf('ammeter_id'), 1)
+        // this.columnData.indexOf('level') != -1 && this.columnData.splice(this.columnData.indexOf('level'), 1)
+        // this.columnData.sort(function (a, b) {
+        //   return a - b
+        // })
+        this.columnData = dataCl
+
         this.total = this.dataAll.length
-
+        console.log(this.columnData, '=');
       }).catch(err => {
         this.columnData = []
         this.tableData = []
@@ -483,7 +511,74 @@ export default {
       })
 
     },
+    //导出
+    exportTable(tableData, type) {
+      const headArr = Object.keys(tableData[0])
+      let aTime = { 年: 'YYYY.MM ', 月: 'YYYY.MM.DD', 周: 'YYYY.MM.DD' }
+      const titleObj = {}
+      // 要导出的json数据
+      // 列标题
+      let unit = { month: '日', year: '月' }
+      this.columnData.forEach(x => {
+        titleObj[x] = Number(x) + unit[type]
+      })
 
+      const head = Object.keys(titleObj)
+      head.sort(function (a, b) {
+        return a - b
+      })
+      head.unshift('ammeter_name')
+      titleObj.ammeter_name = '回路名称/kWh'
+      let str = "<tr>"
+
+
+      head.forEach((item, index) => {
+
+        str += (index == (head.length - 1)) ? `<td>${titleObj[item] || item}</td></tr>` : `<td>${titleObj[item] || item}</td>`
+
+      })
+      // 循环遍历，每行加入tr标签，每个单元格加td标签
+      for (let i = 0; i < tableData.length; i++) {
+        str += '<tr>';
+        for (const key of head) {
+          // 增加\t为了不让表格显示科学计数法或者其他格式
+          str += `<td>${tableData[i][key] || '' + '\t'}</td>`;
+
+
+        }
+        str += '</tr>';
+      }
+      // Worksheet名
+      const worksheet = 'Sheet1'
+      const uri = 'data:application/vnd.ms-excel;base64,';
+
+      // 下载的表格模板数据
+      const template = `<html
+             xmlns:o="urn:schemas-microsoft-com:office:office" 
+             xmlns:x="urn:schemas-microsoft-com:office:excel"
+        xmlns="http://www.w3.org/TR/REC-html40">
+      <head> <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+          <x:Name>${worksheet}</x:Name>
+          <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+          </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--> </head>
+    <body><table style="vnd.ms-excel.numberformat:@" >${str}</table></body>
+      </html>`;
+      // 下载模板
+      console.log(str, '====date数据');
+      // 输出base64编码
+      const base64 = function (s) {
+        return window.btoa(unescape(encodeURIComponent(s)));
+      };
+      const format = function (s, c) {
+        return s.replace(/{(\w+)}/g, function (m, p) {
+          return c[p];
+        });
+      };
+      const a = document.createElement("a");
+      a.href = uri + base64(format(template));
+      a.download = "用电分析" + ".xls";
+      a.click();
+    },
 
     //表格选择框事件
     handleSelectionChange(selection) {
@@ -493,6 +588,7 @@ export default {
         delete x.ammeter_id
         delete x.level
       })
+      console.log(this.echartsData, '=====');
     },
 
     //  图表按钮
@@ -545,11 +641,7 @@ export default {
     },
     setValue(value) {
       this.dataIds = value
-
-
     }
-
-
   },
   destroyed() {
     //必需，不可删除
@@ -579,16 +671,11 @@ export default {
 
     /deep/ .el-radio-button {
       height: 32px;
-
-
-
     }
 
     /deep/.el-radio-button__inner {
       line-height: 10px;
     }
-
-
 
     .southern_buttons_item {
       text-align: center;
@@ -609,6 +696,7 @@ export default {
       justify-content: center;
       align-items: center;
       margin-left: 16px;
+      margin-right: 16px;
 
       .ehartImageItem {
         padding-left: 16px;

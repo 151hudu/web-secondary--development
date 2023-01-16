@@ -174,7 +174,8 @@ export const themeInfo = {
 export const customConfig = {
   componentId: "123",
   appId: "123",
-  modelId: "c0ad9e85-c425-462f-acd6-32c702a1b7a6",
+  // modelId: "c0ad9e85-c425-462f-acd6-32c702a1b7a6",
+  modelId: "d7b66535-9f3c-4b20-b42d-6b25e9524881",
   buttons: JSON.stringify({
     defaultValue: "战勤部",
     data: [

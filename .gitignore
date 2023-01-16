@@ -21,7 +21,8 @@ pluginTemp/libs/*
 plugin-*.zip
 temp
 .history
-
+# log files
+*.log
 # Editor directories and files
 .umi
 .idea

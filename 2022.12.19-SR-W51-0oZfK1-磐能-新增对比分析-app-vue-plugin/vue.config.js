@@ -4,7 +4,14 @@ module.exports = {
     disableHostCheck: true,
     proxy: {
       "/api": {
+<<<<<<< HEAD
         target: "https://zhny.hn.sgcc.com.cn/",
+=======
+        // target: "http://10.15.70.123:12203",
+        // target: "http://10.15.70.38:18080/",
+        target: "http://121.36.134.217:47264/",
+        // target: "http://10.15.111.15:12345/",
+>>>>>>> 69eb67e03c216fa71c95da16445a144fb956b746
         changeOrigin: true,
         pathRewrite: {
           "/api": ""
@@ -21,33 +28,33 @@ module.exports = {
         (element) => {
           ["vue-modules", "vue", "normal-modules", "normal"].forEach((m) => {
             config.module
-                  .rule(element)
-                  .oneOf(m)
-                  .uses.delete("extract-css-loader")
-                  .end()
-                  .use("vue-style-loader")
-                  .loader("vue-style-loader")
-                  .options({
-                    sourceMap: false,
-                    shadowMode: false
-                  })
-                  .before("css-loader");
+              .rule(element)
+              .oneOf(m)
+              .uses.delete("extract-css-loader")
+              .end()
+              .use("vue-style-loader")
+              .loader("vue-style-loader")
+              .options({
+                sourceMap: false,
+                shadowMode: false
+              })
+              .before("css-loader");
           });
         }
       );
     });
     config.resolve.alias
-          .set("@", resolve("./src"));
+      .set("@", resolve("./src"));
     config.module
-          .rule("images")
-          .use("url-loader")
-          .loader("url-loader")
-          .tap(options => Object.assign(options, { limit: 10 * 100 * 1024 * 1024 }));
+      .rule("images")
+      .use("url-loader")
+      .loader("url-loader")
+      .tap(options => Object.assign(options, { limit: 10 * 100 * 1024 * 1024 }));
     config.module
-          .rule("fonts")
-          .use("url-loader")
-          .loader("url-loader")
-          .tap(options => Object.assign(options, { limit: 10 * 100 * 1024 * 1024 }));
+      .rule("fonts")
+      .use("url-loader")
+      .loader("url-loader")
+      .tap(options => Object.assign(options, { limit: 10 * 100 * 1024 * 1024 }));
 
   }
 };

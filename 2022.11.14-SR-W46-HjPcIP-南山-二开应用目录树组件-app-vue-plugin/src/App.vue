@@ -3,29 +3,19 @@
   <div :id="id" style="width: 230px; height: 100%; background-color: #fff" :ref="id">
     <!-- -->
     <el-input placeholder="输入关键字进行过滤" size="small" v-model="filterText" class="searchInput">
-      <img class="searchIcon" slot="append" width="26px" height="26px" src="../pluginTemp/images/Frame 33668.png"
-    /></el-input>
+      <img class="searchIcon" slot="append" width="26px" height="26px"
+        src="../pluginTemp/images/Frame 33668.png" /></el-input>
     <el-checkbox class="checked1" v-model="checked1" @change="cascadeChoose">级联选择</el-checkbox>
     <el-checkbox v-model="checked2" @change="handleCheckAllChange">全选</el-checkbox>
-    <el-tree
-      class="filter-tree"
-      :check-strictly="!checked1"
-      :data="stationTreeData"
-      :props="defaultProps"
-      default-expand-all
-      :filter-node-method="filterNode"
-      ref="stationTree"
-      show-checkbox
-      node-key="data_id"
-      @check-change="handleCheckChange"
-    >
+    <el-tree class="filter-tree two_tree" :check-strictly="!checked1" :data="stationTreeData" :props="defaultProps"
+      default-expand-all :filter-node-method="filterNode" ref="stationTree" show-checkbox node-key="data_id"
+      @check-change="handleCheckChange">
       <span class="span-ellipsis" slot-scope="{ node }">
         <span :title="node.label">{{ node.label }}</span>
       </span>
     </el-tree>
   </div>
 </template>
-
 <script>
 import eventActionDefine from "./components/msgCompConfig";
 import { Input, Tree, Checkbox, Button } from "element-ui";
@@ -98,6 +88,7 @@ export default {
       defaultProps: {
         children: "children",
         label: "name",
+        id: 'data_id'
       },
       count: 1,
       stationTreeData: [],
@@ -197,7 +188,6 @@ export default {
           });
           this.treeResults.push(message);
         });
-        console.log(this.treeResults);
         this.stationTreeData = this.listToTree(this.treeResults);
         this.$nextTick(() => {
           if (window.localStorage.getItem("hasChecked")) {
@@ -222,7 +212,7 @@ export default {
 
     //业务代码
   },
-  created() {},
+  created() { },
   methods: {
     /**
      * 触发事件 必需，不可删除
@@ -294,7 +284,22 @@ export default {
       this.hasChooseData.push(data);
       if (JSON.parse(JSON.stringify(this.huixianData)) !== this.$refs.stationTree.getCheckedKeys().concat(this.$refs.stationTree.getHalfCheckedKeys()).join()) {
         window.localStorage.setItem("hasChecked", JSON.stringify(this.$refs.stationTree.getCheckedNodes()));
-        this.huixianData = this.$refs.stationTree.getCheckedKeys().concat(this.$refs.stationTree.getHalfCheckedKeys()).join();
+        if (this.checked1 && this.$refs.stationTree.getCheckedKeys().concat(this.$refs.stationTree.getHalfCheckedKeys()).length != this.levelData.length) {
+          this.huixianData = [...this.$refs.stationTree.getCheckedKeys()]
+          this.$refs.stationTree.getCheckedKeys().forEach((x, i) => {
+            let a = this.findNode(this.stationTreeData, (node) => {
+              if (node.data_id == x) {
+                if (this.huixianData.indexOf(node.parent_id) == -1) {
+                  this.huixianData.splice(this.huixianData.indexOf(x), 0, node.parent_id)
+                }
+                return node.name === x
+              }
+            })
+          })
+          this.huixianData = this.huixianData.join();
+        } else {
+          this.huixianData = this.$refs.stationTree.getCheckedKeys().concat(this.$refs.stationTree.getHalfCheckedKeys()).join();
+        }
         console.log(this.huixianData);
         if (this.$refs.stationTree.getCheckedKeys().concat(this.$refs.stationTree.getHalfCheckedKeys()).length == this.levelData.length) {
           this.checked2 = true;
@@ -305,6 +310,18 @@ export default {
         this.triggerEvent(this.huixianData);
       }
     },
+    //递归方法
+    findNode(tree, func) {
+      for (const node of tree) {
+        if (func(node)) return node
+        if (node.children) {
+          const res = this.findNode(node.children, func)
+          if (res) return res
+        }
+      }
+      return null
+    },
+    //找到节点插入数据
     handleNodeClick(data) {
       console.log(data);
     },
@@ -373,41 +390,52 @@ export default {
   white-space: nowrap;
   font-size: 14px;
 }
+
 .searchInput {
   margin-bottom: 14px;
+
   /deep/.el-input__inner {
     transition: none;
   }
 }
+
 .filter-tree {
   margin-top: 20px;
   padding: 0 10px 0 0;
 }
+
 .checked1 {
   margin-left: 16px;
 }
+
 .searchIcon {
   position: relative;
   top: 1px;
 }
-.searchInput /deep/.el-input__inner:hover + .el-input-group__append {
+
+.searchInput /deep/.el-input__inner:hover+.el-input-group__append {
   border-color: #c0c4cc;
 }
-.searchInput /deep/.el-input__inner:focus + .el-input-group__append {
+
+.searchInput /deep/.el-input__inner:focus+.el-input-group__append {
   border-color: #409eff;
 }
+
 /deep/.el-input-group--append .el-input__inner,
 .el-input-group__prepend {
   border-right: 0px;
 }
+
 /deep/.el-input-group__append {
   background: transparent;
 }
+
 /deep/.el-checkbox__input.is-checked .el-checkbox__inner,
 .el-checkbox__input.is-indeterminate .el-checkbox__inner {
   background: #0454f2;
   border-color: #0454f2;
 }
+
 /deep/.el-input-group__append,
 .el-input-group__prepend {
   padding: 0 3px;
@@ -415,10 +443,49 @@ export default {
 </style>
 <style lang="less">
 .filter-tree {
+
   .el-checkbox__input.is-checked .el-checkbox__inner,
   .el-checkbox__input.is-indeterminate .el-checkbox__inner {
     background: #0454f2 !important;
     border-color: #0454f2 !important;
+  }
+}
+
+.two_tree {
+  .el-tree-node {
+    .el-tree-node__content {
+      background: rgba(26, 121, 255, 0.1);
+      margin-bottom: 6px;
+    }
+
+    .el-tree-node__children {
+      .el-tree-node__content {
+        background: rgba(21, 144, 85, 0.06);
+        margin-bottom: 0px;
+      }
+
+      .el-tree-node {
+        .el-tree-node__children {
+          .el-tree-node__content {
+            background: rgba(102, 102, 204, 0.05);
+            margin-bottom: 0px;
+          }
+
+          .el-tree-node__content:first-of-type {
+            margin-top: 6px;
+          }
+        }
+      }
+    }
+
+  }
+}
+
+.two_tree {
+  .el-tree-node__children {
+    .el-tree-node:last-of-type {
+      margin-bottom: 6px;
+    }
   }
 }
 </style>

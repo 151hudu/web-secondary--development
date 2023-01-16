@@ -1,7 +1,7 @@
 {
   "id": "438e31c9-cabf-44fd-a58e-a531e87b7397",
   "type": "analyzer",
-  "main": "main.34e63eca.js",
+  "main": "main.e76be7c9.js",
   "version": "2",
   "props": {
     "img": "custom_table.png",
@@ -15,6 +15,10 @@
     "scriptName": "main.b42fe2f5.js",
     "vars": [
       "背景颜色",
+      "图表上边距",
+      "图表下边距",
+      "图表左边距",
+      "图表右边距",
       "悬浮背景渐变颜色",
       "图例整体位置",
       "图例文字颜色",

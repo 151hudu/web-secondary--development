@@ -9,17 +9,17 @@ import moment from "moment";
 
 import { BellOutlined } from '@ant-design/icons'
 
-// const dataMenu = [
-//   { chield_name: '菜单1', chield_url: '111111111' },
-//   { chield_name: '菜单2', chield_url: '2222' },
-//   { chield_name: '菜单3', chield_url: '333' },
-// ]
-// const form = {
-//   name: '运维菜单', img: '',
-//   url: 'https://element.eleme.cn/#/zh-CN/component/',
-//   openType: 1,
-//   menuArr: dataMenu
-// }
+const dataMenu = [
+  { chield_name: '菜单1', chield_url: '111111111' },
+  { chield_name: '菜单2', chield_url: '2222' },
+  { chield_name: '菜单3', chield_url: '333' },
+]
+const form = {
+  name: '运维菜单', img: '',
+  url: 'https://element.eleme.cn/#/zh-CN/component/',
+  openType: 1,
+  menuArr: dataMenu
+}
 
 
 const List = ({ configuration, history }) => {
@@ -38,7 +38,7 @@ const List = ({ configuration, history }) => {
     try {
       setConfig(JSON.parse(configuration || "{}"));
 
-      let form = JSON.parse(configuration || "{}")
+      // let form = JSON.parse(configuration || "{}")
       let a = form
       let temp = {}
       for (const key in a) {
@@ -65,13 +65,16 @@ const List = ({ configuration, history }) => {
       temp.popupClassName = 'handerMenuChirend'
       temp.popupOffset = [-40, 5]
       setMenu([temp])
+      console.log(temp);
       console.log(JSON.parse(configuration || "{}"));
     } catch (error) {
       console.error("configuration解析错误", error);
     }
-    let a = document.querySelector('.Header_two').parentNode
-    if (a) a.style.height = '100%'
-
+    let t = headerRef.current.parentNode
+    let b = document.querySelector('.application-customize-header')
+    if (b) b.style.backgroundColor = '#fff'
+    if (t) t.style.height = '100%'
+    // console.log(headerRef.current.parentNode, '===dsa');
   }, [])
 
   // const onClick = ({ item, key, keyPath, domEven }) => {
@@ -80,19 +83,19 @@ const List = ({ configuration, history }) => {
   // };
   const onClick = (e) => {
     console.log('click ', e.item.props.value);
-    if (config.openType == 1) {
-      window.open(e.item.props.value)
-    } else {
-      console.log("window.history: ", window.history);
-      history.push(e.item.props.value)
-      // window.location.href = e.item.props.value
+    // if (config.openType == 1) {
+    //   window.open(e.item.props.value)
+    // } else {
+    //   console.log("window.history: ", window.history);
+    //   history.push(e.item.props.value)
+    //   // window.location.href = e.item.props.value
 
-    }
+    // }
     setCurrent(e.key);
   };
   return (
     <>
-      <div className="Header_two" >
+      <div className="Header_two" ref={headerRef}>
         <Menu className='handerMenu' onClick={onClick} selectedKeys={[current]} mode="horizontal" items={menu} triggerSubMenuAction='click' />
         {/* <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" >
           {

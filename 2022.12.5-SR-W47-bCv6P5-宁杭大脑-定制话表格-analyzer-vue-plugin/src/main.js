@@ -36,12 +36,15 @@ if (dom) {
       externalVariables: {
         background: "",
         headerFontSize: '24',
-        headerColor: '',
+        headerColor: 'red',
         headerFontFamily: '楷体',
         headerFontWeight: 'false',
         bodyFontSize: '20',
+        titleWidth: '32',
         bodyColor: '',
+        dataWidth: '70',
         bodyFontFamily: '',
+        barDataOrder: '南京端,南京器,南京,南京二',
       },
     };
     const props = {

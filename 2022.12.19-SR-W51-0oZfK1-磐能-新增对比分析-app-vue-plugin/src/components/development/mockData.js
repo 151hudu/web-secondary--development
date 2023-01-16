@@ -181,7 +181,8 @@ export const customConfig = {
         label: "基层六队", value: "基层六队"
       }
     ]
-  })
+  }),
+  type: '0',
 };
 export const appVariables = [
   {

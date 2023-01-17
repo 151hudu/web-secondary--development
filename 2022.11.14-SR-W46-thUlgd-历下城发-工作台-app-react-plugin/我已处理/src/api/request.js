@@ -3,7 +3,7 @@ import qs from "querystringify";
 
 if (process.env.NODE_ENV === "development") {
    document.cookie =
-      "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY3MDMxMDg2Nzg3NiwidXNlcklkIjoiYzgzNTdlMWYtMWUwOS00Y2NhLWE1MmQtN2U2OTc5YjI1MzRhIn0.8CkL02wXwWCKALqFpbNZNcvePRRRQSTys6BVOqwxPJ4";
+      "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY3MzkzNTkwNTI5NCwidXNlcklkIjoiODVlODFjNDQtMjg0OC00OTM5LThjYmItZjM0YWY0YTc5Njk0In0.N4zLpsK3id9P8lI_y7f16oOJERSkOGFJMfrLSkuRC1g";
 }
 
 const instance = axios.create({

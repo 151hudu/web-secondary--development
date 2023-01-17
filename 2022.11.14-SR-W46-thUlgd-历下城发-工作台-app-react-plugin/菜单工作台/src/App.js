@@ -130,7 +130,8 @@ const Workbench = (props) => {
                   return (
                      item.key && {
                         key: item.key,
-                        label: props.intlGetKey(item.label),
+                        // label: props.intlGetKey(item.label),
+                        label: item.label,
                         icon: <img src={item.isCheck ? item.checkImg : item.unCheckedImg} alt="" key={index} />,
                      }
                   );

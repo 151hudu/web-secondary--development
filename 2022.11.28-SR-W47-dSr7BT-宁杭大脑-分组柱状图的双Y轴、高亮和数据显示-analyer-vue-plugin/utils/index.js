@@ -1,4 +1,4 @@
-const Utils = {
+const utils = {
   /**
    * 将平台返回数据转化为对象数组的形式
    * @param {Array} originTableData 平台接口查询回来的数据
@@ -22,31 +22,13 @@ const Utils = {
     return tableData;
   },
   /**
-   * 自定义定时器，将在执行指定次数之后结束
-   * @param {Number} time 定时器执行的时间间隔，单位ms
-   * @param {Number} maxTimes 定时器最大执行次数
-   * @param {Function} callback 定时器回调函数,若需要提前结束，请返回false
-   */
-  customInterval(time, maxTimes, callback) {
-    if (time < 1 || maxTimes < 1 || Object.prototype.toString.call(callback) != "[object Function]") {
-      return;
-    }
-    let count = 0;
-    let timer = setInterval(() => {
-      count++;
-      if (count === maxTimes || callback() === false) {
-        clearInterval(timer);
-      }
-    }, time);
-  },
-  /**
    * 判断两个数组是否包含相同的元素（只能比较基础数据类型）
    * @param {Array} arr1
    * @param {Array} arr2
    * @returns {Boolean}
    */
   arrayContainsSame: (arr1, arr2) => {
-    let result = [...arr1, ...arr2];
+    let result = [...arr1, ...arr2]
     let set = new Set(result);
     if (set.size === result.length) {
       return false;
@@ -59,7 +41,7 @@ const Utils = {
    */
   generateUUID: () => {
     let d = new Date().getTime();
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
       let r = (d + Math.random() * 16) % 16 | 0;
       d = Math.floor(d / 16);
       return (c == "x" ? r : (r & 0x3) | 0x8).toString(16);
@@ -70,7 +52,7 @@ const Utils = {
    *
    * @param {Node} elem 元素节点
    */
-  getHideElementSize: function(elem) {
+  getHideElementSize: function (elem) {
     let width,
       height,
       // elem = document.querySelector(ele),
@@ -85,17 +67,17 @@ const Utils = {
     return {
       width: width,
       height: height
-    };
+    }
 
     function getNoneNode(node) {
-      let display = getStyles(node).getPropertyValue("display"),
+      let display = getStyles(node).getPropertyValue('display'),
         tagName = node.nodeName.toLowerCase();
-      if (display != "none"
-          && tagName != "body") {
+      if (display != 'none'
+          && tagName != 'body') {
         getNoneNode(node.parentNode);
       } else {
         noneNodes.push(node);
-        if (tagName != "body") {
+        if (tagName != 'body') {
           getNoneNode(node.parentNode);
         }
       }
@@ -127,7 +109,7 @@ const Utils = {
         nodeStyle[i] = {
           visibility: visibility,
           display: display
-        };
+        }
       }
     }
 
@@ -144,7 +126,7 @@ const Utils = {
    * 判断元素是否可见
    * @param {Node} element 元素节点
    */
-  isVisiable: function(element) {
+  isVisiable: function (element) {
     if (element === null || element === undefined) {
       return false;
     }
@@ -172,7 +154,7 @@ const Utils = {
     }
 
     return true;
-  }
-};
+  },
+}
 
-export default Utils;
+export default utils

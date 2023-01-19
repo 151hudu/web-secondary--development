@@ -58,6 +58,7 @@ export default class Main extends Component {
     data.list.forEach((item, index) => {
       YdataName.push(item.name);
       Xdata.push(item.rate);
+      item.upDownNnum > 0 ? Dvalue.push("▲ " + item.upDownNnum) : Dvalue.push("▼ " + Math.abs(Number(item.upDownNnum)));
       TopData.unshift("top " + (index + 1));
     });
     if (YdataName.length < 5) {
@@ -105,6 +106,32 @@ export default class Main extends Component {
           splitLine: "",
           axisTick: "none",
           axisLine: "none",
+          data: Dvalue,
+          axisLabel: {
+            show: true,
+            interval: 0,
+            align: "right",
+            verticalAlign: "bottom",
+            padding: [0, 20, 10, 0],
+            lineHeight: 10,
+            fontSize: this.左侧字体大小,
+            textStyle: {
+              color: function (value) {
+                if (value.indexOf("▲") !== -1) {
+                  return "#FD6666";
+                } else if (value.indexOf("▼") !== -1) {
+                  return "#13F6EE";
+                } else {
+                  return "red";
+                }
+              },
+            },
+          },
+        },
+        {
+          splitLine: "",
+          axisTick: "none",
+          axisLine: "none",
           position: "left",
           data: TopData,
           axisLabel: {
@@ -146,9 +173,9 @@ export default class Main extends Component {
               fontFamily: "arial",
               formatter: (data) => {
                 if (String(data.data).indexOf(".") !== -1) {
-                  return Number(data.data).toFixed(1)*100 + "%";
+                  return Number(data.data).toFixed(1) + "%";
                 } else {
-                  return data.data*100 + "%";
+                  return data.data + "%";
                 }
               },
               position: "left",

@@ -20,7 +20,7 @@ export default class Main extends Component {
     let options = JSON.parse(JSON.stringify(props.options || {}));
     this.背景颜色 = options?.externalVariables?.背景颜色 || "#040B20";
     this.左侧字体大小 = options?.externalVariables?.左侧字体大小 || "10px";
-    this.top位置 = options?.externalVariables?.top位置 || "110";
+    this.top位置 = options?.externalVariables?.top位置 || "80";
     this.柱体文字大小 = options?.externalVariables?.柱体文字大小 || "14px";
     this.柱体宽度 = options?.externalVariables?.柱体宽度 || "15";
     this.图形左边距 = options?.externalVariables?.图形左边距 || "30%";
@@ -83,39 +83,29 @@ export default class Main extends Component {
     //     change_rate: 4,
     //   },
     // ];
-    data.list.sort(this.compare("num"));
-    let YdataName1 = [];
-    let YdataName2 = [];
+    data.list.sort(this.compare("rankUpDown"));
+    let YdataName = [];
     let Xdata = [];
     let Dvalue = [];
     let TopData = [];
     data.list?.forEach((item, index) => {
-      // if (this.codeShow == "true" && this.NameShow == "true") {
-      //   YdataName.push(item.segCode + "  " + item.segName);
-      // } else if (this.codeShow == "true" && this.NameShow == "false") {
-      //   YdataName.push(item.segCode);
-      // } else if (this.codeShow == "false" && this.NameShow == "true") {
-      //   YdataName.push(item.segName);
-      // } else {
-      YdataName1.push(item.segCode);
-      YdataName2.push(item.segName);
+      if (this.codeShow == "true" && this.NameShow == "true") {
+        YdataName.push(item.segCode + "  " + item.segName);
+      } else if (this.codeShow == "true" && this.NameShow == "false") {
+        YdataName.push(item.segCode);
+      } else if (this.codeShow == "false" && this.NameShow == "true") {
+        YdataName.push(item.segName);
+      } else {
+        YdataName.push("");
+      }
       Xdata.push(item.num);
       item.rankUpDown > 0 ? Dvalue.push("▲ " + item.rankUpDown) : Dvalue.push("▼ " + Math.abs(Number(item.rankUpDown)));
       TopData.unshift("top " + (index + 1));
     });
-    if (YdataName1.length < 5) {
-      let l = YdataName1.length;
+    if (YdataName.length < 5) {
+      let l = YdataName.length;
       for (let k = 0; k < 5 - l; k++) {
-        YdataName1.unshift("");
-        Xdata.unshift("");
-        Dvalue.unshift("");
-        TopData.unshift("");
-      }
-    }
-    if (YdataName2.length < 5) {
-      let l = YdataName2.length;
-      for (let k = 0; k < 5 - l; k++) {
-        YdataName2.unshift("");
+        YdataName.unshift("");
         Xdata.unshift("");
         Dvalue.unshift("");
         TopData.unshift("");
@@ -141,29 +131,32 @@ export default class Main extends Component {
           axisTick: "none",
           axisLine: "none",
           axisLabel: {
-            padding: [0, 0, 0, -140],
             fontSize: this.左侧字体大小,
             textStyle: {
               color: "#88A2B5",
             },
-            align: "left",
           },
-          data: YdataName1,
+          data: YdataName,
         },
         {
-          splitLine: "none",
+          splitLine: "",
           axisTick: "none",
           axisLine: "none",
-          position: "left",
+          data: Dvalue,
           axisLabel: {
-            padding: [0, 0, 0, -100],
+            show: true,
+            padding: [0, 8, 10, 0],
             fontSize: this.左侧字体大小,
             textStyle: {
-              color: "#88A2B5",
+              color: function (value) {
+                if (value.indexOf("▲") !== -1) {
+                  return "#FD6666";
+                } else {
+                  return "#13F6EE";
+                }
+              },
             },
-            align: "left",
           },
-          data: YdataName2,
         },
         {
           splitLine: "",

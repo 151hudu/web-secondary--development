@@ -21,6 +21,7 @@
     "axios": "^0.23.0",
     "core-js": "^3.6.5",
     "element-ui": "^2.15.9",
+    "html2canvas": "^1.4.1",
     "jquery": "^3.6.0",
     "querystringify": "^2.2.0",
     "vue": "^2.7.8"

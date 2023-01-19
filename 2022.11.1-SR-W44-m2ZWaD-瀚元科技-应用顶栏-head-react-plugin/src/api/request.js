@@ -4,7 +4,7 @@ import qs from "querystringify";
 if (process.env.NODE_ENV === "development") {
   document.cookie =
     // "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY2ODczNTQ0NzQzMSwidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.FjwFGyCC-a2QFua35MxXAcQnA9FV78rb-_pxF2hE9A0";
-    "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY3MDUwMDAxODU4OCwidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.7rAthC-A8klH1Hn9Oq4ayds35qp6s60KBSlo5HsFddM";
+    "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY3Mjc5NzcxMDEwMywidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.8nUsA5Ql1ahCmn6_F8q90wcCBJp_xJZgSs2Flys8FSI";
   // "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY2OTcxMDg0ODIyNSwidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.sz9RdnF_5OqSl5jOqZ1mnNYZweVCw6gKyGZ7XltJOOk";
   // "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY2ODc3Mjk1NTQxMiwidXNlcklkIjoiYmM0ODJmMjEtYThkYi00YTYxLTg2ODYtOGI4NzUzODYwM2YzIn0.v4Lo2Szftj2HKxf27xhWl2S0UClOHPIMBXJhf09YiBI";
   document.cookie =

@@ -5,8 +5,12 @@ module.exports = {
     proxy: {
       "/api": {
 <<<<<<< HEAD
+<<<<<<< HEAD
         target: "https://zhny.hn.sgcc.com.cn/",
 =======
+=======
+        target: "https://zhny.hn.sgcc.com.cn/",
+>>>>>>> 9c010413887b42431339af720d151a0c7ebc82c5
         // target: "http://10.15.70.123:12203",
         // target: "http://10.15.70.38:18080/",
         target: "http://121.36.134.217:47264/",

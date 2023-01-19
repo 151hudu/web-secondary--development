@@ -975,10 +975,20 @@ export default {
       this.loading.ls = true
       let { data } = await queryHistoryData({
         equipment_id: this.equipmentId, date: time, "pageNum": this.pageNum,
-        "pageSize": this.pageSize
+        "pageSize": this.pageNum == 1 ? this.pageSize + 1 : this.pageSize
       })
       this.loading.ls = false
-      this.historyData = [...data.results]
+      if (this.pageNum == 1) {
+        this.historyData = [...data.results]
+        this.historyData.forEach((x, i) => {
+
+          if (x.time > new Date().getTime()) delete this.historyData[i]
+        })
+
+      } else {
+        this.historyData = [...data.results]
+      }
+
       this.totalD = data.totalCount
     },
     //更改页数大小

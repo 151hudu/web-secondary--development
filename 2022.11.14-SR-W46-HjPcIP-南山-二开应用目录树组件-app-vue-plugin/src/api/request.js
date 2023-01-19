@@ -4,11 +4,13 @@ import qs from "querystringify";
 let apiContextPath = "";
 if (process.env.NODE_ENV === "development") {
   document.cookie =
-    "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY3MzQwNDc0NDA0NCwidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.dne_HhfCyNvB-OprfDTvVFzfa89fGDnBmtmJLOR0crE";
+    "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY3MzkzNTcyNjg0OCwidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.Nh5UrAAxCufc-Soexq1BbN0kuq7TT88dPgbuMZt5jSI";
   document.cookie =
-    "refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY0NjcyMjI2ODY4Nn0.TEVE_nopHNZlvSQM_RUZrLcCzkaERiHo8nz0q-ksL3E";
+    "refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY3MzkzNTcyNjg0OX0.tLN1qPNqD-YRR_xKDDe1P64sF7e3Z_Bol6mc5AJamFs";
   document.cookie = "username=admin";
   document.cookie = "windowOnline=true";
+  document.cookie = "JSESSIONID=73DA9EC7D70F527DC63253722A546629";
+  // document.cookie = "JSESSIONID=2F50BA55790ED2182C00145DF9B8D227;";
   apiContextPath = "/api";
 }
 

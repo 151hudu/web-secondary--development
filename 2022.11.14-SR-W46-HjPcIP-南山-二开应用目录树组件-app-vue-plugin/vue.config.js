@@ -3,7 +3,8 @@ module.exports = {
     disableHostCheck: true,
     proxy: {
       "/api": {
-        target: "http://14.21.43.41:18080",
+        // target: "http://14.21.43.41:18080",
+        target: "http://10.15.111.15:12201",
         changeOrigin: true,
         pathRewrite: {
           "/api": "",

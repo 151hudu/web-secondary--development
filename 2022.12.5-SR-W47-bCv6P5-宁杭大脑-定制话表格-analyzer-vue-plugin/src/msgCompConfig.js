@@ -7,21 +7,10 @@ export const events = [
       {
         name: "值",
         key: "value",
-        dataType: "string",
-      },
-    ],
-  },
-  {
-    key: "tabsChange",
-    name: "标签切换",
-    payload: [
-      {
-        name: "标签值",
-        key: "tabValue",
-        dataType: "string",
-      },
-    ],
-  },
+        dataType: "string"
+      }
+    ]
+  }
 ];
 
 // 组件可接收事件,定义方法需加上do_EventCenter_前缀，数组可以为空，但不能删除定义
@@ -46,9 +35,11 @@ export const actions = [
   //     }
   //   ]
   // }
+
+
 ];
 
 export default {
   actions,
-  events,
+  events
 };

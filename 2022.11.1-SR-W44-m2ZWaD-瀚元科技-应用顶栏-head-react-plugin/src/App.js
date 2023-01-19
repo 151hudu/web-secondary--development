@@ -23,8 +23,9 @@ const { Search } = Input;
 // const { SubMenu } = Menu;
 // const { Link } = Anchor;
 const appid = qs.parse(window.location.search).appid;
-// const datappId = qs.parse(window.location.search).appid;
-// const menuId = qs.parse(window.location.search).appid;
+const province_id = qs.parse(window.location.search).Province_Id;
+const city_id = qs.parse(window.location.search).City_Id;
+const substation_no = qs.parse(window.location.search).Substation_No;
 const regionalAssets = []
 // const office_name = window.currentUser?.office_name || '全国'
 const logoutSystem = () => {
@@ -124,12 +125,13 @@ export default class App extends Component {
 
 
     let { datappMenus } = await this.queryMenu()
-    console.log(datappMenus, '====de');
+
     datappMenus.forEach((x, i) => {
       x.className = 'handerMenu2  handMenu' + i
       x.popupClassName = 'handerMenuChirend' + i
       x.key = 'menu' + i
       x.label = x.name
+
       if (x.children.length == 0) delete x.children
       x.children && x.children.forEach((item, inx) => {
         item.key = x.key + 'item' + inx
@@ -139,6 +141,7 @@ export default class App extends Component {
       })
       x.onTitleClick = this.onClick
       x.popupOffset = [-22, 5]
+      if (x.label == 'SYSR.APP_MANAGEMENT') datappMenus.splice(i, 1)
     })
 
     // menuAndButton
@@ -154,6 +157,9 @@ export default class App extends Component {
       x.popupOffset = [-22, 5]
     })
     let parName = office_name == '全国' ? '中国' : office_name
+
+
+
     this.setState({
       menuData: datappMenus, regionValue: office_name
     })
@@ -172,16 +178,8 @@ export default class App extends Component {
     tempZd = datas.find((x, i) => {
       return x.substation_name == parName
     })
-
-
     this.flatHandler(datar, office_name).then(res => {
-
       let tree = this.translateDataToTree(res)
-
-
-
-
-
       let statusList
       if (tempZd) {
         statusList = [tempZd.substation_no]
@@ -193,9 +191,30 @@ export default class App extends Component {
         })
       }
 
+      if (substation_no) {
 
+        let tempZd = datas.find((x, i) => {
+          return x.substation_no == substation_no
+        })
+        parName = tempZd.substation_name
+
+
+      } else if (city_id) {
+        let tempQy = datar.find((x, i) => {
+          return x.city_id
+            == city_id
+        })
+        parName = tempQy.city_name
+      } else if (province_id) {
+        let tempQy = datar.find((x, i) => {
+          return x.province_id
+            == province_id
+        })
+
+        parName = tempQy.province_name
+      }
       this.setState({
-        treeData: tree, statusList, regionFiled: parName, statusListAll: statusList
+        treeData: tree, statusList, regionFiled: parName, regionValue: parName == '中国' ? '全国' : parName, statusListAll: statusList
       }, () => {
         this.queryAlterFn()
         let time1 = setInterval(() => {
@@ -206,7 +225,31 @@ export default class App extends Component {
 
     })
 
-    if (parName != '中国') {
+
+    if (province_id) {
+      let syid = province_id
+      let city = city_id
+      let substation = substation_no
+
+      this.setState({ city, substation },)
+      const { changeAppVariables = '', appVarKey = 'province_id|city_id|substation_no|test' } = this.props
+      let AppVariables = {}
+      let appArr = appVarKey.split('|')
+      AppVariables[appArr[0]] = syid || tempZd?.province
+      AppVariables[appArr[1]] = city || tempZd?.city
+      AppVariables[appArr[2]] = substation
+      let temp = {}
+      temp[appArr[0]] = syid || tempZd?.province
+      temp[appArr[1]] = city || tempZd?.city
+      temp[appArr[2]] = substation
+      if (appArr[3]) {
+        AppVariables[appArr[3]] = JSON.stringify(temp)
+
+      }
+      sessionStorage.setItem('hanYuanTopInfo', JSON.stringify(temp))
+      changeAppVariables && changeAppVariables(AppVariables)
+
+    } else if (parName != '中国') {
 
       let syid = tempQy?.province_id
       let city = tempQy?.city_name == parName && tempQy?.city_name != tempQy?.province_name ? tempQy?.city_id : ''
@@ -228,7 +271,7 @@ export default class App extends Component {
         AppVariables[appArr[3]] = JSON.stringify(temp)
 
       }
-
+      sessionStorage.setItem('hanYuanTopInfo', JSON.stringify(temp))
 
       changeAppVariables && changeAppVariables(AppVariables)
     }
@@ -285,53 +328,28 @@ export default class App extends Component {
   }
   wrapperWheel(e) {
     e.preventDefault();
-
-    // if (e.target.className == 'timeline-item-info' || e.target.className == 'timeline-item-scroll') {
-
-    //   e.target.addEventListener("wheel", this.contentWheel);
-    // }
-    // if (e.target.className == 'analyzer-timeline') {
     this.metaButton.current.scrollLeft += e.deltaY * 3 + e.deltaX * 3;
-
-    // }
   };
-
-
   queryAlterFn() {
-
-
     let { alarmAsset = '0cda0b85-ddf3-42eb-9180-3d08d947b628', alarmField = 'type3', areaFiled = 'substation_no' } = this.props;
     let { regionFiled, statusList } = this.state
     let dateT = new Date().getTime()
-
     queryAssetById(alarmAsset, dateT).then(res => {
-      // let parName = regionFiled == '全国' ? '中国' : regionFiled
       let data = utils.translatePlatformDataToJsonArray(res)
-
       if (regionFiled != '全国') {
         let temp = []
-
         statusList.forEach(item => {
-
           data.forEach(x => {
-
             if (x[areaFiled] == item && x.clear_time == null) temp.push(x)
           })
-
         })
-
         data = temp
-
       }
-
-
       const arrOptions = this.props?.optiFieldValueR || ['1', '2', '3', '4']
       let a = {}
       let b = []
-
       data.forEach(x => {
         let key = x[alarmField]
-
         if (a[key]) {
           a[key]++
         } else {
@@ -344,32 +362,16 @@ export default class App extends Component {
         x.type = arrOptions[i]
         x.value = 0
       })
-
-      // console.log(a, '===s');
       temp.forEach((x, i) => {
         for (const keya in a) {
-
           if (keya == x.type) {
             x.value = a[keya] > 99 ? '99+' : a[keya]
-
           }
         }
       })
-
-
-
-      // let i = 0
-      // for (let key in temp) {
-      //   // b[i] = [Number(a[key].toFixed(2)), key]
-      //   b[i] = { type: arrOptions[i], num: temp[key] }
-
-      //   i++
-      // }
-
       this.setState({
         warningAlter: temp
       })
-
     }).catch(err => {
 
     })
@@ -399,35 +401,25 @@ export default class App extends Component {
     let cityArr = []
     let countryArr = []
     data.forEach((x, i) => {
-
       if (x.nation == parName || x.province_name == parName || x.city_name == parName || x.country_name == parName || x.nation == '全国') {
         let strL = String(x.city_id).length
         let strl = String(x.country_id).length
         let proBoolean = true
         let cityBoolean = true
         provinceArr.forEach((pr,) => {
-
           proBoolean = !(pr.id == x.province_id)
         })
-
-
         if (proBoolean && (x.province_name == parName || office_name == '全国')) provinceArr.push({ id: String(x.province_id), name: x.province_name, parentid: office_name == '全国' ? '0' : null, statu: true })
         cityArr.forEach((cit, i) => {
           cityBoolean = !(cit.id == x.city_id)
         })
-
         let nameId = x.province_name == parName || office_name == '全国' ? String(x.city_id).substr(0, strL - 2) : null
         if (cityBoolean && x.city_name && (x.city_name != x.province_name || x.country_name)) cityArr.push({ id: String(x.city_id), name: x.city_name, parentid: nameId, statu: true })
         if (x.country_name) countryArr.push({ id: String(x.country_id), name: x.country_name, parentid: String(x.country_id).substr(0, strl - 2) })
       }
-
-
     })
-
     let res = await queryAssetById(substationAsset);
-
     let zhandian = utils.translatePlatformDataToJsonArray(res)
-
     let zuidiji = []
     zhandian.forEach((x, i) => {
       zuidiji.push({ id: x.substation_no + 'x', name: x.substation_name, parentid: String(x.city) })
@@ -435,7 +427,6 @@ export default class App extends Component {
 
     if (office_name == '全国') {
       let nationArr = [{ id: '0', name: '全国', parentid: null, statu: true }]
-
       return [...cityArr, ...zuidiji, ...provinceArr, ...nationArr]
     } else {
       return [...cityArr, ...zuidiji, ...provinceArr]
@@ -447,9 +438,7 @@ export default class App extends Component {
   translateDataToTree(data) {
     let parents = data.filter(value => value.parentid == 'undefined' || value.parentid == null)
     let children = data.filter(value => value.parentid !== 'undefined' && value.parentid != null)
-
     let translator = (parents, children) => {
-
       parents.forEach((parent) => {
         children.forEach((current, index) => {
           if (current.parentid === parent.id) {
@@ -504,7 +493,6 @@ export default class App extends Component {
   // };
   onSearch = (value) => {
     const { searchUrl = "" } = this.props;
-
     let a = searchUrl;
     let b = a + value;
     window.open(b);
@@ -572,11 +560,8 @@ export default class App extends Component {
   }
   //区域选择
   onChangeC = (_, arrsel) => {
-
-
     const { changeAppVariables, appVarKey = 'province_id|city_id|substation_no|test', } = this.props
     const { officeno, city, office_name, statusListAll } = this.state
-    // return
     if (office_name == '全国') {
       if (_.length == 1) {
         let AppVariables = {}
@@ -584,14 +569,13 @@ export default class App extends Component {
         appArr.forEach(item => {
           AppVariables[item] = ''
         })
-
         this.setState({ regionValue: '全国', regionFiled: '', statusList: statusListAll, clickStatus: true }, () => {
-
           this.queryAlterFn()
         })
-        document.querySelector('.resetBtn') && document.querySelector('.resetBtn').click()
 
+        sessionStorage.setItem('hanYuanTopInfo', '{"province_id":"","city_id":"","substation_no":""}')
         changeAppVariables && changeAppVariables(AppVariables)
+        document.querySelector('.resetBtn') && document.querySelector('.resetBtn').click()
       } else {
         let _2 = _.slice(1)
         let leng = _2.length
@@ -600,7 +584,6 @@ export default class App extends Component {
         let regionValue = arrsel[leng2 - 1].name
         let arrList = leng == 3 ? _2[leng - 1].replace('x', '') : arrsel[leng2 - 1]
         let statusList = []
-
         if (arrList.children && arrList.statu) {
           statusList = this.childHanfler(arrList.children)
           statusList.forEach((x, i) => {
@@ -611,7 +594,6 @@ export default class App extends Component {
           statusList = arrList.statu ? [] : [arrList]
         }
         this.setState({ regionValue, regionFiled: regionFiled, statusList, clickStatus: true }, () => {
-
           this.queryAlterFn()
         })
         let AppVariables = {}
@@ -641,9 +623,7 @@ export default class App extends Component {
 
         }
         if (appArr[3]) AppVariables[appArr[3]] = JSON.stringify(temp)
-
-
-
+        sessionStorage.setItem('hanYuanTopInfo', JSON.stringify(temp))
         changeAppVariables && changeAppVariables(AppVariables)
       }
 
@@ -662,12 +642,7 @@ export default class App extends Component {
       } else {
         statusList = arrList.statu ? [] : [arrList]
       }
-
-
-
-
       this.setState({ regionValue, regionFiled: regionFiled, statusList, clickStatus: true }, () => {
-
         this.queryAlterFn()
       })
       let AppVariables = {}
@@ -697,9 +672,7 @@ export default class App extends Component {
 
       }
       if (appArr[3]) AppVariables[appArr[3]] = JSON.stringify(temp)
-
-
-
+      sessionStorage.setItem('hanYuanTopInfo', JSON.stringify(temp))
       changeAppVariables && changeAppVariables(AppVariables)
     }
 
@@ -733,28 +706,52 @@ export default class App extends Component {
   };
 
   itmeOnClick = ({ item, key, keyPath, domEven }) => {
-
     let pid = item.props.id
     let address = item.props.url
     let { appId, history } = this.props;
 
     if (pid) {
+      window?.pluginCesiumMap?.viewer?.destroy && window.pluginCesiumMap.viewer.destroy()
       let url = `applicationview/content/view?appid=${appId}&type=view&themed=be604992-edae-4002-b362-586742e36d4e&menuId=${pid}`
-      // let url = `applicationview/content/view?appid=${appId}&pId=${pid}`
       history.push(url)
+      // setTimeout(() => {
+      // for (const key in sessionStorage) {
+      //   if (key.indexOf('currentQueryParams') != -1) {
+      //     let a = JSON.parse(sessionStorage[key])
+      //     a.forEach(x => {
+      //       x.value = ''
+      //     })
+      //     sessionStorage.setItem(key, JSON.stringify(a))
+      //   }
+      //   if (key.indexOf('queryList') != -1) {
+      //     let a = JSON.parse(sessionStorage[key])
+      //     a.forEach(x => {
+      //       x.filterValue = []
+      //       x.list = []
+      //       x.defaultValue_value = ''
+      //       x.defaultValue = ''
+      //     })
+      //     sessionStorage.setItem(key, JSON.stringify(a))
+      //   }
+      // }
+      // document.querySelector('.resetBtn') && document.querySelector('.resetBtn').click()
+      // }, 200)
+
+      // console.log(statusListAll, '========结果');
+      const { statusList, statusListAll, regionValue } = this.state
+      // statusList.length ==statusListAll.length
+      // if (regionValue == '全国') {
+      setTimeout(() => {
+        document.querySelector('.resetBtn') && document.querySelector('.resetBtn').click()
+      }, 600)
+      // }
+
     } else {
       window.location.href = address
     }
-
-
-
-
-
     this.setState({
       current: key
     })
-
-
 
   }
   querySel = (e) => {
@@ -790,12 +787,14 @@ export default class App extends Component {
     if (alarmUrl.indexOf('applicationview/content/view') != -1) {
       let obej = {}
       obej[alarmAppKey] = type
+      obej.now_state = '0'
       changeAppVariables && changeAppVariables(obej)
+      document.querySelector('.resetBtn') && document.querySelector('.resetBtn').click()
       history.push(`${alarmUrl}`)
-      console.log(obej, '======dataParams');
     } else {
       let obej = {}
       obej[alarmAppKey] = type
+      obej.now_state = '0'
       changeAppVariables && changeAppVariables(obej)
       window.open(`${alarmUrl}`)
 
@@ -888,32 +887,22 @@ export default class App extends Component {
               style={{ height: "64px" }}
             >
               <div className="allButtons">
-
-
                 <Menu
                   className='handerMenu'
-
                   items={
                     menuData
                   }
                   mode='horizontal' forceSubMenuRender={true} selectedKeys={[current]}
                   triggerSubMenuAction='click' onClick={(e) => { this.itmeOnClick(e) }} onOpenChange={(e) => { this.querySel(e) }}
                 >
-
-
                 </Menu>
-
-
               </div>
-
-
             </div>
 
           </div>
 
           <div className="lineRight">
             <Cascader options={treeData} popupClassName='tow_Cascader' fieldNames={{ children: 'children', value: 'id', label: 'name' }}
-
               changeOnSelect={true}
               className='dddd' onChange={this.onChangeC}>
               <div className='aTag'><a href="#">{regionValue}   </a><DownOutlined /></div>

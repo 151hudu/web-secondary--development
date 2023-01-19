@@ -21,7 +21,7 @@ import eventActionDefine from "./components/msgCompConfig";
 import { Input, Tree, Checkbox, Button } from "element-ui";
 import Vue from "vue";
 import Utils from "./utils";
-import { queryData, queryById } from "./api/asset";
+import { queryData, queryById, queryMenuByOfficeID } from "./api/asset";
 import { mockJieKou } from "./components/mockData";
 import { json } from "body-parser";
 Vue.use(Input);
@@ -35,6 +35,7 @@ export default {
   props: {
     customConfig: Object,
     info: Object,
+    eventBus: Object,
     //应用变量和系统变量 7.26 V8R4C50SPC220需求新加 之前版本取不到appVariables和sysVariables
     appVariables: Array,
     sysVariables: Array,
@@ -78,6 +79,7 @@ export default {
         this.$refs.stationTree.filter(val);
       });
     },
+
   },
   data() {
     return {
@@ -87,7 +89,7 @@ export default {
       filterText: "",
       defaultProps: {
         children: "children",
-        label: "name",
+        label: "ammeter_name",
         id: 'data_id'
       },
       count: 1,
@@ -108,86 +110,23 @@ export default {
   },
   mounted() {
     console.log(this.appVariables);
-    this.appVariables.forEach((item, index) => {
-      if (item.name == this.customConfig?.appVariablesName) {
-        this.appVariablesSearch.id = item.id;
-        this.appVariablesSearch.variable_name = item.name;
-        this.appVariablesSearch.variable_value = item.default_value;
-      }
-    });
-    this.checked1 = JSON.parse(window.localStorage.getItem("relation")) == null ? false : JSON.parse(window.localStorage.getItem("relation"));
-    let infoById = {
-      params: {
-        modelId: this.customConfig.modelId || "",
-      },
-    };
-    queryById(infoById).then((response) => {
-      this.ListIInfo = response.data;
-      let message = {
+
+    this.eventBus.on((newProps) => {
+      newProps.appVariables.forEach((item, index) => {
+        if (item.name == newProps.customConfig?.appVariablesName) {
+          this.appVariablesSearch.id = item.id;
+          this.appVariablesSearch.variable_name = item.name;
+          this.appVariablesSearch.variable_value = item.default_value;
+        }
+      });
+      this.checked1 = JSON.parse(window.localStorage.getItem("relation")) == null ? false : JSON.parse(window.localStorage.getItem("relation"));
+      let infoById = {
         params: {
           modelId: this.customConfig.modelId || "",
         },
-        data: {
-          pageSize: 99999,
-          pageNum: 1,
-          variables: [this.appVariablesSearch],
-          orderBy: "",
-          orderSort: "",
-        },
       };
-      queryData(message).then((res) => {
-        // res = mockJieKou;
-        console.time("global");
-        res.data.results.forEach((item, index) => {
-          let message = {
-            children: [],
-          };
-          this.ListIInfo.formListModelComponentList.forEach((itemList, indexList) => {
-            if (itemList.componentAlias == "belonging_park") {
-              item.componentResultList.forEach((compItem, compIndex) => {
-                if (compItem.componentId == itemList.componentId) {
-                  message.belonging_park = compItem.result.label;
-                }
-              });
-            }
-            if (itemList.componentAlias == "belonging_company") {
-              item.componentResultList.forEach((compItem, compIndex) => {
-                if (compItem.componentId == itemList.componentId) {
-                  message.belonging_company = compItem.result.label;
-                }
-              });
-            }
-            if (itemList.componentAlias == "data_id") {
-              item.componentResultList.forEach((compItem, compIndex) => {
-                if (compItem.componentId == itemList.componentId) {
-                  message.data_id = compItem.result.label;
-                }
-              });
-            }
-            if (itemList.componentAlias == "parent_id") {
-              item.componentResultList.forEach((compItem, compIndex) => {
-                if (compItem.componentId == itemList.componentId) {
-                  message.parent_id = compItem.result.label;
-                }
-              });
-            }
-            if (itemList.componentAlias == "belonging_regional") {
-              item.componentResultList.forEach((compItem, compIndex) => {
-                if (compItem.componentId == itemList.componentId) {
-                  message.belonging_regional = compItem.result.label;
-                }
-              });
-            }
-            if (itemList.componentAlias == "name") {
-              item.componentResultList.forEach((compItem, compIndex) => {
-                if (compItem.componentId == itemList.componentId) {
-                  message.name = compItem.result.label;
-                }
-              });
-            }
-          });
-          this.treeResults.push(message);
-        });
+      queryMenuByOfficeID(this.appVariablesSearch.variable_value).then(res => {
+        this.treeResults = res.data
         this.stationTreeData = this.listToTree(this.treeResults);
         this.$nextTick(() => {
           if (window.localStorage.getItem("hasChecked")) {
@@ -199,8 +138,92 @@ export default {
         console.log(JSON.parse(window.localStorage.getItem("hasChecked")));
         console.timeEnd("global");
         this.getLevelData();
-      });
-    });
+      })
+    })
+
+    // queryById(infoById).then((response) => {
+    //   this.ListIInfo = response.data;
+    //   let message = {
+    //     params: {
+    //       modelId: this.customConfig.modelId || "",
+    //     },
+    //     data: {
+    //       pageSize: 99999,
+    //       pageNum: 1,
+    //       variables: [this.appVariablesSearch],
+    //       orderBy: "",
+    //       orderSort: "",
+    //     },
+    //   };
+    //   queryData(message).then((res) => {
+    //     // res = mockJieKou;
+    //     console.time("global");
+    //     res.data.results.forEach((item, index) => {
+    //       let message = {
+    //         children: [],
+    //       };
+    //       this.ListIInfo.formListModelComponentList.forEach((itemList, indexList) => {
+    //         if (itemList.componentAlias == "belonging_park") {
+    //           item.componentResultList.forEach((compItem, compIndex) => {
+    //             if (compItem.componentId == itemList.componentId) {
+    //               message.belonging_park = compItem.result.label;
+    //             }
+    //           });
+    //         }
+    //         if (itemList.componentAlias == "belonging_company") {
+    //           item.componentResultList.forEach((compItem, compIndex) => {
+    //             if (compItem.componentId == itemList.componentId) {
+    //               message.belonging_company = compItem.result.label;
+    //             }
+    //           });
+    //         }
+    //         if (itemList.componentAlias == "data_id") {
+    //           item.componentResultList.forEach((compItem, compIndex) => {
+    //             if (compItem.componentId == itemList.componentId) {
+    //               message.data_id = compItem.result.label;
+    //             }
+    //           });
+    //         }
+    //         if (itemList.componentAlias == "parent_id") {
+    //           item.componentResultList.forEach((compItem, compIndex) => {
+    //             if (compItem.componentId == itemList.componentId) {
+    //               message.parent_id = compItem.result.label;
+    //             }
+    //           });
+    //         }
+    //         if (itemList.componentAlias == "belonging_regional") {
+    //           item.componentResultList.forEach((compItem, compIndex) => {
+    //             if (compItem.componentId == itemList.componentId) {
+    //               message.belonging_regional = compItem.result.label;
+    //             }
+    //           });
+    //         }
+    //         if (itemList.componentAlias == "name") {
+    //           item.componentResultList.forEach((compItem, compIndex) => {
+    //             if (compItem.componentId == itemList.componentId) {
+    //               message.name = compItem.result.label;
+    //             }
+    //           });
+    //         }
+    //       });
+    //       this.treeResults.push(message);
+    //     });
+    //     console.log(this.treeResults, '========数据最初');
+    //     this.stationTreeData = this.listToTree(this.treeResults);
+    //     this.$nextTick(() => {
+    //       if (window.localStorage.getItem("hasChecked")) {
+    //         this.$refs.stationTree.setCheckedNodes(JSON.parse(window.localStorage.getItem("hasChecked")));
+    //       } else {
+    //         this.firstIn(this.stationTreeData);
+    //       }
+    //     });
+    //     console.log(JSON.parse(window.localStorage.getItem("hasChecked")));
+    //     console.timeEnd("global");
+    //     this.getLevelData();
+    //   });
+    // });
+
+
 
     //用于注册事件定义，不可删除
     let { componentId } = this.customConfig || {};
@@ -454,26 +477,42 @@ export default {
 .two_tree {
   .el-tree-node {
     .el-tree-node__content {
-      background: rgba(26, 121, 255, 0.1);
       margin-bottom: 6px;
     }
 
     .el-tree-node__children {
       .el-tree-node__content {
-        background: rgba(21, 144, 85, 0.06);
-        margin-bottom: 0px;
+        //一级
+        background: rgba(26, 121, 255, 0.1);
+        margin-bottom: 6px;
+
       }
 
       .el-tree-node {
         .el-tree-node__children {
           .el-tree-node__content {
-            background: rgba(102, 102, 204, 0.05);
+            //二级
+            background: rgba(21, 144, 85, 0.06);
             margin-bottom: 0px;
           }
 
-          .el-tree-node__content:first-of-type {
-            margin-top: 6px;
+          .el-tree-node {
+            .el-tree-node__children {
+              .el-tree-node__content {
+                //三级
+                background: rgba(102, 102, 204, 0.05);
+                margin-bottom: 0px;
+              }
+
+              .el-tree-node__content:first-of-type {
+                margin-top: 6px;
+              }
+            }
           }
+
+          // .el-tree-node__content:first-of-type {
+          //   margin-top: 6px;
+          // }
         }
       }
     }

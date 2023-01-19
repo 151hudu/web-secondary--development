@@ -1,7 +1,7 @@
 {
-  "id": "8bebc924-99cd-45c5-9232-e65b0f7e9f81",
+  "id": "ab3d49e1-1943-44fd-b24d-894e96cf8ca9",
   "type": "analyzer",
-  "main": "app.bd3c25a1.js",
+  "main": "app.4ed375e2.js",
   "version": "2",
   "props": {
     "img": "custom_table.png",
@@ -33,7 +33,8 @@
       "rateLossColor",
       "rateDigit",
       "dataWidth",
-      "dataHeight"
+      "dataHeight",
+      "barDataOrder"
     ]
   },
   "requirement-number": "SR-W47-bCv6P5",

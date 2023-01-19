@@ -174,6 +174,7 @@ export const themeInfo = {
 export const customConfig = {
   componentId: "123",
   appId: "123",
+  appVariablesName: 'parkname',
   // modelId: "c0ad9e85-c425-462f-acd6-32c702a1b7a6",
   modelId: "d7b66535-9f3c-4b20-b42d-6b25e9524881",
   buttons: JSON.stringify({
@@ -214,7 +215,18 @@ export const customConfig = {
     ],
   }),
 };
-export const appVariables = [];
+export const appVariables = [{
+  data_type: 0,
+  default_value: "a8a0fa4f-4b93-11ed-bb09-0050568274c9",
+  id: "d30bf27a-a462-4478-b2ed-b4aff2dd926a",
+  name: "parkname"
+}];
+
+export const eventBus = {
+  on: function (callback) {
+    callback({ appVariables, customConfig })
+  }
+};
 
 export const mockJieKou = {
   message: "query succeeded!",

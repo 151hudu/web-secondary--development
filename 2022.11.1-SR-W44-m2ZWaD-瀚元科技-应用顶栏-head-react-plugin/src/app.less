@@ -223,7 +223,7 @@
       display: flex;
       align-items: center;
       float: right;
-      width: 520px;
+      width: 490px;
       justify-content: space-between;
 
       .aTag {
@@ -788,6 +788,22 @@
 
 .tow_Cascader .ant-cascader-menu::-webkit-scrollbar {
   display: none;
+}
+
+.tow_Cascader .ant-cascader-menu {
+  width: 120px;
+
+  .ant-cascader-menu-item {
+    .ant-cascader-menu-item-content {
+      max-width: 98px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap
+    }
+
+  }
+
+  // . ant-cascader-menu
 }
 
 .tow_Cascader ul {

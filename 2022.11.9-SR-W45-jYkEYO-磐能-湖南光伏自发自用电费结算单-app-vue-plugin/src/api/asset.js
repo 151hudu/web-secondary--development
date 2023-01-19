@@ -15,8 +15,11 @@ export const queryDataDetail = (params) => request.post(`/ext/bill/queryDataDeta
 // 更新报表
 export const saveData = (params, data) => request.post(`/ext/bill/saveData?form_id=${params.form_id}&id=${params.id}`, data);
 // 导出模板查询
-export const queryViewTableInfo = (params) => request.get(`/formView/queryViewTableInfo?view_id=${params.view_id}`,);
+export const queryViewTableInfo = (params) => request.get(`/formView/queryViewTableInfo?view_id=${params.view_id}`);
 // 导出模板查询
-export const queryAll = (params) => request.get(`/system/property/queryAll`,);
+export const queryAll = (params) => request.get(`/system/property/queryAll`);
 // 导出模板查询
-export const exportTempleDetailData = (params, data) => request.post(`/form/exportTempleDetailData?form_id=${params.form_id}&view_id=${params.view_id}&template_id=${params.template_id}&export_type=${params.export_type}`, data);
+export const exportTempleDetailData = (params, data) =>
+  request.post(`/form/exportTempleDetailData?form_id=${params.form_id}&view_id=${params.view_id}&template_id=${params.template_id}&export_type=${params.export_type}`, data);
+export const uploadPic = (data) => request.post(`/image/uploadPic?category=4`, data);
+export const img2pdf = (data) => request.post(`/bill/img2pdf`, data);

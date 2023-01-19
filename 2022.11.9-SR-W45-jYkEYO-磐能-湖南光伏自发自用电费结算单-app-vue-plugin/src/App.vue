@@ -1,16 +1,16 @@
 <template>
   <!-- 定义外层容器标识，宽高百分百 不可删除 -->
-  <div :id="identification" style="width: 100%; height: 100%; background-color: #fff" :ref="identification">
-    <div class="headerTab">
+  <div :id="identification" style="width: 100%; height: 100%; background-color: #fff" :ref="identification" v-loading="loading" element-loading-text="正在生成PDF">
+    <div class="headerTab" v-show="isSaveTable">
       <div class="tabLeft" :class="{ active: activeShow }" @click="switchActive(true)">账单明细</div>
       <div class="tabRight" :class="{ active: !activeShow }" @click="switchActive(false)">表码明细</div>
     </div>
     <div class="settlement-details">
       <div class="button-line" v-show="activeShow">
-        <img src="../pluginTemp/images/export.png" style="cursor: pointer" @click="saveTable('D')" alt="" />
+        <img src="../pluginTemp/images/export.png" v-show="isSaveTable" style="cursor: pointer" @click="saveTable('D')" alt="" />
       </div>
       <div class="button-line" v-show="!activeShow">
-        <img src="../pluginTemp/images/export.png" style="cursor: pointer" @click="saveTable('B')" alt="" />
+        <img src="../pluginTemp/images/export.png" v-show="isSaveTable" style="cursor: pointer" @click="saveTable('B')" alt="" />
       </div>
       <div class="top_Title" v-show="activeShow">光伏自发自用电费账单</div>
       <div class="top_Title" v-show="!activeShow">光伏计量表表码值明细</div>
@@ -169,7 +169,7 @@
                 </template>
               </el-table-column>
             </el-table-column>
-            <el-table-column prop="poweruse_all" :render-header="renderHeader" label="电量|(kWh)" min-width="115">
+            <el-table-column prop="poweruse_all" :render-header="renderHeader" label="电量|(kWh)" min-width="115" max-width="202">
               <template slot-scope="scope">
                 {{ (scope.row.poweruse_all = myFixed((Number(scope.row.nownum_all) - Number(scope.row.lastnum_all)) * Number(scope.row.dnbbl), 2)) }}
               </template>
@@ -177,16 +177,16 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="button-line" v-if="mainEdit == 0 && !activeShow">
+      <div class="button-line" v-if="mainEdit == 0 && !activeShow && isSaveTable">
         <div
           v-if="mainEdit == 0 && !activeShow"
           @click="queryDataDetailFunc(false)"
           style="width: 85px; height: 32px; cursor: pointer; border-radius: 2px; margin-right: 10px; background-color: #0084ff"
         >
           <img src="../pluginTemp/images/重置.png" style="margin-top: 5px; margin-left: 8px" alt="" />
-          <span style="color: #fff; font-size: 16px; vertical-align: top; margin-top: 3px; margin-left: 14px; display: inline-block">重置</span>
+          <span v-show="isSaveTable" style="color: #fff; font-size: 16px; vertical-align: top; margin-top: 3px; margin-left: 14px; display: inline-block">重置</span>
         </div>
-        <img src="../pluginTemp/images/save.png" style="cursor: pointer" v-if="mainEdit == 0 && !activeShow" @click="saveTable" alt="" />
+        <img src="../pluginTemp/images/save.png" style="cursor: pointer" v-if="mainEdit == 0 && !activeShow" @click="saveTable('flag')" alt="" />
       </div>
       <div class="topInfoText" v-show="activeShow">
         <span>自发自用电量明细：</span>
@@ -270,9 +270,9 @@
 
 <script>
 import eventActionDefine from "./components/msgCompConfig";
-import { queryDataDetail, saveData, queryViewTableInfo, exportTempleDetailData, queryAll } from "././api/asset";
+import { queryDataDetail, saveData, queryViewTableInfo, exportTempleDetailData, queryAll, uploadPic, img2pdf } from "././api/asset";
 import utils from "@/utils";
-
+import html2canvas from "html2canvas";
 export default {
   //这里写组件英文名称，容器dom的id及事件中心命名均用到这个name，请认真填写
   name: "ButtonChange",
@@ -346,6 +346,9 @@ export default {
       xxxx: 1, //重新渲染表格key值
       timer: null,
       lastTime: null,
+      loading: false,
+      isSaveTable: true,
+      uploadPDF: [],
     };
   },
   mounted() {
@@ -372,6 +375,93 @@ export default {
     }
   },
   methods: {
+    saveTableExportPDF() {
+      this.activeShow = true;
+      this.isSaveTable = false;
+      this.loading = true;
+      this.$nextTick(() => {
+        // 手动创建一个 canvas 标签
+        const canvas = document.createElement("canvas");
+        // 获取父标签，意思是这个标签内的 DOM 元素生成图片
+        // imageTofile是给截图范围内的父级元素自定义的ref名称
+        let canvasBox = this.$refs[this.identification];
+        // 获取父级的宽高
+        const width = parseInt(window.getComputedStyle(canvasBox).width);
+        const height = parseInt(window.getComputedStyle(canvasBox).height);
+        // 宽高 * 2 并放大 2 倍 是为了防止图片模糊
+        canvas.width = width * 2;
+        canvas.height = height * 2;
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+        const context = canvas.getContext("2d");
+        context.scale(2, 2);
+        const options = {
+          backgroundColor: null,
+          canvas: canvas,
+          useCORS: true,
+        };
+        html2canvas(canvasBox, options).then(async (canvas) => {
+          let dataURL = canvas.toDataURL("image/png");
+          await this.uploadIMG(dataURL);
+          this.activeShow = false;
+          this.loading = false;
+          this.$nextTick(() => {
+            const canvas2 = document.createElement("canvas");
+            let canvasBox2 = this.$refs[this.identification];
+            this.loading = true;
+            const width2 = parseInt(window.getComputedStyle(canvasBox2).width);
+            const height2 = parseInt(window.getComputedStyle(canvasBox2).height);
+            canvas2.width = width2 * 2;
+            canvas2.height = height2 * 2;
+            canvas2.style.width = width2 + "px";
+            canvas2.style.height = height2 + "px";
+            const context = canvas2.getContext("2d");
+            context.scale(2, 2);
+            const options2 = {
+              backgroundColor: null,
+              canvas: canvas2,
+              useCORS: true,
+            };
+            html2canvas(canvasBox2, options2).then(async (canvas) => {
+              let dataURL2 = canvas.toDataURL("image/png");
+              await this.uploadIMG(dataURL2);
+              console.log(this.uploadPDF);
+              img2pdf(this.uploadPDF).then((res) => {
+                console.log(res);
+                this.$message({
+                  message: "生成PDF成功",
+                  type: "success",
+                });
+              });
+              this.loading = false;
+              this.isSaveTable = true;
+            });
+          });
+        });
+      });
+    },
+    //下载图片
+    async uploadIMG(url) {
+      var formData = new FormData();
+      formData.append("file", this.base64toFile(url));
+      let res = await uploadPic(formData);
+      this.uploadPDF.push(res.data);
+    },
+    base64toFile(dataurl, filename = "file") {
+      let arr = dataurl.split(",");
+      let mime = arr[0].match(/:(.*?);/)[1];
+      let suffix = mime.split("/")[1];
+      let bstr = atob(arr[1]);
+      let n = bstr.length;
+      let u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      let file = new File([u8arr], `${filename}.${suffix}`, {
+        type: mime,
+      });
+      return file;
+    },
     queryAllFunc() {
       const sessionValue = sessionStorage.getItem("sessionValue");
       if (sessionValue) {
@@ -621,15 +711,17 @@ export default {
         form_id: this.GetQueryString("form_id"),
         id: this.GetQueryString("data_id"),
       };
+      this.excelAllData.display_flag = 0;
       saveData(message, this.excelAllData)
         .then((res) => {
           if (res.status == 200) {
             this.queryDataDetailFunc(false);
-            if (flag) {
+            if (flag !== "flag") {
               this.exportExcel(flag);
             }
+            this.saveTableExportPDF();
             return this.$message({
-              message: "更新成功",
+              message: "更新成功请稍等",
               type: "success",
             });
           }
@@ -1149,7 +1241,6 @@ export default {
     },
     nownum_allSum(row) {
       let message = Number(row.nownum_j) + Number(row.nownum_f) + Number(row.nownum_p) + Number(row.nownum_g);
-      console.log(Number(row.nownum_j), Number(row.nownum_f), Number(row.nownum_p), Number(row.nownum_g));
       if (row.nownum_j == null && row.nownum_f == null && row.nownum_p == null && row.nownum_g == null) {
         message = 0;
       }
@@ -1416,9 +1507,9 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
-
-input[type="number"] {
+.topTable input[type="number"] {
   -moz-appearance: textfield;
+  line-height: 18px;
 }
 .application-add {
   min-height: 100% !important;

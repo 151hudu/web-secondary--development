@@ -3,12 +3,12 @@ import qs from "querystringify";
 
 let apiContextPath = "";
 if (process.env.NODE_ENV === "development") {
-  document.cookie =
-    "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY3NTIzMTk1MzEyMCwidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.XbzE1I_paOBjS0fKuFmVajKsPRoJtr6JsDr0_lP5ZUk";
-  document.cookie =
-    "refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY0NjcyMjI2ODY4Nn0.TEVE_nopHNZlvSQM_RUZrLcCzkaERiHo8nz0q-ksL3E";
-  document.cookie = "username=admin";
-  document.cookie = "windowOnline=true";
+  // document.cookie =
+  //   "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY0NjcyMjI2ODY4NSwidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.F8wr84ha-dW18J9wZOQeTXj55mXTdqKfLBeNlNueoLY";
+  // document.cookie =
+  //   "refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY0NjcyMjI2ODY4Nn0.TEVE_nopHNZlvSQM_RUZrLcCzkaERiHo8nz0q-ksL3E";
+  // document.cookie = "username=admin";
+  // document.cookie = "windowOnline=true";
   apiContextPath = "/api";
 }
 
@@ -33,7 +33,7 @@ instance.interceptors.response.use(
     if (typeof data === "string") {
       data = JSON.parse(data);
     }
-    if (data && (data.status !== 0&&data.status !== 200) && !(data instanceof Blob)) {
+    if (data && data.status !== 200 && !(data instanceof Blob)) {
       return Promise.reject(response);
     }
     if (data instanceof Blob) {

@@ -1,7 +1,7 @@
 {
-  "id": "de495b6e-a2b5-4103-8bf2-0cea6e378b97",
+  "id": "de495b6e-a2b5-4103-8bf2-0cea6e378b90",
   "type": "canvas",
-  "main": "app.39b762b6.js",
+  "main": "app.f83adadf.js",
   "version": "2",
   "props": {
     "img": "APP_0001.png",
@@ -14,6 +14,6 @@
     "componentAttributes": "{\"style\":[\"title\"],\"data\":[\"key\"],\"interaction\":[\"eventCenterConfig\"]}",
     "assetColumnList": "[{\"col_name\":\"自定义\",\"col_datatype\":0}]"
   },
-  "requirement-number": "SR-W2-kfjoN2",
-  "requirement-name": "二开画布列表地址组件"
+  "requirement-number": "SR-W6-RhPnGA",
+  "requirement-name": "二开移动端画布列表地址组件"
 }

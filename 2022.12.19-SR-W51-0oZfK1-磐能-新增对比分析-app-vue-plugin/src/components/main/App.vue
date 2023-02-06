@@ -20,6 +20,7 @@
         v-model="dataPicker" type="daterange" format="yyyy-MM-dd" value-format="yyyy-MM-dd" range-separator="至"
         start-placeholder="开始日期" end-placeholder="结束日期" @change="dateChange" :picker-options="pickerOptions">
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 69eb67e03c216fa71c95da16445a144fb956b746
       </el-date-picker>
 =======
@@ -29,6 +30,9 @@
           start-placeholder="开始日期" end-placeholder="结束日期" @change="dateChange" :picker-options="pickerOptions">
         </el-date-picker>
 >>>>>>> 9c010413887b42431339af720d151a0c7ebc82c5
+=======
+      </el-date-picker>
+>>>>>>> e722fa827f9859848fabc859d1a87af73f747e09
     </div>
     <p class="chartsTitle">等效时数对比图</p>
     <div style="height: 400px; width: 100%" id="contrastCharts"></div>

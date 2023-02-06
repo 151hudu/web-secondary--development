@@ -178,6 +178,7 @@ export default class App extends Component {
     tempZd = datas.find((x, i) => {
       return x.substation_name == parName
     })
+    let res2 = await this.flatHandler(datar, office_name)
     this.flatHandler(datar, office_name).then(res => {
       let tree = this.translateDataToTree(res)
       let statusList
@@ -190,29 +191,6 @@ export default class App extends Component {
           statusList[i] = x
         })
       }
-
-      if (substation_no) {
-
-        let tempZd = datas.find((x, i) => {
-          return x.substation_no == substation_no
-        })
-        parName = tempZd.substation_name
-
-
-      } else if (city_id) {
-        let tempQy = datar.find((x, i) => {
-          return x.city_id
-            == city_id
-        })
-        parName = tempQy.city_name
-      } else if (province_id) {
-        let tempQy = datar.find((x, i) => {
-          return x.province_id
-            == province_id
-        })
-
-        parName = tempQy.province_name
-      }
       this.setState({
         treeData: tree, statusList, regionFiled: parName, regionValue: parName == '中国' ? '全国' : parName, statusListAll: statusList
       }, () => {
@@ -222,9 +200,94 @@ export default class App extends Component {
         }, time * 1000)
         this.setState({ tiemObj: time1 })
       })
-
     })
-
+    if (substation_no) {
+      let tempZd = datas.find((x, i) => {
+        return x.substation_no == substation_no
+      })
+      parName = tempZd.substation_name
+      this.flatHandler(datar, parName).then(res => {
+        let tree = this.translateDataToTree(res)
+        let tree2 = this.translateDataToTree(res2)
+        let statusList
+        if (tempZd) {
+          statusList = [tempZd.substation_no]
+        } else {
+          statusList = this.childHanfler(tree)
+          statusList.forEach((x, i) => {
+            x = x.substr(0, x.length - 1)
+            statusList[i] = x
+          })
+        }
+        this.setState({
+          treeData: tree2, statusList, regionFiled: parName, regionValue: parName == '中国' ? '全国' : parName
+        }, () => {
+          this.queryAlterFn()
+          let time1 = setInterval(() => {
+            this.queryAlterFn()
+          }, time * 1000)
+          this.setState({ tiemObj: time1 })
+        })
+      })
+    } else if (city_id) {
+      let tempQy = datar.find((x, i) => {
+        return x.city_id
+          == city_id
+      })
+      parName = tempQy.city_name
+      this.flatHandler(datar, parName).then(res => {
+        let tree = this.translateDataToTree(res)
+        let tree2 = this.translateDataToTree(res2)
+        let statusList
+        if (tempZd) {
+          statusList = [tempZd.substation_no]
+        } else {
+          statusList = this.childHanfler(tree)
+          statusList.forEach((x, i) => {
+            x = x.substr(0, x.length - 1)
+            statusList[i] = x
+          })
+        }
+        this.setState({
+          treeData: tree2, statusList, regionFiled: parName, regionValue: parName == '中国' ? '全国' : parName,
+        }, () => {
+          this.queryAlterFn()
+          let time1 = setInterval(() => {
+            this.queryAlterFn()
+          }, time * 1000)
+          this.setState({ tiemObj: time1 })
+        })
+      })
+    } else if (province_id) {
+      let tempQy = datar.find((x, i) => {
+        return x.province_id
+          == province_id
+      })
+      parName = tempQy.province_name
+      this.flatHandler(datar, parName).then(res => {
+        let tree = this.translateDataToTree(res)
+        let tree2 = this.translateDataToTree(res2)
+        let statusList
+        if (tempZd) {
+          statusList = [tempZd.substation_no]
+        } else {
+          statusList = this.childHanfler(tree)
+          statusList.forEach((x, i) => {
+            x = x.substr(0, x.length - 1)
+            statusList[i] = x
+          })
+        }
+        this.setState({
+          treeData: tree2, statusList, regionFiled: parName, regionValue: parName == '中国' ? '全国' : parName,
+        }, () => {
+          this.queryAlterFn()
+          let time1 = setInterval(() => {
+            this.queryAlterFn()
+          }, time * 1000)
+          this.setState({ tiemObj: time1 })
+        })
+      })
+    }
 
     if (province_id) {
       let syid = province_id

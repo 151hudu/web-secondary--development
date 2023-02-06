@@ -1,7 +1,7 @@
 {
   "id": "d522915d-c0e1-4cf5-bbac-c165a05852fc",
   "type": "analyzer",
-  "main": "main.b21e7262.js",
+  "main": "main.4763d302.js",
   "version": "2",
   "configuration": true,
   "props": {
@@ -20,7 +20,9 @@
       "服务编排名称",
       "top位置",
       "柱体宽度",
-      "柱体文字大小"
+      "柱体文字大小",
+      "type",
+      "rateType"
     ],
     "optionModules": []
   },

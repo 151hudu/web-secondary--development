@@ -23,8 +23,8 @@ export default class Main extends Component {
     this.top位置 = options?.externalVariables?.top位置 || "200";
     this.柱体宽度 = options?.externalVariables?.柱体宽度 || "14";
     this.柱体文字大小 = options?.externalVariables?.柱体文字大小 || "14px";
-    this.roadShow = options?.externalVariables?.roadShow || "true";
-    this.road_posShow = options?.externalVariables?.road_posShow || "true";
+    this.type = options?.externalVariables?.type || "day";
+    this.rateType = options?.externalVariables?.rateType || 5;
     console.log(this.背景颜色);
   }
   componentDidMount() {
@@ -50,18 +50,27 @@ export default class Main extends Component {
   }
   initEcharts(data) {
     console.log(data);
+    data.list = data.list.filter((item) => {
+      return item.type == this.type;
+    });
+    data.list = data.list.filter((item) => {
+      return item.rateType == this.rateType;
+    });
+    console.log(data.list);
     data.list.sort(this.compare("rate"));
     let YdataName = [];
     let Xdata = [];
     let Dvalue = [];
     let TopData = [];
     data.list.forEach((item, index) => {
-      YdataName.push(item.name);
-      Xdata.push(item.rate);
-      TopData.unshift("top " + (index + 1));
+      if (index < 5) {
+        YdataName.push(item.name);
+        Xdata.push(item.rate);
+        TopData.unshift("top " + (index + 1));
+      }
     });
     if (YdataName.length < 5) {
-      let l = YdataName.length
+      let l = YdataName.length;
       for (let k = 0; k < 5 - l; k++) {
         YdataName.unshift("");
         Xdata.unshift("");
@@ -146,9 +155,9 @@ export default class Main extends Component {
               fontFamily: "arial",
               formatter: (data) => {
                 if (String(data.data).indexOf(".") !== -1) {
-                  return Number(data.data).toFixed(1)*100 + "%";
+                  return (Number(data.data)* 100).toFixed(1)  + "%";
                 } else {
-                  return data.data*100 + "%";
+                  return data.data * 100 + "%";
                 }
               },
               position: "left",

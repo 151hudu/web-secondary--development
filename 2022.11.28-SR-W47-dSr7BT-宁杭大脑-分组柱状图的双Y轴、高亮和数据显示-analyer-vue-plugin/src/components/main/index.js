@@ -200,8 +200,9 @@ export default class Main extends Component {
           nameTextStyle: {
             color: "#b0e8ffd8",
             fontSize: this.标签大小,
-            padding: [0, 0, 0, Ydata1.length>1?35:70],
+            padding: [0, 0, 0, Ydata1.length > 1 ? 15 : 70],
           },
+          minInterval: 1,
           type: "value",
           // max: maxValue,
           min: 0,
@@ -235,10 +236,11 @@ export default class Main extends Component {
           nameTextStyle: {
             color: "#b0e8ffd8",
             fontSize: this.标签大小,
-            padding: [0, 0, 0,  Ydata2.length>1?-15:-55],
+            padding: [0, 0, 0, Ydata2.length > 1 ? -35 : -65],
           },
           type: "value",
           // max: maxValue,
+          minInterval : 1,
           min: 0,
           scale: true,
           position: "right",
@@ -260,6 +262,7 @@ export default class Main extends Component {
       series: [
         {
           type: "custom",
+          zlevel: 999,
           name: this.第一组名称,
           renderItem: (params, api) => {
             let cubeLeftStyle = new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -350,6 +353,7 @@ export default class Main extends Component {
         {
           type: "bar",
           barWidth: "40",
+          zlevel: 999,
           label: {
             emphasis: {
               color: "#fff",
@@ -399,6 +403,7 @@ export default class Main extends Component {
         {
           type: "custom",
           yAxisIndex: 1,
+          zlevel: 999,
           name: this.第二组名称,
           renderItem: (params, api) => {
             let cubeLeftStyle = new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -487,6 +492,7 @@ export default class Main extends Component {
         },
         {
           type: "bar",
+          zlevel: 999,
           barWidth: "40",
           label: {
             emphasis: {
@@ -703,10 +709,11 @@ export default class Main extends Component {
           nameTextStyle: {
             color: "#b0e8ffd8",
             fontSize: this.标签大小,
-            padding: [0, 0, 0, Ydata1.length>1?35:70],
+            padding: [0, 0, 0, Ydata1.length > 1 ? 15 : 70],
           },
           type: "value",
           // max: maxValue,
+          minInterval : 1,
           min: 0,
           axisLine: {
             show: true,
@@ -739,9 +746,10 @@ export default class Main extends Component {
           nameTextStyle: {
             color: "#b0e8ffd8",
             fontSize: this.标签大小,
-            padding: [0, 0, 0,  Ydata2.length>1?-15:-55],
+            padding: [0, 0, 0, Ydata2.length > 1 ? -35 : -65],
           },
           // max: maxValue,
+          minInterval : 1,
           min: 0,
           scale: true,
           position: "right",
@@ -763,6 +771,7 @@ export default class Main extends Component {
       series: [
         {
           type: "custom",
+          zlevel: 999,
           name: this.第一组名称,
           renderItem: (params, api) => {
             let cubeLeftStyle = new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -852,6 +861,7 @@ export default class Main extends Component {
         },
         {
           type: "bar",
+          zlevel: 999,
           barWidth: "1",
           label: {
             emphasis: {

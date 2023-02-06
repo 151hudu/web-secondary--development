@@ -46,7 +46,7 @@ export default class Main extends Component {
     return function (a, b) {
       var val1 = a[key];
       var val2 = b[key];
-      return val1 - val2;
+      return val2 - val1;
     };
   }
   initEcharts(data) {
@@ -83,7 +83,7 @@ export default class Main extends Component {
     //     change_rate: 4,
     //   },
     // ];
-    data.list.sort(this.compare("num"));
+    data.list.sort(this.compare("rank"));
     let YdataName1 = [];
     let YdataName2 = [];
     let Xdata = [];
@@ -97,11 +97,13 @@ export default class Main extends Component {
       // } else if (this.codeShow == "false" && this.NameShow == "true") {
       //   YdataName.push(item.segName);
       // } else {
-      YdataName1.push(item.segCode);
-      YdataName2.push(item.segName);
-      Xdata.push(item.num);
-      item.rankUpDown > 0 ? Dvalue.push("▲ " + item.rankUpDown) : Dvalue.push("▼ " + Math.abs(Number(item.rankUpDown)));
-      TopData.unshift("top " + (index + 1));
+      if (index < 5) {
+        YdataName1.push(item.segCode);
+        YdataName2.push(item.segName);
+        Xdata.push(item.num);
+        item.rankUpDown > 0 ? Dvalue.push("▲ " + item.rankUpDown) : Dvalue.push("▼ " + Math.abs(Number(item.rankUpDown)));
+        TopData.unshift("top " + (index + 1));
+      }
     });
     if (YdataName1.length < 5) {
       let l = YdataName1.length;

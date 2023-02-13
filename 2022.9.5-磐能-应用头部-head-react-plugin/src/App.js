@@ -225,10 +225,16 @@ const App = (props) => {
   }, []);
 
   const toggleCollapsed = () => {
+    console.log(props);
     setTimeout(() => {
       setCollapsed(!collapsed);
     }, 140);
-    window.PubSub.publish("collapsed", !collapsed);
+    // window.PubSub.publish("collapsed", !collapsed);
+    // props.setAppMenucollapsed(!collapsed);
+    var newEvent =new CustomEvent("MenuClick", {
+      detail: { tf: !collapsed }
+    });
+    window.dispatchEvent(newEvent);
   };
 
   const getUserName = () => {
@@ -237,6 +243,11 @@ const App = (props) => {
       customConfig.getUserName((name) => {
         setUserName(name);
       });
+    if (!customConfig?.getUserName) {
+      ReportingService.user().then((res) => {
+        setUserName(res.data.name);
+      });
+    }
   };
 
   const onSearch = (value) => {
@@ -313,7 +324,16 @@ const App = (props) => {
     console.log(props);
     if (key === "1") {
       console.log("onSignOutonSignOutonSignOutonSignOut");
-      onSignOut();
+      if (onSignOut) {
+        onSignOut();
+      } else {
+        ReportingService.logout().then((res) => {
+          console.log(res);
+          if (res.status == "200") {
+            window.location.href = window.location.origin + "/dtyq/pngf/login";
+          }
+        });
+      }
     }
     if (key === "2") {
       jumptoPersonalCenter && jumptoPersonalCenter();

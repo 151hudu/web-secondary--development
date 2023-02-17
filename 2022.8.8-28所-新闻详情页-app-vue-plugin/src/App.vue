@@ -20,7 +20,7 @@
       </div>
       <!-- 编辑评论区 -->
       <div class="comment" v-if="commentShow == 1">
-        <span class="comment_Nums"> 共24个评论 </span>
+        <span class="comment_Nums"> 共{{ this.commentData.length }}个评论 </span>
         <div class="comment_Input_Area">
           <el-input type="textarea" placeholder="写下你的评论" :autosize="{ maxRows: 4 }" v-model="commentValue" resize="none" class="comment_Input"> </el-input>
           <span class="comment_Button">
@@ -80,13 +80,13 @@
     <div class="content_Right">
       <div class="download" v-if="articleData.resourceType !== 'image'" :style="{ background: theme.themeColor }" @click="downLoad">
         <span>
-          <save theme="outline" size="24" fill="#ffffff" />
-          <span class="clickDown">点击下载</span>
+          <download theme="outline" size="16" fill="#ffffff" />
+          <span class="clickDown">附件下载</span>
         </span>
       </div>
       <div class="my_Operation" v-if="collectionShow == 1 || shareShow == 1">
         <span :style="{ fontWeight: 700, color: theme.themeColor }">丨</span>
-        <span> 我的操作</span>
+        <span style="font-weight: 700"> 我的操作</span>
         <el-divider></el-divider>
         <div class="my_Operation_Button">
           <div class="my_Operation_Collection" v-if="collectionShow == 1">
@@ -106,25 +106,26 @@
           </div> -->
         </div>
       </div>
-      <div class="about_News" :style="{ height: this.aboutHeight }">
+      <div class="about_News" :style="{ minHeight: this.aboutHeight }">
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="相关推荐" name="first">
             <ul style="padding: 0">
               <li class="about_News_First" v-for="(item, index) in aboutList" :key="index">
-                <pennant theme="filled" size="18" :fill="theme.themeColor" />
+                <Flag theme="filled" size="18" :fill="theme.themeColor" />
                 <span>{{ item.title }}</span>
               </li>
             </ul>
           </el-tab-pane>
         </el-tabs>
       </div>
-      <div class="about_News2" :style="{ height: this.ran2Height }">
+      <div class="about_News2" :style="{ minHeight: this.ran2Height }">
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="热点排行" name="first">
             <ul style="padding: 0">
               <li class="about_News_First" v-for="(item, index) in rankList" :key="index">
-                <span :style="{color:theme.themeColor}">{{index +1}}</span>&nbsp;&nbsp;&nbsp;
-                <span>{{item.title}}</span>
+                <span class="numSpan" :style="{ color: index + 1 < 4 ? theme.themeColor : '' }">{{ index + 1 }}</span
+                >&nbsp;&nbsp;&nbsp;
+                <span>{{ item.title }}</span>
               </li>
             </ul>
           </el-tab-pane>
@@ -168,7 +169,7 @@ import "./index.css";
 import pdf from "vue-pdf";
 import { queryRightSideDetail, queryAssetById, queryComments, addLike, addNewsCollect, addNewsComments, deleteNewsCollect, deleteLike, queryOfficeUser, share } from "./api/asset";
 import moment from "moment";
-import { ThumbsUp, GoodTwo, Comment, Save, Pennant } from "@icon-park/vue";
+import { ThumbsUp, GoodTwo, Comment, Download, Pennant, Flag } from "@icon-park/vue";
 export default {
   name: "App",
   props: {
@@ -179,15 +180,16 @@ export default {
     ThumbsUp,
     GoodTwo,
     Comment,
-    Save,
+    Download,
     Pennant,
     pdf,
+    Flag,
   },
   computed: {
     theme() {
       let { theme_global_config } = this.themeInfo || {
         theme_global_config: {
-          "--theme-public-pinPai-color": "rgba(24,144,255,1)",
+          "--theme-public-pinPai-color": "#106EB2",
           "--theme-public-text-color-1": "rgba(12, 13, 14,1)",
         },
       };
@@ -223,13 +225,12 @@ export default {
       text: '<h1>富强、民主、文明、和谐</h1><br/><h2><font color="red">自由、平等、公正、法治</font></h2><br/><h3><font color="blue">爱国、敬业、诚信、友善</font></h3>',
       activeName: "first",
       circleUrl: window.location.origin + "storage_area/files/datasouce/123.jpg",
-      src: require("../../小黑子.mp4"),
+      src: "",
       showOrHidden: "showOrHidden",
       articleData: "",
-      commentData: "",
-      selectData: "",
+      commentData: [],
+      selectData: [],
       organization: [],
-      commentShow: [],
       // articleTitle: "",
       // articleTime: "",
       // articleSouce: "",
@@ -259,9 +260,9 @@ export default {
   },
   mounted() {
     console.log(this.GetQueryString("dataId"));
-    this.aboutHeight = this.customConfig.相关推荐高度 ? this.customConfig.相关推荐高度 + 'px' : "290px";
+    this.aboutHeight = this.customConfig.相关推荐高度 ? this.customConfig.相关推荐高度 + "px" : "432px";
     this.aboutNum = this.customConfig.相关推荐条数 ? this.customConfig.相关推荐条数 : 5;
-    this.rankHeight = this.customConfig.热点排行高度 ? this.customConfig.热点排行高度 + 'px' : "290px";
+    this.rankHeight = this.customConfig.热点排行高度 ? this.customConfig.热点排行高度 + "px" : "432px";
     this.rankNum = this.customConfig.热点排行条数 ? this.customConfig.热点排行条数 : 5;
     this.aboutID = this.customConfig.查询相关推荐资产ID ? this.customConfig.查询相关推荐资产ID : "";
     this.rankID = this.customConfig.查询热点排行资产ID ? this.customConfig.查询热点排行资产ID : "";
@@ -308,8 +309,10 @@ export default {
         url: window.location.href,
         infoUrlTitle: this.customConfig.分享名称 ? this.customConfig.分享名称 : this.articleData.title,
       };
+      console.log(this.selectData);
       this.selectData.forEach((item, index) => {
-        item.users.forEach((userItem, userIndex) => {
+        console.log(item.users);
+        item.users?.forEach((userItem, userIndex) => {
           message.userIdList.push(userItem.id);
         });
       });
@@ -396,19 +399,31 @@ export default {
     },
     collect(type) {
       if (type == "delete") {
-        deleteNewsCollect({ objcetId: this.articleData.dataId }).then((res) => {
-          if (res.status == 200) {
-            this.articleData.collect = 0;
-            this.$forceUpdate();
-          }
-        });
+        deleteNewsCollect({ objcetId: this.articleData.dataId })
+          .then((res) => {
+            if (res.status == 200) {
+              this.articleData.collect = 0;
+              this.$forceUpdate();
+            }
+          })
+          .catch((err) => {
+            if (err.status == 401) {
+              window.location.href = window.location.origin + "/home";
+            }
+          });
       } else {
-        addNewsCollect({ objcetId: this.articleData.dataId }).then((res) => {
-          if (res.status == 200) {
-            this.articleData.collect = 1;
-            this.$forceUpdate();
-          }
-        });
+        addNewsCollect({ objcetId: this.articleData.dataId })
+          .then((res) => {
+            if (res.status == 200) {
+              this.articleData.collect = 1;
+              this.$forceUpdate();
+            }
+          })
+          .catch((err) => {
+            if (err.status == 401) {
+              window.location.href = window.location.origin + "/home";
+            }
+          });
       }
     },
     commentArticle() {
@@ -416,9 +431,15 @@ export default {
         objcetId: this.articleData.dataId,
         content: this.commentValue,
       };
-      addNewsComments(message).then((res) => {
-        this.queryComments();
-      });
+      addNewsComments(message)
+        .then((res) => {
+          this.queryComments();
+        })
+        .catch((err) => {
+          if (err.status == 401) {
+            window.location.href = window.location.origin + "/home";
+          }
+        });
     },
     commentSonShow(item) {
       item.replyShow = true;
@@ -432,13 +453,25 @@ export default {
         objcetId: item.dataId,
       };
       if (item.flag == 1) {
-        deleteLike(messgae).then((res) => {
-          this.queryComments();
-        });
+        deleteLike(messgae)
+          .then((res) => {
+            this.queryComments();
+          })
+          .catch((err) => {
+            if (err.status == 401) {
+              window.location.href = window.location.origin + "/home";
+            }
+          });
       } else {
-        addLike(messgae).then((res) => {
-          this.queryComments();
-        });
+        addLike(messgae)
+          .then((res) => {
+            this.queryComments();
+          })
+          .catch((err) => {
+            if (err.status == 401) {
+              window.location.href = window.location.origin + "/home";
+            }
+          });
       }
     },
     handleClick(tab, event) {
@@ -448,14 +481,22 @@ export default {
       // this.dialogVisible = true;
     },
     commentArticleSon(item) {
+      console.log(999);
       let message = {
         objcetId: this.articleData.dataId,
         content: item.replyInput,
         parentId: item.dataId,
       };
-      addNewsComments(message).then((res) => {
-        this.queryComments();
-      });
+      addNewsComments(message)
+        .then((res) => {
+          this.queryComments();
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err.status == 401) {
+            window.location.href = window.location.origin + "/home";
+          }
+        });
     },
     about_VideoChange() {},
     putComment(item, index, status) {
@@ -510,7 +551,7 @@ export default {
   // 新闻内容
   .news {
     min-height: 100px;
-    padding: 25px;
+    padding: 24px;
     background: #ffffff;
     .news_Title {
       color: dodgerblue;
@@ -655,15 +696,17 @@ export default {
 }
 // 右侧
 .content_Right {
-  min-width: 330px;
+  min-width: 200px;
+  width: 25%;
   display: flex;
   flex-direction: column;
   margin-left: 20px;
   .download {
-    height: 80px;
+    height: 56px;
     min-width: 330px;
-    border-radius: 7px;
-    background: #2dbed1;
+    width: 100%;
+    border-radius: 4px;
+    background: #106eb2;
     display: flex;
     margin-bottom: 30px;
     justify-content: center;
@@ -671,17 +714,19 @@ export default {
     cursor: pointer;
     .clickDown {
       margin-left: 10px;
-      vertical-align: 3px;
-      font-size: 20px;
+      vertical-align: 0px;
+      font-size: 16px;
+      margin-top: 5px;
       color: #ffffff;
     }
   }
   .my_Operation {
     height: 180px;
-    width: 330px;
+    width: 100%;
     background: #ffffff;
     padding: 20px;
-    border-radius: 7px;
+    border-radius: 4px;
+    margin-bottom: 16px;
     .my_Operation_Button {
       display: flex;
       .my_Operation_Collection,
@@ -724,13 +769,13 @@ export default {
   }
   .about_News,
   .about_News2 {
-    height: 280px;
-    width: 330px;
+    width: 100%;
+    border-radius: 4px;
     overflow: hidden;
     background: #ffffff;
-    margin-top: 30px;
+    margin-bottom: 16px;
     padding: 20px;
-
+    height: 42vh;
     /deep/.el-tab-pane,
     /deep/.el-tabs {
       height: 100%;
@@ -743,15 +788,27 @@ export default {
       display: flex;
       flex-direction: column;
       justify-content: start;
+      margin: 0 0 0 15px;
+      overflow: hidden;
     }
     .about_News_First {
       list-style: none;
-      margin-bottom: 20px;
+      height: 42px;
+      line-height: 42px;
       cursor: pointer;
-      &:hover {
-        color: #4980ed;
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      .numSpan {
+        font-family: DIN-BlackItalic !important;
       }
-      .i-icon-pennant {
+      &:hover {
+        color: #106eb2;
+        background: #106eb219;
+        border-radius: 4px;
+      }
+      .i-icon-flag {
         margin-right: 10px;
       }
     }
@@ -761,7 +818,7 @@ export default {
     }
     /deep/.is-active {
       color: #000000;
-      font-size: 22px;
+      font-size: 18px;
       font-weight: 700;
     }
     /deep/.el-tabs__item:hover {
@@ -770,7 +827,7 @@ export default {
   }
   .about_Video {
     height: 310px;
-    width: 330px;
+    width: 100%;
     background: #ffffff;
     margin-top: 30px;
     padding: 20px;

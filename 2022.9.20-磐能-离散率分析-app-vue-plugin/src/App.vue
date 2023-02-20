@@ -19,7 +19,7 @@
       <div class="ehcarts_box" v-if="pageType == 'echarts'">
          <div ref="echartsBar" id="pn_echarts_bar" style="width: 100%; height: 100%"></div>
          <div style="margin-top: 50px">
-            逆变器等效时数偏差率高：
+            组串电流偏差率高：
             <span v-if="!remindInfo">无</span>
             <span v-if="remindInfo">{{ remindInfo }}</span>
          </div>
@@ -29,22 +29,18 @@
          <el-table ref="tableData" v-loading="tableLoading" :data="tableData" border :cell-style="tableRowClassName" :header-cell-style="{ background: '#ECF5FF' }" height="100%">
             <el-table-column class-name="first_column" prop="time" label="时间" width="160" sortable fixed align="center"></el-table-column>
             <el-table-column class-name="second_column" prop="dispersion_rate" label="离散率（%）" min-width="120" fixed align="center"></el-table-column>
-            <el-table-column class-name="third_column" label="平均等效时数" min-width="110" fixed align="center">
-               <template slot-scope="scope">
-                  <div>{{ Number(scope.row.equivalent_hours).toFixed(2) }}</div>
-               </template>
-            </el-table-column>
-            <template>
-               <el-table-column v-for="(item, i) in columnData" :key="i" class-name="dynamic_column" min-width="90" :label="item" :prop="item" align="center">
-                  <!-- <template slot="header">
+            <el-table-column class-name="third_column" prop="current_p_avg" label="平均电流Ⅰ*" min-width="105" fixed align="center"></el-table-column>
+            <template v-for="i in 24">
+               <el-table-column v-if="columnIsShow(i)" :key="i" class-name="dynamic_column" min-width="65" align="center">
+                  <template slot="header">
                      <div>
-                        <span>{{ i }}</span>
-                        <span>#</span>
-                        <span>逆变器</span>
+                        <span>Ⅰ</span>
+                        <span class="column_label">{{ i }}</span>
+                        <span>*</span>
                      </div>
-                  </template> -->
+                  </template>
                   <template slot-scope="scope">
-                     <div>{{ Number(scope.row[item]).toFixed(2) }}</div>
+                     <div :class="dispersionStyle(scope.row, i)">{{ scope.row[`PV${i}`] }}</div>
                   </template>
                </el-table-column>
             </template>
@@ -68,6 +64,8 @@
 <script>
 // 引入逻辑控制
 import eventActionDefine from "./components/msgCompConfig";
+// 引入公共封装方法
+import utils from "@/utils";
 // 引入接口方法
 import { queryAssetByTime, getEcharts, exportEchartsExcel, queryRemindInfo } from "./api/asset";
 // 引入CSS文件
@@ -98,12 +96,10 @@ export default {
          datePicke: [new Date(new Date().getTime() - 3600 * 1000 * 24 * 6).getTime(), new Date().getTime()],
          // 表格数据
          tableData: [],
-         // 表格加载
+         // 表格loading
          tableLoading: false,
          // 图表
          myChart: null,
-         //表头数据
-         columnData: [],
          // 图表数据
          seriesData: [0, 0, 0, 0, 0],
          // 页面展示类型
@@ -135,7 +131,7 @@ export default {
       this.addDatePickerIcon();
 
       if (process.env.NODE_ENV !== "production") {
-         this.do_EventCenter_getIds({ value: "116" });
+         this.do_EventCenter_getIds({ value: "1999116999240" });
       }
    },
 
@@ -365,23 +361,21 @@ export default {
       getEchartsData() {
          this.seriesData = [];
 
-         let _startTime = this.datePicke[0];
-         let _endTime = this.datePicke[1];
+         let startTime = moment(this.datePicke[0]).format("yyyy-MM-DD 00:00:00");
+         let endTime = moment(this.datePicke[1]).format("yyyy-MM-DD 23:59:59");
 
-         _startTime = moment(_startTime).format("yyyy-MM-DD 00:00:00");
-         _endTime = moment(_endTime).format("yyyy-MM-DD 23:59:59");
-
-         getEcharts(this.ids, _startTime, _endTime).then((res) => {
+         getEcharts(this.ids, startTime, endTime).then((res) => {
             let _res = res.data[0];
             this.seriesData = [_res.five, _res.four, _res.three, _res.two, _res.one];
-
+            // 生成Echarts
             this.initEcharts();
          });
 
          // 获取提示消息
          queryRemindInfo(this.ids, _startTime, _endTime).then((res) => {
+            this.total = res.data.num;
             let strArr = [];
-            res.data.forEach((item) => {
+            res.data.pvSet.forEach((item) => {
                strArr.push(`【${item}】`);
             });
             this.remindInfo = strArr.join("、");
@@ -391,41 +385,21 @@ export default {
       // 获取表格数据
       getTabelData() {
          this.tableData = [];
-         this.columnData = [];
-
          this.tableLoading = true;
 
-         let _startTime = this.datePicke[0];
-         let _endTime = this.datePicke[1];
+         let startTime = moment(this.datePicke[0]).format("yyyy-MM-DD 00:00:00");
+         let endTime = moment(this.datePicke[1]).format("yyyy-MM-DD 23:59:59");
 
-         _startTime = moment(_startTime).format("yyyy-MM-DD 00:00:00");
-         _endTime = moment(_endTime).format("yyyy-MM-DD 23:59:59");
-
-         queryAssetByTime(this.ids, this.page, this.pageSize, _startTime, _endTime)
+         queryAssetByTime(this.ids, startTime, endTime, this.page, this.pageSize)
             .then((res) => {
-               this.total = res.data.totalCount;
-
-               let resData = JSON.parse(JSON.stringify(res.data.results));
-
-               let head = Object.keys(res.data.results[0]);
-
-               head.splice(head.indexOf("time"), 1);
-               head.splice(head.indexOf("equivalent_hours_avg"), 1);
-               head.splice(head.indexOf("equivalent_hours"), 1);
-               head.splice(head.indexOf("dispersion_rate"), 1);
-               let headCopy = JSON.parse(JSON.stringify(head));
-               head = headCopy.filter((x, i) => {
-                  if (x.substring(0, 2) != "PV") return x;
-               });
-
-               this.columnData = head;
-
+               let resData = JSON.parse(JSON.stringify(res.data));
                resData.forEach((item) => {
                   if (item.time) {
                      let times = Date.parse(new Date(item.time));
                      item.time = moment(times).format("yyyy-MM-DD HH:mm:ss");
                   }
                });
+
                this.$nextTick(() => {
                   this.tableData = resData;
                   this.$forceUpdate();
@@ -446,6 +420,7 @@ export default {
             };
          }
          const task = () => {
+            console.log("重新渲染表格");
             this.$refs.tableData.doLayout();
          };
          this.debounceTask = debounce(task, 300);
@@ -473,7 +448,7 @@ export default {
             return "coloumn_grey";
          }
          if (row[`PV${index}`]) {
-            if ((row.equivalent_hours - row[`PV${index}`]) / row.equivalent_hours >= 0.2) {
+            if ((row.current_p_avg - row[`PV${index}`]) / row.current_p_avg >= 0.2) {
                return "coloumn_yellow";
             } else {
                return "coloumn_white";
@@ -523,13 +498,14 @@ export default {
 
       // 添加日期选择器图标
       addDatePickerIcon() {
-         let icon = $("#datePickIcon_nbq");
+         let icon = $("#datePickIcon_lsl");
          if (icon[0]) {
             icon.remove();
          }
 
          let datepicker_icon = $(".el-range__close-icon");
-         let iconDom = `<img id="datePickIcon_nbq" src="${dateicon}" width="100%" height="100%" />`;
+
+         let iconDom = `<img id="datePickIcon_lsl" src="${dateicon}" width="100%" height="100%" />`;
          datepicker_icon.append(iconDom);
       },
 
@@ -557,7 +533,7 @@ export default {
 
       // 注册组件名
       Event_Center_getName() {
-         return "逆变器";
+         return "离散率";
       },
    },
    // 注销页面
@@ -574,11 +550,9 @@ export default {
 .pn_outermost {
    width: 100%;
    height: 100%;
-   min-height: 800px;
    box-sizing: border-box;
    background: #fff;
    padding: 25px 25px 28px 25px;
-
    // 头部盒子
    .header_box {
       width: 100%;
@@ -586,24 +560,20 @@ export default {
       justify-content: space-between;
       margin-bottom: 5px;
    }
-
    // 日期选择器
    .datepicker_button {
       border-radius: 2px;
       margin-left: 2px;
       display: flex;
       align-items: center;
-
       .export_button {
          cursor: pointer;
          margin-top: 1px;
          margin-left: 25px;
       }
-
       .el-range-input {
          background: rgba(239, 240, 243, 1);
       }
-
       // 选择器整体
       .el-date-editor {
          cursor: pointer;
@@ -629,7 +599,6 @@ export default {
       .el-range__icon {
          display: none;
       }
-
       // 右侧图标
       .el-range__close-icon {
          position: absolute;
@@ -640,7 +609,6 @@ export default {
          top: -1px;
       }
    }
-
    // ehcarts盒子
    .ehcarts_box {
       margin-left: -0.8px;
@@ -648,7 +616,6 @@ export default {
       height: 418.09px;
       margin-bottom: 24.91px;
    }
-
    // 表格头部
    .el-table__header {
       // 头部单元格
@@ -660,7 +627,6 @@ export default {
          font-weight: bold;
          font-family: "Alibaba PuHuiTi";
          box-sizing: border-box;
-
          // 头部单元格内元素
          .cell {
             padding: 0;
@@ -669,14 +635,12 @@ export default {
          }
       }
    }
-
    // 表格行
    .el-table__row {
       // 头部单元格
       .el-table__cell {
          padding: 0 !important;
          height: 40px;
-
          // 头部单元格内元素
          .cell {
             padding: 0;
@@ -686,26 +650,22 @@ export default {
          }
       }
    }
-
    // 表格底部横线
    .el-table::before {
       height: 0;
    }
-
    // 表格边框颜色
    .el-table--border,
    .el-table--group {
       border: 1px solid #d0dae4;
       border-bottom: none;
    }
-
    // 表格内竖线颜色
    .el-table--border td,
    .el-table--border th,
    .el-table__body-wrapper .el-table--border.is-scrolling-left ~ .el-table__fixed {
       border-right: 1px solid #d0dae4;
    }
-
    // 表格内行线颜色
    .el-table td,
    .el-table th.is-leaf {
@@ -718,7 +678,6 @@ export default {
       box-sizing: border-box;
       margin-top: 30px;
       background: transparent;
-
       li {
          width: 30px;
          height: 28px;
@@ -728,7 +687,6 @@ export default {
          background: transparent !important;
       }
    }
-
    .el-pagination.is-background .el-pager li:not(.disabled).active {
       color: #111 !important;
       border-radius: 4px;
@@ -750,25 +708,11 @@ export default {
       }
    }
 
-   // // 滚动条宽高
-   // ::-webkit-scrollbar {
-   //   height: 8px;
-   //   width: 9px;
-   // }
-
-   // // // 表格固定列样式
-   // .el-table__fixed,
-   // .el-table__fixed-right {
-   //   height: calc(100% - 8px) !important;
-   //   box-shadow: -5px -2px 10px rgba(0, 0, 0, 0.12) !important;
-   // }
-
    /* 滚动滑块的颜色 */
    ::-webkit-scrollbar-thumb {
       background-color: #1b85ff;
       border-radius: 5px;
    }
-
    /* 滚动条背景颜色 */
    ::-webkit-scrollbar-track {
       background-color: #fff;
@@ -782,19 +726,16 @@ export default {
    color: #ffffff;
    height: 100%;
 }
-
 .coloumn_white {
    background: #fff;
    color: #000000;
    height: 100%;
 }
-
 .coloumn_grey {
    background: #aaaaaa;
    color: #fff;
    height: 100%;
 }
-
 .column_label {
    font-size: 11px;
 }
@@ -807,7 +748,6 @@ export default {
    border-width: 0 !important;
    border-radius: 5 !important;
 }
-
 .tooltipBox_title,
 .tooltipBox_content {
    display: flex;
@@ -817,22 +757,18 @@ export default {
    padding-left: 10px;
    padding-top: 5px;
 }
-
 .tooltipBox_radius {
    width: 15px;
    height: 15px;
    margin-right: 10px;
    border-radius: 50%;
 }
-
 .tooltipBox_title {
    margin: 5px 0 5px 0;
 }
-
 .tooltipBox_content {
    margin-bottom: 5px;
 }
-
 .tooltipBox .tooltipBox_content:last-child {
    margin-bottom: 10px;
 }

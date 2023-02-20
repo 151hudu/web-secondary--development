@@ -3,13 +3,12 @@ import qs from "querystringify";
 
 let apiContextPath = "";
 if (process.env.NODE_ENV === "development") {
-   document.cookie = "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY3NTgyODcxMDM5MywidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.A8IsSJceuXUlrs1RnToHI0Fpx9CHZE64PXyIF0b6XXw";
+   document.cookie = "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY3NTg0Mzg4MTI4NywidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.EEQ27kCPrMKh9RpVduYQMVLp3hFPjBJZbNkdU0cfjP0";
    apiContextPath = "/api";
 }
 
 const instance = axios.create({
    baseURL: `${apiContextPath}/dtyq/pngf/sdata/rest`,
-   // baseURL: `${apiContextPath}/sdata/rest`,
    timeout: 60000,
    validateStatus: function (status) {
       return status >= 200 && status < 300; // default

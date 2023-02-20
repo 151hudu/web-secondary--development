@@ -239,8 +239,9 @@ export default class App extends Component {
         params.push(item)
       })
       params = params.join('&')
-      url = url + '?' + params
-
+      url += url.includes('?')
+        ? '&' + params
+        : '?' + params
     }
 
     if (index > 0) {

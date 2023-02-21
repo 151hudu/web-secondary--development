@@ -46,6 +46,7 @@ if (process.env.NODE_ENV !== "production") {
   }
 
   window.CUSTOM_PLUGIN.set(process.env.VUE_APP_CUSTOM_PLUGIN_ID, (dom, props) => {
+    console.log(props);
     if (dom.childNodes.length > 0) {
       dom.removeChild(dom.childNodes[0]);
     }

@@ -175,6 +175,7 @@ export default {
   props: {
     customConfig: Object,
     themeInfo: Object,
+    pageAnonymous: Number,
   },
   components: {
     ThumbsUp,
@@ -399,47 +400,40 @@ export default {
     },
     collect(type) {
       if (type == "delete") {
-        deleteNewsCollect({ objcetId: this.articleData.dataId })
-          .then((res) => {
-            if (res.status == 200) {
-              this.articleData.collect = 0;
-              this.$forceUpdate();
-            }
-          })
-          .catch((err) => {
-            if (err.status == 401) {
-              window.location.href = window.location.origin + "/home";
-            }
-          });
+        deleteNewsCollect({ objcetId: this.articleData.dataId }).then((res) => {
+          if (res.status == 401 && this.pageAnonymous == 1) {
+            return (window.location.href = window.location.origin + "/home");
+          }
+          if (res.status == 200) {
+            this.articleData.collect = 0;
+            this.$forceUpdate();
+          }
+        });
       } else {
         addNewsCollect({ objcetId: this.articleData.dataId })
           .then((res) => {
+            if (res.status == 401 && this.pageAnonymous == 1) {
+              return (window.location.href = window.location.origin + "/home");
+            }
             if (res.status == 200) {
               this.articleData.collect = 1;
               this.$forceUpdate();
             }
           })
-          .catch((err) => {
-            if (err.status == 401) {
-              window.location.href = window.location.origin + "/home";
-            }
-          });
       }
     },
     commentArticle() {
+      console.log(888);
       let message = {
         objcetId: this.articleData.dataId,
         content: this.commentValue,
       };
-      addNewsComments(message)
-        .then((res) => {
-          this.queryComments();
-        })
-        .catch((err) => {
-          if (err.status == 401) {
-            window.location.href = window.location.origin + "/home";
-          }
-        });
+      addNewsComments(message).then((res) => {
+        if (res.status == 401 && this.pageAnonymous == 1) {
+          return (window.location.href = window.location.origin + "/home");
+        }
+        this.queryComments();
+      });
     },
     commentSonShow(item) {
       item.replyShow = true;
@@ -453,25 +447,19 @@ export default {
         objcetId: item.dataId,
       };
       if (item.flag == 1) {
-        deleteLike(messgae)
-          .then((res) => {
-            this.queryComments();
-          })
-          .catch((err) => {
-            if (err.status == 401) {
-              window.location.href = window.location.origin + "/home";
-            }
-          });
+        deleteLike(messgae).then((res) => {
+          if (res.status == 401 && this.pageAnonymous == 1) {
+            return (window.location.href = window.location.origin + "/home");
+          }
+          this.queryComments();
+        });
       } else {
-        addLike(messgae)
-          .then((res) => {
-            this.queryComments();
-          })
-          .catch((err) => {
-            if (err.status == 401) {
-              window.location.href = window.location.origin + "/home";
-            }
-          });
+        addLike(messgae).then((res) => {
+          if (res.status == 401 && this.pageAnonymous == 1) {
+            return (window.location.href = window.location.origin + "/home");
+          }
+          this.queryComments();
+        });
       }
     },
     handleClick(tab, event) {
@@ -487,16 +475,12 @@ export default {
         content: item.replyInput,
         parentId: item.dataId,
       };
-      addNewsComments(message)
-        .then((res) => {
-          this.queryComments();
-        })
-        .catch((err) => {
-          console.log(err);
-          if (err.status == 401) {
-            window.location.href = window.location.origin + "/home";
-          }
-        });
+      addNewsComments(message).then((res) => {
+        if (res.status == 401 && this.pageAnonymous == 1) {
+          return (window.location.href = window.location.origin + "/home");
+        }
+        this.queryComments();
+      });
     },
     about_VideoChange() {},
     putComment(item, index, status) {

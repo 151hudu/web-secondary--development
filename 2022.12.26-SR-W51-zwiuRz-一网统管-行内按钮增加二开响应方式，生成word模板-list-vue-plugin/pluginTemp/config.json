@@ -1,7 +1,7 @@
 {
-  "id": "96464882-0ddf-413c-9150-951724000935",
+  "id": "dbf3eee1-0e18-411f-881b-7ee12134ee85",
   "type": "list-custom-btn",
-  "main": "app.bff2d905.js",
+  "main": "main.54c76de9.js",
   "version": "2",
   "props": {
     "styleArr": "[\"title\",\"height\",\"key\", \"eventCenterConfig\"]",
@@ -9,6 +9,6 @@
     "componentAttributes": "{\"style\":[\"title\",\"height\"],\"data\":[\"key\"],\"interaction\":[\"eventCenterConfig\"]}",
     "assetColumnList": "[{\"col_name\":\"自定义\",\"col_datatype\":0}]"
   },
-  "requirement-number": "SR-W7-JmDHTf",
-  "requirement-name": "列表行内按钮导出压缩包，支持批量"
+  "requirement-number": "SR-W51-zwiuRz",
+  "requirement-name": "行内按钮增加二开响应方式，生成word模板"
 }

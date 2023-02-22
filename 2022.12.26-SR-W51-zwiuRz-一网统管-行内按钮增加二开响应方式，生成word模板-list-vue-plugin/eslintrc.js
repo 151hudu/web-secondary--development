@@ -8,15 +8,25 @@ module.exports = {
     "standard/no-callback-literal": "off",
     camelcase: "off",
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn"
+    "react-hooks/exhaustive-deps": "warn",
   },
   settings: {
     react: {
-      version: "detect"
-    }
+      version: "detect",
+    },
   },
-  parserOptions: {
-    "ecmaVersion": 7,
-    "sourceType": "module"
-  }
-}
+  overrides: [
+    {
+      files: ["*.ts", "*.tsx"],
+      plugins: ["@typescript-eslint"],
+      parser: "@typescript-eslint/parser",
+      // rules: fileConfig.rules,
+      parserOptions: {
+        project: "./tsconfig.json",
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+  ],
+};

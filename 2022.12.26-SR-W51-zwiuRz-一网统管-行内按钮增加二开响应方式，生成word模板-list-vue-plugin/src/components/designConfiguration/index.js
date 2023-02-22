@@ -1,37 +1,55 @@
-import React from "react";
-import { useEffect } from "react";
-import { Form, Input } from "antd";
+import React, { useEffect } from "react";
+import { Form, Input,InputNumber } from "antd";
 
-function DesignConfiguration(props) {
+const DesignConfiguration = ({ changeConfiguration, configuration }) => {
   const [form] = Form.useForm();
-  //此处的customConfig已经封装为一个object，可以直接使用,changeCustomConfig的入参应为一个json字符串
-  const { changeCustomConfig, customConfig } = props;
-  console.log(props, 12);
-  //id为默认添加的配置项，勿删
   useEffect(() => {
-    form.setFieldsValue(JSON.parse(customConfig));
+    try {
+      form.setFieldsValue(JSON.parse(configuration));
+    } catch (error) {
+      console.error("configuration解析错误", error);
+    }
   }, []);
-  const handleValueChange = (changedValues, allValues) => {
-    changeCustomConfig(JSON.stringify(allValues));
+
+  const onFormLayoutChange = (changedValues, allValues) => {
+    changeConfiguration(allValues);
   };
 
   const formItemLayout = {
-    labelCol: { span: 4 },
-    wrapperCol: { span: 20 },
+    labelCol: { span: 6 },
+    wrapperCol: { span: 18 },
   };
 
   return (
     <>
-      <Form {...formItemLayout} form={form} onValuesChange={handleValueChange}>
-        <Form.Item label="下标" name="position">
-          <Input style={{ width: "200px" }} />
+      <Form
+        {...formItemLayout}
+        form={form}
+        onValuesChange={onFormLayoutChange}
+      >
+        <Form.Item label="type：" name="type" initialValue={''}>
+          <Input />
         </Form.Item>
-        <Form.Item label="path" name="path">
-          <Input style={{ width: "200px" }} />
+        <Form.Item label="department：" name="department" initialValue={''}>
+          <input />
         </Form.Item>
-      </Form>
+        <Form.Item label="字段名" name="fieldName" initialValue={''}>
+          <Input />
+        </Form.Item>
+        <Form.Item label="dayUrl" name="dayUrl" initialValue={''}>
+          <Input />
+        </Form.Item>
+        <Form.Item label="monUrl" name="monUrl" initialValue={''}>
+          <Input />
+        </Form.Item>
+        <Form.Item label="yearUrl" name="yearUrl" initialValue={''}>
+          <Input />
+        </Form.Item>
+      </Form>z
     </>
   );
-}
+};
+
+DesignConfiguration.propTypes = {};
 
 export default DesignConfiguration;

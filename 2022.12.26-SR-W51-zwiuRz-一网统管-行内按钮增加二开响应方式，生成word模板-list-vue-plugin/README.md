@@ -15,7 +15,7 @@
 
 ### 开发前准备
 
-scli方式
++ scli方式
     1. 本地运行cmd命令，打开运行窗口。
     2. 执行以下命令全局安装sdata-cli服务。
 
@@ -24,6 +24,11 @@ scli方式
   ```
     3. 安装完成后，运行scli i，选择对应模块及框架
     4. npm i或者yarn install安装相关依赖项，运行npm run serve(Vue版本)/npm run start(React版本)即可开始进行开发
++ github方式
+    1.
+    本地下载github仓库[https://github.com/Orochi-sx/web-secondary--development](https://github.com/Orochi-sx/web-secondary--development/)
+    2. 切换对应的分支及插件类型，如vue版本的应用插件为vue-version-app
+    3. npm i或者yarn install安装相关依赖项，运行npm run serve(Vue版本)/npm run start(React版本)即可开始进行开发
 
 ### 插件包文件说明
 

@@ -17,13 +17,11 @@ lib
 .DS_Store
 pluginTemp/js/*
 **/pluginTemp/js/*.js
-**/pluginTemp/media
 pluginTemp/libs/*
 plugin-*.zip
 temp
 .history
-# log files
-*.log
+
 # Editor directories and files
 .umi
 .idea

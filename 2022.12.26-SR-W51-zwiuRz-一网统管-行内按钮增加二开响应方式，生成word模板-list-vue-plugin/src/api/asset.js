@@ -5,5 +5,5 @@ import request from "./request";
  * @param id 资产ID
  *
  */
-export const exportZip = (data) =>
-  request.post(`/ZHSJExportZip/exportZip`, data, { responseType: "blob" });
+export const queryAssetById = (id, count = 200) =>
+  request.post(`/asset/getAssetData?asset_id=${id}&count=${count}`, { filters: [] });

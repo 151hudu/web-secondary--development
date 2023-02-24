@@ -74,7 +74,7 @@
         </div>
       </div>
       <div class="bm_distribution_fenge">
-        <span @click="putAwayFn"> {{ putAway? "展开": "收起" }} <i
+        <span @click="putAwayFn"> {{ putAway ? "展开" : "收起" }} <i
             :class='putAway ? "el-icon-arrow-down" : "el-icon-arrow-up"'></i></span>
       </div>
       <div class="bm_distribution_footer">
@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import { queryAssetById } from '../../api/asset'
+import { queryAssetById, queryOffecid, userQuery } from '../../api/asset'
 import Utils from '../../utils'
 const sortArr = ["妇联组织",
   "妇女儿童之家",
@@ -137,34 +137,37 @@ export default {
       analysisData: []
     };
   },
-  mounted() {
+  async mounted() {
     //此方法封装了事件注册，不可删除
     this.mainInit(this);
-    this.filterData()
+    try {
+      let res = await userQuery(res.data.id)
+      this.filterData(res.data.id)
+    } catch (error) {
+      this.filterData()
+    }
+
   },
   methods: {
     //过滤数据
-    filterData() {
-      queryAssetById(this.assetId).then(res => {
-        let a = Utils.translatePlatformDataToJsonArray(res)
-        let tempData = {}
-        a.forEach(x => {
-          if (tempData[x.type] || tempData[x.type] === 0) {
-            tempData[x.type] = tempData[x.type] + x.num
-          } else {
-            tempData[x.type] = x.num
-          }
-        })
+    filterData(user_id = 1234567890) {
+      queryOffecid({ user_id }).then(res => {
+        let arrData = res.data
         let ArrData = []
-        for (const key in tempData) {
-          ArrData.push({ key: key, value: tempData[key] })
-        }
+        arrData.forEach(x => {
+          ArrData.push({ key: x.organization_type_name, value: x.associated_number })
+        })
+
+        // for (const key in tempData) {
+        //   ArrData.push({ key: key, value: tempData[key] })
+        // }
         let sortData = []
         this.conSortData.forEach(item => {
           ArrData.forEach(x => {
             if (x.key === item) sortData.push(x)
           })
         })
+        // this.analysisData = ArrData
         this.analysisData = sortData
         // console.log(sortData, '=======>sort');
       }).catch(err => {
@@ -203,11 +206,14 @@ export default {
 </script>
 <style lang="less" scoped>
 .app-secondary_xue {
-  padding: 0 10px 0 10px;
+  padding: 0 15px 0 15px;
 
   .bm_distribution {
     // border: 1px solid black;
-    padding: 14px 16px;
+    background: #fff;
+    padding: 14px 16px 15px 16px;
+    box-shadow: 0px 2px 10px 0px #F2F2F6;
+    border-radius: 8px;
 
     .bm_distribution_head {
       padding-bottom: 12px;
@@ -254,6 +260,7 @@ export default {
 
           .template_value {
             font-weight: 800;
+            margin-top: 5px;
           }
         }
 
@@ -316,7 +323,8 @@ export default {
 
           .templatePublic {
             font-size: 9px;
-            padding: 1%;
+            // padding: 1%;
+            padding: 2%;
 
             .template_title {
               transform: scale(0.80);
@@ -401,23 +409,26 @@ export default {
 
           // display: flex;
           .templateTest {
-            display: flex;
+
             height: calc(100% - 10px);
           }
 
-          .template_title {
-            max-width: 75%;
-            min-width: 60%;
-            // flex: 1;
-          }
-
+          // .template_title {
+          //   max-width: 75%;
+          //   min-width: 60%;
+          //   // flex: 1;
+          // }
           .template_value {
-            min-width: 10%;
-            max-width: 40%;
-            margin-left: -18%;
-            align-self: flex-end;
             margin-top: -1px;
           }
+
+          // .template_value {
+          //   min-width: 10%;
+          //   max-width: 40%;
+          //   margin-left: -18%;
+          //   align-self: flex-end;
+          //   margin-top: -1px;
+          // }
 
           background: url('../../api/image/10女性创业孵化中心.png');
           margin-right: 2%;
@@ -518,68 +529,76 @@ export default {
 }
 
 
-@media (max-width: 442px) {
-  .template10 {
-    .template_title {
-      max-width: 90% !important;
-    }
-  }
+// @media (max-width: 442px) {
+//   .template10 {
+//     .template_title {
+//       max-width: 90% !important;
+//     }
+//   }
 
-}
+// }
 
-@media (min-width: 443px) {
-  .six_template {
+// @media (min-width: 443px) {
+//   .six_template {
 
-    .templatePublic {
-      font-size: 9px;
-      padding: 2% 0 0 3% !important;
+//     .templatePublic {
+//       font-size: 9px;
+//       padding: 2% 0 0 3% !important;
 
-      .template_title {
-        transform: scale(0.9) !important;
-        transform-origin: 0 0;
-      }
+//       .template_title {
+//         transform: scale(0.9) !important;
+//         transform-origin: 0 0;
+//       }
 
-      .template_value {
-        transform: scale(0.9) !important;
-        transform-origin: 0 0;
-      }
+//       .template_value {
+//         transform: scale(0.9) !important;
+//         transform-origin: 0 0;
+//       }
 
-    }
-  }
+//     }
+//   }
 
-  .template10 {
-    .template_value {
-      margin-top: 11px !important;
-      margin-left: -8% !important;
-    }
-  }
-}
+//   .template10 {
+//     .template_value {
+//       margin-top: 11px !important;
+//       margin-left: -8% !important;
+//     }
+//   }
+// }
 
-@media (min-width: 476px) {
-  .six_template {
+// @media (min-width: 476px) {
+//   .six_template {
 
-    .templatePublic {
-      font-size: 9px;
-      padding: 3% 0 0 4% !important;
+//     .templatePublic {
+//       font-size: 9px;
+//       padding: 3% 0 0 4% !important;
 
-      .template_title {
-        transform: scale(0.9) !important;
-        transform-origin: 0 0;
-      }
+//       .template_title {
+//         transform: scale(0.9) !important;
+//         transform-origin: 0 0;
+//       }
 
-      .template_value {
-        transform: scale(0.9) !important;
-        transform-origin: 0 0;
-      }
+//       .template_value {
+//         transform: scale(0.9) !important;
+//         transform-origin: 0 0;
+//       }
 
-    }
-  }
+//     }
+//   }
 
-  .template10 {
-    .template_value {
-      margin-top: 11px !important;
-      margin-left: -8% !important;
-    }
-  }
-}
+//   .template10 {
+//     .template_value {
+//       margin-top: 11px !important;
+//       margin-left: -8% !important;
+//     }
+//   }
+// }
+
+// @media (min-width: 528px) {
+//   .template10 {
+//     .templateTest{
+//         display:block;
+//     }
+//   }
+// }
 </style>

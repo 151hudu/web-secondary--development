@@ -5,7 +5,7 @@ import { Development } from "@/components/index.js";
 import Utils from "@/utils/index.js";
 import configJson from "../pluginTemp/config.json";
 
-import "amfe-flexible";
+// import "amfe-flexible";
 
 import { Button, Popup, Cell, CellGroup, RadioGroup, Radio } from "vant";
 import "vant/lib/index.css";

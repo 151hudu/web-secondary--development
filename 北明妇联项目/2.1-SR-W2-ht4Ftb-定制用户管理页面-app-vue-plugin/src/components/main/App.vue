@@ -32,7 +32,7 @@
                </div>
             </template>
             <template v-if="!isLogin">
-               <div class="please_login">请登录</div>
+               <div class="please_login" @click="routerLink">请登录</div>
             </template>
          </div>
          <!-- 用户菜单 -->
@@ -90,6 +90,10 @@ import "swiper/swiper-bundle.css";
 
 Swiper.use([Pagination]);
 
+import VConsole from "vconsole";
+
+import defaultPicture from "../../assets/默认头像.png";
+
 export default {
    name: "Main",
 
@@ -112,9 +116,14 @@ export default {
          isLogin: true,
 
          // 用户信息
-         userForm: {},
+         userForm: {
+            nickname: "昵称",
+            integral: 0,
+            province: "",
+            city: "",
+         },
          // 用户头像
-         userPicture: "../../assets/默认头像.png",
+         userPicture: defaultPicture,
 
          // 左侧菜单
          menuLeftList: [],
@@ -137,6 +146,14 @@ export default {
    },
 
    mounted() {
+      // new VConsole();
+
+      this.userForm.nickname = "昵称";
+      this.userForm.integral = 0;
+      this.userPicture = defaultPicture;
+      this.userForm.province = "";
+      this.userForm.city = "";
+
       // 事件注册
       this.mainInit(this);
       // 创建轮播图
@@ -209,13 +226,6 @@ export default {
                return;
             }
          });
-         // 获取信息数据
-         await getDataApi({ user_id: this.accountCode }).then((res) => {
-            this.userForm = res.data[0];
-
-            let picture = JSON.parse(res.data[0].head_picture);
-            this.userPicture = picture[0].url;
-         });
          // 获取菜单数据
          await queryAssetById("07d82842-286a-1365-1a8f-0501b6a8acb6").then((res) => {
             let resData = this.translatePlatformDataToJsonArray(res);
@@ -230,6 +240,23 @@ export default {
                }
             });
          });
+         // 获取个人信息
+         await getDataApi({ user_id: this.accountId })
+            .then((res) => {
+               this.userForm = res.data[0];
+               if (this.userForm.head_picture) {
+                  let picture = JSON.parse(this.userForm.head_picture);
+
+                  this.userPicture = picture[0].url;
+                  this.$forceUpdate();
+                  console.log("头像地址", picture[0].url);
+               } else {
+                  this.userPicture = defaultPicture;
+               }
+            })
+            .catch(() => {
+               this.userPicture = defaultPicture;
+            });
       },
 
       // 打开弹出层
@@ -266,7 +293,9 @@ export default {
                this.history.push(menu.link);
             }
          } else {
-            console.log("未登录");
+            let href = `${window.location.origin}/login?redirect_url=%2Fapplication%2Fmobileview%2F604e00d4-66a7-4df3-043d-4f0f326a323e%3FidType%3Dpage&appid=9b7b76e8-3099-aa84-305c-7a7a456f287b`;
+            console.log("未登录", href);
+            window.location.href = href;
          }
       },
 

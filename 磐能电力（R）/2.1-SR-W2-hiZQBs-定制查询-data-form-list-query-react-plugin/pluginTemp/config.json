@@ -1,0 +1,14 @@
+{
+  "id": "3519b44f-8f66-47ca-babf-75d655206b48-list-area",
+  "type": "data-form-list-query",
+  "main": "main.6df96964.js",
+  "version": "2",
+  "props": {
+    "styleArr": "[\"title\",\"key\"]",
+    "columnStyle": "{title:'自定义'}",
+    "componentAttributes": "{\"style\":[\"title\"],\"data\":[\"key\"],\"interaction\":[]}",
+    "assetColumnList": "[{\"col_name\":\"自定义\",\"col_datatype\":0}]"
+  },
+  "requirement-number": "SR-W2-hiZQBs",
+  "requirement-name": "定制列表查询条件下拉框"
+}

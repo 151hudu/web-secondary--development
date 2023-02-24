@@ -48,6 +48,20 @@ export const dataSource = [
   ["南通市", "121.186564", "31.885252", "A", 2000, 5000],
   ["无锡市", "121.118758", "31.887438", "A", 3000, 9500],
   ["盐城市", "121.364062", "32.007754", "A", 900, 5200],
+  ["武汉市", "114.324286", "30.587362", "A", 900, 5200],
+  ["武汉市", "114.324286", "30.587362", "A", 900, 5200],
+  ["武汉市", "114.324286", "30.587362", "A", 900, 5200],
+  ["武汉市", "114.324286", "30.587362", "A", 900, 5200],
+  ["武汉市", "114.324286", "30.587362", "A", 900, 5200],
+  ["武汉市", "114.324286", "30.587362", "A", 900, 5200],
+  ["武汉市", "114.324286", "30.587362", "A", 900, 5200],
+  ["武汉市", "114.324286", "30.587362", "A", 900, 5200],
+  ["武汉市", "114.324286", "30.587362", "A", 900, 5200],
+  ["武汉市", "114.324286", "30.587362", '<p style="text-indent:14px"><span style=";font-family:宋体;font-size:14px">元宵节，是中国春节年俗中最后一个重要节令。元宵之夜，大街小巷张灯结彩，人们赏灯，猜灯谜，吃元宵，将从除夕开始延续的庆祝活动推向又一个高潮，成为世代相沿的习俗。在元宵佳节即将来临之际，为丰富社区居民的文化娱乐活动，开创社区和谐、祥和喜庆的节日气氛，增强居民群众团结向上、健康、科学的生活方式。</span><span style=";font-family:宋体;font-size:14px"><span style="font-family:Calibri">2</span></span><span style=";font-family:宋体;font-size:14px">月</span><span style="font-size: 14px;"><span style="font-family:Calibri">2</span></span><span style=";font-family:宋体;font-size:14px">日</span><span style=";font-family:宋体;font-size:14px">，</span><span style=";font-family:宋体;font-size:14px">东河花园社区妇联</span><span style=";font-family:宋体;font-size:14px"><span style="font-family:宋体">以</span><span style="font-family:Calibri">&quot;</span></span><span style=";font-family:宋体;font-size:14px">欢欢喜喜闹元宵</span><span style=";font-family:宋体;font-size:14px"><span style="font-family:Calibri">&quot;</span><span style="font-family:宋体">为主题在社区大门口开展元宵节活动。来自社区的党员、退休人员、空巢孤寡老人，弱势群体、社区志愿者等近</span></span><span style=";font-family:宋体;font-size:14px"><span style="font-family:Calibri">40</span></span><span style=";font-family:宋体;font-size:14px">人参加了本次活动。</span></p ><p style="text-indent:14px"><span style=";font-family:宋体;font-size:14px">< img src="http://wx.jswomen.com.cn/wx/do/common/view?url=/news/videoNew/20230208/1675833623784.jpg" title="1675833623784.jpg" alt="微信图片_2023020114472013.jpg"/></span></p ><p style="text-indent:14px"><span style=";font-family:宋体;font-size:14px"><br/></span></p ><p style="text-indent:14px"><span style=";font-family:宋体;font-size:14px">接下来在一阵阵的掌声、欢笑声中，活动正式开始，老人们有的玩套圈、有的正在猜谜语、而有些老人却开心地包起了汤圆来。老人们个个都欢声笑语，精神抖数，充分反映了退休老人幸福和谐的晚年生活以及对社区组织的形式多样的文体活动的支持与热爱。当志愿者们把象征团圆吉祥现煮的热腾腾的汤圆送到现场每位老人的手中时，不但让老同志们感受到了政府给予的关怀和社区大家庭的温暖，也让大家更深地体会到中国传统节日的氛围和内涵，现场的人更能感受到她们在社区这个大家庭生活的幸福感！通过开展此次活动，使</span><span style=";font-family:宋体;font-size:14px">东河花园</span><span style=";font-family:宋体;font-size:14px">社区广大居民群众的精神文化需求得到了满足，同时弘扬了民族文化，</span><span style=";font-family:宋体;font-size:14px">促进了文化交流，展示社区文化风貌，是居民体验了文化的魅力，丰富了社区居民的文化知识，开拓了视野，让居民过上了温馨的元宵节', 900, 5200],
+  ["武汉市", "114.324286", "30.587362", '<p style="text-indent:14px"><span style=";font-family:宋体;font-size:14px">元宵节，是中国春节年俗中最后一个重要节令。元宵之夜，大街小巷张灯结彩，人们赏灯，猜灯谜，吃元宵，将从除夕开始延续的庆祝活动推向又一个高潮，成为世代相沿的习俗。在元宵佳节即将来临之际，为丰富社区居民的文化娱乐活动，开创社区和谐、祥和喜庆的节日气氛，增强居民群众团结向上、健康、科学的生活方式。</span><span style=";font-family:宋体;font-size:14px"><span style="font-family:Calibri">2</span></span><span style=";font-family:宋体;font-size:14px">月</span><span style="font-size: 14px;"><span style="font-family:Calibri">2</span></span><span style=";font-family:宋体;font-size:14px">日</span><span style=";font-family:宋体;font-size:14px">，</span><span style=";font-family:宋体;font-size:14px">东河花园社区妇联</span><span style=";font-family:宋体;font-size:14px"><span style="font-family:宋体">以</span><span style="font-family:Calibri">&quot;</span></span><span style=";font-family:宋体;font-size:14px">欢欢喜喜闹元宵</span><span style=";font-family:宋体;font-size:14px"><span style="font-family:Calibri">&quot;</span><span style="font-family:宋体">为主题在社区大门口开展元宵节活动。来自社区的党员、退休人员、空巢孤寡老人，弱势群体、社区志愿者等近</span></span><span style=";font-family:宋体;font-size:14px"><span style="font-family:Calibri">40</span></span><span style=";font-family:宋体;font-size:14px">人参加了本次活动。</span></p ><p style="text-indent:14px"><span style=";font-family:宋体;font-size:14px">< img src="http://wx.jswomen.com.cn/wx/do/common/view?url=/news/videoNew/20230208/1675833623784.jpg" title="1675833623784.jpg" alt="微信图片_2023020114472013.jpg"/></span></p ><p style="text-indent:14px"><span style=";font-family:宋体;font-size:14px"><br/></span></p ><p style="text-indent:14px"><span style=";font-family:宋体;font-size:14px">接下来在一阵阵的掌声、欢笑声中，活动正式开始，老人们有的玩套圈、有的正在猜谜语、而有些老人却开心地包起了汤圆来。老人们个个都欢声笑语，精神抖数，充分反映了退休老人幸福和谐的晚年生活以及对社区组织的形式多样的文体活动的支持与热爱。当志愿者们把象征团圆吉祥现煮的热腾腾的汤圆送到现场每位老人的手中时，不但让老同志们感受到了政府给予的关怀和社区大家庭的温暖，也让大家更深地体会到中国传统节日的氛围和内涵，现场的人更能感受到她们在社区这个大家庭生活的幸福感！通过开展此次活动，使</span><span style=";font-family:宋体;font-size:14px">东河花园</span><span style=";font-family:宋体;font-size:14px">社区广大居民群众的精神文化需求得到了满足，同时弘扬了民族文化，</span><span style=";font-family:宋体;font-size:14px">促进了文化交流，展示社区文化风貌，是居民体验了文化的魅力，丰富了社区居民的文化知识，开拓了视野，让居民过上了温馨的元宵节', 900, 5200],
+  ["武汉市", "114.324286", "30.587362", '<p style="text-indent:14px"><span style=";font-family:宋体;font-size:14px">元宵节，是中国春节年俗中最后一个重要节令。元宵之夜，大街小巷张灯结彩，人们赏灯，猜灯谜，吃元宵，将从除夕开始延续的庆祝活动推向又一个高潮，成为世代相沿的习俗。在元宵佳节即将来临之际，为丰富社区居民的文化娱乐活动，开创社区和谐、祥和喜庆的节日气氛，增强居民群众团结向上、健康、科学的生活方式。</span><span style=";font-family:宋体;font-size:14px"><span style="font-family:Calibri">2</span></span><span style=";font-family:宋体;font-size:14px">月</span><span style="font-size: 14px;"><span style="font-family:Calibri">2</span></span><span style=";font-family:宋体;font-size:14px">日</span><span style=";font-family:宋体;font-size:14px">，</span><span style=";font-family:宋体;font-size:14px">东河花园社区妇联</span><span style=";font-family:宋体;font-size:14px"><span style="font-family:宋体">以</span><span style="font-family:Calibri">&quot;</span></span><span style=";font-family:宋体;font-size:14px">欢欢喜喜闹元宵</span><span style=";font-family:宋体;font-size:14px"><span style="font-family:Calibri">&quot;</span><span style="font-family:宋体">为主题在社区大门口开展元宵节活动。来自社区的党员、退休人员、空巢孤寡老人，弱势群体、社区志愿者等近</span></span><span style=";font-family:宋体;font-size:14px"><span style="font-family:Calibri">40</span></span><span style=";font-family:宋体;font-size:14px">人参加了本次活动。</span></p ><p style="text-indent:14px"><span style=";font-family:宋体;font-size:14px">< img src="http://wx.jswomen.com.cn/wx/do/common/view?url=/news/videoNew/20230208/1675833623784.jpg" title="1675833623784.jpg" alt="微信图片_2023020114472013.jpg"/></span></p ><p style="text-indent:14px"><span style=";font-family:宋体;font-size:14px"><br/></span></p ><p style="text-indent:14px"><span style=";font-family:宋体;font-size:14px">接下来在一阵阵的掌声、欢笑声中，活动正式开始，老人们有的玩套圈、有的正在猜谜语、而有些老人却开心地包起了汤圆来。老人们个个都欢声笑语，精神抖数，充分反映了退休老人幸福和谐的晚年生活以及对社区组织的形式多样的文体活动的支持与热爱。当志愿者们把象征团圆吉祥现煮的热腾腾的汤圆送到现场每位老人的手中时，不但让老同志们感受到了政府给予的关怀和社区大家庭的温暖，也让大家更深地体会到中国传统节日的氛围和内涵，现场的人更能感受到她们在社区这个大家庭生活的幸福感！通过开展此次活动，使</span><span style=";font-family:宋体;font-size:14px">东河花园</span><span style=";font-family:宋体;font-size:14px">社区广大居民群众的精神文化需求得到了满足，同时弘扬了民族文化，</span><span style=";font-family:宋体;font-size:14px">促进了文化交流，展示社区文化风貌，是居民体验了文化的魅力，丰富了社区居民的文化知识，开拓了视野，让居民过上了温馨的元宵节', 900, 5200],
+  ["武汉市", "114.324286", "30.587362", "A", 900, 5200],
+  ["武汉市", "114.324286", "30.587362", "A", 900, 5200],
 ];
 import configJson from "../../../pluginTemp/config.json";
 const CUSTOM_PLUGIN_ID = configJson.id;
@@ -185,7 +199,7 @@ export const mockCustomConfig = {
       ],
       showCondition: [
         {
-          value: "南京市",
+          value: "武汉市",
           column: "城市",
         },
       ],
@@ -195,7 +209,7 @@ export const mockCustomConfig = {
         {
           uid: 1673251946982,
           name: "custom_table.png",
-          url: "/storage_area/form/1234567890/7f81d4c20ff6420a911cdb1e4609862d.png",
+          url: "/storage_area/form/1234567890/7f81d4c20ff6420a911cdb1e4609862d2.png",
           status: "success",
         },
       ],
@@ -236,12 +250,18 @@ export const mockCustomConfig = {
         {
           uid: 1673251946982,
           name: "custom_table.png",
-          url: "/storage_area/form/1234567890/7f81d4c20ff6420a911cdb1e4609862d.png",
+          url: "/storage_area/form/1234567890/7f81d4c20ff6420a911cdb1e4609862d2.png",
           status: "success",
         },
       ],
     },
   ],
+  imageryProviderList: [{ serveUrl: 'http://127.0.0.1:5500/tileset.json', name: 22 }],
+  tooltips: ['城市', '利润', '种类'],
+  fontColor: '',
+  fontSize: '',
+  fontFamily: '',
+  backgroundColor: '',
   ServerImageryProvider:
     "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
 };

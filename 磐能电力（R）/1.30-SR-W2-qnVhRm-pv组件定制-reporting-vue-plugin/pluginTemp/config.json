@@ -1,0 +1,14 @@
+{
+  "id": "96829ce0-8cd2-4396-8234-233c143ce0f4",
+  "type": "reporting",
+  "main": "app.dba3478c.js",
+  "version": "2",
+  "props": {
+    "styleArr": "[\"title\",\"key\", \"eventCenterConfig\"]",
+    "columnStyle": "{title:'自定义'}",
+    "componentAttributes": "{\"style\":[\"title\"],\"data\":[\"key\"],\"interaction\":[\"eventCenterConfig\"]}",
+    "assetColumnList": "[{\"col_name\":\"自定义\",\"col_datatype\":0}]"
+  },
+  "requirement-number": "SR-W2-qnVhRm",
+  "requirement-name": "定制填报表单PV/MPPT组件（含功能测试）"
+}

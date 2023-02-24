@@ -1,76 +1,60 @@
 <template>
-  <div
-    class="analyzer-secondary"
-    :style="{ width, height }"
-    ref="analyzer-secondary"
-    :id="id"
-  >
+  <div class="analyzer-secondary" :style="{ width, height }" ref="analyzer-secondary" :id="id">
     <div id="mMap" :style="{ width, height }"></div>
-
     <div class="layers">
-      <el-checkbox-group v-model="checkList" @change="checkListChange">
-        <el-checkbox
-          v-for="(item, index) in pointListApp"
-          :label="item.name"
-          :key="index"
-        >
-          <span class="check-lebel" :title="item.name">{{ item.name }}</span>
-          <img
-            v-if="item.imgList[0]?.url"
-            :src="item.imgList[0]?.url"
-            class="check-icon"
-          />
+      <div class="layers_btn" @click="handleOpen">
+        <i :class="{ 'el-icon-s-fold': openBtn, 'el-icon-s-unfold': !openBtn }"></i>
+        {{ openBtn ? '展开' : '收起' }}
+      </div>
+
+      <div :class="{ layers_item: true, layers_Shou: openBtn }">
+        <el-checkbox v-model="checkedVar" label="全选" @change="checkListChangeAll">
+          <span class="check-lebel" title="全选">全选</span>
         </el-checkbox>
-      </el-checkbox-group>
+        <el-checkbox-group v-model="checkList" @change="checkListChange">
+          <el-checkbox v-for="(item, index) in pointListApp" :label="item.name" :key="index">
+            <span class="check-lebel" :title="item.name">{{ item.name }}</span>
+            <img v-if="item.imgList[0]?.url" :src="item.imgList[0]?.url" class="check-icon" />
+          </el-checkbox>
+        </el-checkbox-group>
+      </div>
+
     </div>
-    <el-dialog
-      :width="dialogPoint.modalWidth?.toString() + 'px'"
-      :visible.sync="pointVisible"
-      :append-to-body="true"
-      :show-close="false"
-      custom-class="point-detail"
-    >
+    <el-dialog :width="dialogPoint.modalWidth?.toString() + 'px'" :visible.sync="pointVisible" :append-to-body="true"
+      :show-close="false" custom-class="point-detail">
       <div :style="{ width: '100%', height: dialogPoint.modalHeight + 'px' }">
         <div class="modalTitle">{{ dialogPoint.modalTitle }}</div>
-        <el-table
-          :data="
-            pointData.slice(
-              (currentPage - 1) * pagesize,
-              currentPage * pagesize
-            )
-          "
-          border
-          :row-class-name="tableRowClassName"
-        >
+        <el-table :data="
+          pointData.slice(
+            (currentPage - 1) * pagesize,
+            currentPage * pagesize
+          )
+        " border :row-class-name="tableRowClassName">
           <el-table-column prop="_index" label="序号" width="70" align="center">
           </el-table-column>
-          <el-table-column
-            v-for="(item, index) in dialogPoint.modalTableColumn"
-            :key="index"
-            :label="item.column"
-            :prop="item.column"
-            :width="item.width"
-            align="center"
-          >
+          <el-table-column v-for="(item, index) in dialogPoint.modalTableColumn" :key="index" :label="item.column"
+            :prop="item.column" :width="item.width" align="center">
             <template slot-scope="scope">
-              <el-tooltip effect="dark">
-                <div slot="content" :style="{ 'max-width': '500px' }">
+              <el-popover v-if="tooltips.includes(item.column)" trigger="click" effect="dark" placement="bottom"
+                popper-class="test">
+                <div class="toolips_font" :style="{ 'max-width': '500px' }">
                   {{ scope.row[item.column] }}
                 </div>
+                <span slot="reference" class="point-cell">{{ scope.row[item.column] }}</span>
+              </el-popover>
+              <div v-else>
+                <!-- <div class="toolips_font" :style="{ 'max-width': '500px' }">
+                    {{ scope.row[item.column] }}
+                  </div> -->
                 <span class="point-cell">{{ scope.row[item.column] }}</span>
-              </el-tooltip>
+              </div>
+
             </template>
           </el-table-column>
         </el-table>
 
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :page-size="pagesize"
-          layout="prev, pager, next"
-          :total="pointData.length"
-          class="pagination"
-        ></el-pagination>
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-size="pagesize"
+          layout="prev, pager, next" :total="pointData.length" class="pagination"></el-pagination>
       </div>
     </el-dialog>
   </div>
@@ -85,14 +69,16 @@ import {
   Tooltip,
   Checkbox,
   CheckboxGroup,
+  Popover
 } from "element-ui";
 import Vue from "vue";
 import _ from "lodash";
 import * as Cesium from "cesium";
-
+import { css } from 'emotion';
 import green3d from "./images/green3d.png";
 import yellow3d from "./images/yellow3d.png";
 import red3d from "./images/red3d.png";
+import red from "./images/red.png";
 
 // if (process.env.NODE_ENV !== "production") {
 // Cesium.Ion.defaultAccessToken =
@@ -110,7 +96,7 @@ Vue.use(Pagination);
 Vue.use(Tooltip);
 Vue.use(Checkbox);
 Vue.use(CheckboxGroup);
-
+Vue.use(Popover);
 let imgMap = {};
 export default {
   name: "MainCesium",
@@ -139,7 +125,11 @@ export default {
       pagesize: 10,
       currentPage: 1,
       checkList: [],
-
+      checkOptions: [],
+      testStyle: {},
+      checkedVar: false,
+      openBtn: false,
+      tooltips: []
       // {
       //   text: "武胜社区",
       //   img: "https://img0.baidu.com/it/u=2223986897,2002289354&fm=253&fmt=auto&app=138&f=JPG?w=500&h=500",
@@ -168,8 +158,10 @@ export default {
     updateProcess: Function,
     mainInit: Function,
   },
-  created() {},
+  created() {
+  },
   mounted() {
+
     // this.scriptEle = document.createElement("script")
     // document.head.appendChild(this.scriptEle)
     // this.scriptEle.src = "http://earthsdk.com/v/last/XbsjCesium/Cesium.js";
@@ -186,7 +178,6 @@ export default {
     // document.head.appendChild(this.scriptEle3)
     // this.scriptEle3.rel = "stylesheet";
     // this.scriptEle3.href = "http://earthsdk.com/v/last/XbsjCesium/Widgets/widgets.css";
-
     this.mainInit(this);
     this.initDataSource();
     this.initComData();
@@ -211,9 +202,20 @@ export default {
       const { dataSource, customConfig, options } = this;
       //customOptions为传统的输入框形式的配置项
       const customOptions = options?.externalVariables || {};
-      // console.log('展示页面customConfig', customConfig);
+
+      console.log('展示页面customConfig', customConfig);
       // console.log('//**展示页面dataSource**//', dataSource);
       try {
+        this.tooltips = customConfig.tooltips
+          ? customConfig.tooltips
+          : [];
+        const element = document.querySelector('html')
+        element.style.setProperty('--background-poper', customConfig.backgroundColor ? customConfig.backgroundColor : "white")
+        element.style.setProperty('--color-poper', customConfig.fontColor ? customConfig.fontColor : "12px")
+        element.style.setProperty('--fontSize-poper', customConfig.fontSize ? customConfig.fontSize : "宋体")
+        element.style.setProperty('--fontFamily-poper', customConfig.fontFamily ? customConfig.fontFamily : "black")
+        // element.style.setProperty('--color-poper', 'blue')
+        // element.style.setProperty('--fontSize-poper', '26px')
         // 模型
         this.providerList = customConfig.imageryProviderList
           ? customConfig.imageryProviderList
@@ -227,11 +229,23 @@ export default {
           ? _.cloneDeep(customConfig.pointList)
           : [];
       } catch (error) {
+        this.tooltips = customConfig.tooltips
+          ? customConfig.tooltips
+          : [];
+        const element = document.querySelector('html')
+        element.style.setProperty('--background-poper', customConfig.backgroundColor ? customConfig.backgroundColor : "")
+        element.style.setProperty('--color-poper', customConfig.fontColor ? customConfig.fontColor : "")
+        element.style.setProperty('--fontSize-poper', customConfig.fontSize ? customConfig.fontSize : "")
+        element.style.setProperty('--fontFamily-poper', customConfig.fontFamily ? customConfig.fontFamily : "")
         // 模型
         this.providerList = customConfig.imageryProviderList
           ? customConfig.imageryProviderList
           : [];
         // 底图
+        // this.serverImageryUrl = customConfig.ServerImageryProvider
+        //   ? customConfig.ServerImageryProvider
+        //   : "http://10.34.4.103:8010/ServiceAdapter/MAP/EMAP_DEEPWEB/6f9c5d19634442a3accb406539ef09dc";
+
         this.serverImageryUrl = customConfig.ServerImageryProvider
           ? customConfig.ServerImageryProvider
           : "http://10.34.4.103:8010/ServiceAdapter/MAP/EMAP_DEEPWEB/6f9c5d19634442a3accb406539ef09dc";
@@ -240,10 +254,14 @@ export default {
           ? _.cloneDeep(customConfig.pointList)
           : [];
       }
+
       // console.log('底图this.serverImageryUrl', this.serverImageryUrl);
       // console.log('模型this.providerList', this.providerList);
       console.log("点位this.pointListApp", this.pointListApp);
       // 请求底图
+      this.checkOptions = this.pointListApp.map(x => {
+        return x.name
+      })
       this.initMap();
     },
     // 数据
@@ -313,6 +331,7 @@ export default {
       this.handler = new Cesium.ScreenSpaceEventHandler(this.scene.canvas);
       window._viewer = this.viewer;
       window.Cesium = Cesium;
+
       // 加载图层
       if (this.providerList.length > 0) {
         this.Cesium3DTilesetLoad();
@@ -321,7 +340,9 @@ export default {
       if (this.pointListApp.length > 0) {
         this.pointSet();
       }
+      console.log("点位this.viewer", this.viewer);
       // 拾点
+      this.viewer.scene.globe.depthTestAgainstTerrain = true;
       // this.getClickPointAdd(this.viewer);
     },
     // 加载图层
@@ -334,7 +355,8 @@ export default {
             maximumNumberOfLoadedTiles: 1000, //最大加载瓦片个数
             // shadows: Cesium.ShadowMode.DISABLED,
             // luminanceAtZenith: 1,
-            // url: "http://127.0.0.1:5501/tileset.json",
+            layerIndex: 0
+            // url: "http://127.0.0.1:5500/tileset.json",
           });
           this.scene.primitives.add(tileset);
           tileset.readyPromise
@@ -413,7 +435,6 @@ export default {
           showCondition = [],
         } = item;
         let imgUrl = imgList[0]?.url;
-
         // 条件设值点位过滤
         let points = this.POICollection || [];
         if (showCondition.length) {
@@ -439,6 +460,7 @@ export default {
             label: {
               text: "为什么出不来",
               font: "20px Microsoft YaHei",
+              disableDepthTestDistance: Number.POSITIVE_INFINITY,
               // 字体颜色
               fillColor: Cesium.Color.fromCssColorString("#ffffff"),
               // 背景颜色
@@ -482,6 +504,7 @@ export default {
               width: 40,
               // 大小是否以米为单位
               sizeInMeters: false,
+              disableDepthTestDistance: Number.POSITIVE_INFINITY,
               // 相对于坐标的垂直位置
               verticalOrigin: Cesium.VerticalOrigin.CENTER,
               // 相对于坐标的水平位置
@@ -497,12 +520,16 @@ export default {
             pointIndex: index,
             data: point,
             name,
-          });
+            rectangle: {
+              zIndex: 99,
+            }
+          }
+          );
         });
+
       });
       // 记录全部的点位
       dataSource._entities = entities;
-
       // 点位聚合
       dataSource.clustering.enabled = true;
       dataSource.clustering.pixelRange = 15;
@@ -521,11 +548,11 @@ export default {
         cluster.label.style = Cesium.LabelStyle.FILL_AND_OUTLINE;
         cluster.label.outlineWidth = 2;
         cluster.label.outlineColor = Cesium.Color.WHITE;
-
+        cluster.label.backgroundColor = Cesium.Color.WHITE;
         cluster.billboard.show = true;
         cluster.billboard.width = 48;
+        cluster.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY;
         cluster.billboard.height = 72;
-
         cluster.billboard._clusteredEntities = clusteredEntities;
         // cluster.billboard.eyeOffset = new Cesium.Cartesian3(0, 0, 1)
         // cluster.billboard.image = _that.combineIconAndLabel(
@@ -534,6 +561,7 @@ export default {
         // );
         if (clusteredEntities.length >= 10) {
           cluster.billboard.image = red3d;
+          // cluster.billboard.image = 'http://mms2.baidu.com/it/u=130374937,2930950404&fm=253&app=120&f=GIF&fmt=auto&q=75?w=500&h=511';
         } else if (clusteredEntities.length >= 5) {
           cluster.billboard.image = yellow3d;
         } else {
@@ -549,7 +577,43 @@ export default {
 
       // 点击弹窗
       this.handler.setInputAction(function (event) {
-        const pickedLabel = _that.viewer.scene.pick(event.position);
+        console.log('----------->event', event.position, _that.viewer.scene.pick(event.position, 20, 20));
+        const pickedLabel = _that.viewer.scene.pick(event.position, 25, 25);
+        let pickedLabel2
+        if (pickedLabel?._content) {
+
+          let x = event.position.x
+          let y = event.position.y
+          let testData = [
+            { x: x + 15, y }, { x: x + 15, y: y + 15 },
+            { x: x + 15, y: y - 15 }, { x: x, y: y + 15 },
+            { x: x, y: y - 15 }, { x: x - 15, y: y + 15 },
+            { x: x - 15, y }, { x: x - 15, y: y - 15 },
+          ]
+          for (let index = 0; index < 8; index++) {
+            pickedLabel2 = _that.viewer.scene.pick(testData[index], 25, 25);
+            if (!pickedLabel2._content) break
+          }
+        }
+        if (Cesium.defined(pickedLabel2)) {
+          const { id, primitive: { _clusteredEntities } = {} } = pickedLabel2;
+          const ids = id || _clusteredEntities;
+          if (!ids) return;
+          let pointIndex = ids._pointIndex || 0;
+          let pointData = [{ ...ids._data, _index: 1 }];
+          if (ids.length) {
+            pointIndex = ids[0]._pointIndex || 0;
+            pointData = ids.map((item, index) => {
+              return {
+                ...item._data,
+                _index: index + 1,
+              };
+            });
+          }
+          _that.dialogPoint = _that.pointListApp[pointIndex];
+          _that.pointData = pointData;
+          _that.pointVisible = true;
+        }
         if (Cesium.defined(pickedLabel)) {
           const { id, primitive: { _clusteredEntities } = {} } = pickedLabel;
           const ids = id || _clusteredEntities;
@@ -568,8 +632,8 @@ export default {
           _that.dialogPoint = _that.pointListApp[pointIndex];
           _that.pointData = pointData;
           _that.pointVisible = true;
-          console.log("dialogPoint", _that.dialogPoint, pointIndex);
-          console.log("pointData", pointData);
+          // console.log("dialogPoint", _that.dialogPoint, pointIndex);
+          // console.log("pointData", pointData);
           // 点击放大
           // const position = _that.viewer.camera.position;
           // const cameraHeight =
@@ -580,9 +644,9 @@ export default {
           // _that.viewer.camera.moveForward(moveRate);
           // console.log("moveForward", moveRate, cameraHeight, position);
         }
+        console.log("pointData", _that.pointData);
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
-      // 地图缩放
       // this.handler.setInputAction((wheelment) => {
       //   //从Cesium中获取当前地图瓦片等级
       //   let tilesToRender = _that.viewer.scene.globe._surface._tilesToRender;
@@ -606,7 +670,11 @@ export default {
       window._viewer = this.viewer;
       window.Cesium = Cesium;
     },
-
+    //展开收起
+    handleOpen() {
+      console.log(1111111);
+      this.openBtn = !this.openBtn
+    },
     /**
      * @description: 获取当前鼠标点击位置坐标，并添加到图上显示
      * @param {*} _viewer
@@ -648,7 +716,14 @@ export default {
       this.currentPage = val;
     },
     // 图层显隐
-    checkListChange(showlist = []) {
+    checkListChange(showlist = [], e) {
+      console.log(showlist);
+      if (showlist.length == this.checkOptions.length) {
+        this.checkedVar = true
+        //  console.log();   
+      } else {
+        this.checkedVar = false
+      }
       const {
         dataSources: { _dataSources },
       } = this.viewer;
@@ -667,6 +742,17 @@ export default {
           _dataSources[0].entities.add(entity);
         });
       }
+    },
+    //全选框
+    checkListChangeAll(e, obj) {
+      if (e) {
+        this.checkList.push(...this.checkOptions)
+        this.checkListChange(this.checkOptions)
+      } else {
+        this.checkList = []
+        this.checkListChange([])
+      }
+
     },
     combineIconAndLabel(image, label) {
       // if (imgMap[label]) return imgMap[label];
@@ -700,11 +786,20 @@ export default {
 </script>
 
 <style lang="less">
+:root {
+  --color-poper: #fff;
+  --fontSize-poper: 12px;
+  --fontFamily-poper: '';
+  --background-poper: #303133;
+}
+
 .point-detail {
   background: transparent;
+
   .el-dialog__header {
     display: none;
   }
+
   .el-dialog__body {
     padding: 0;
     background: url("./images/bg.png") no-repeat;
@@ -718,6 +813,7 @@ export default {
       text-align: center;
       margin-bottom: 20px;
     }
+
 
     .el-table {
       background-color: transparent;
@@ -746,6 +842,7 @@ export default {
         td {
           height: 45px;
         }
+
         tr:hover td.el-table__cell {
           background: rgba(66, 134, 251, 0.1);
         }
@@ -762,6 +859,7 @@ export default {
       .oushu {
         background: transparent;
       }
+
       .jishu {
         background: rgba(189, 215, 240, 0.1);
       }
@@ -773,6 +871,7 @@ export default {
     }
   }
 }
+
 .pagination {
   color: #fff;
   text-align: right;
@@ -802,14 +901,41 @@ export default {
   top: 0;
   right: 0;
   z-index: 1;
-  width: 120px;
-  background: rgba(0, 0, 0, 0.3);
-  padding: 10px;
-  margin: 10px;
+
+  display: flex;
+
   .el-checkbox__label {
     color: #fff;
   }
+
+  .layers_item {
+    width: 120px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    margin: 10px;
+    margin-left: 5px;
+  }
+
+  .layers_Shou {
+    display: none;
+    width: 0px;
+    padding: 0px;
+    margin: 0px;
+  }
 }
+
+.layers_btn {
+  margin-top: 5px;
+  color: #fff;
+  width: 20px;
+  height: 68px;
+  text-align: center;
+  cursor: pointer;
+  padding: 4px;
+  margin-top: 10px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
 .check-lebel {
   width: 70px;
   display: inline-block;
@@ -818,10 +944,54 @@ export default {
   text-overflow: ellipsis;
   vertical-align: bottom;
 }
+
 .check-icon {
   width: 16px;
   height: 16px;
   margin-left: 8px;
   vertical-align: middle;
+}
+
+.el-popper[x-placement^=top] .popper__arrow {
+  border-top-color: var(--background-poper) !important;
+}
+
+.el-popper[x-placement^=top] .popper__arrow::after {
+  border-top-color: var(--background-poper) !important;
+}
+
+
+
+.el-popper[x-placement^=bottom] .popper__arrow {
+  border-bottom-color: var(--background-poper) !important;
+}
+
+.el-popper[x-placement^=bottom] .popper__arrow::after {
+  border-bottom-color: var(--background-poper) !important;
+}
+
+
+
+.test {
+  background: var(--background-poper) !important;
+  border: none;
+  min-width: none;
+
+  .toolips_font {
+    text-align: center;
+    color: var(--color-poper);
+    font-size: var(--fontSize-poper);
+    font-family: var(--fontFamily-poper);
+    overflow: auto;
+    max-height: 500px;
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  .toolips_font ::-webkit-scrollbar {
+    display: none;
+  }
 }
 </style>

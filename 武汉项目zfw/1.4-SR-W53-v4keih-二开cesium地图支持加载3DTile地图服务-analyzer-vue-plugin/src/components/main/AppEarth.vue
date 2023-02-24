@@ -1,15 +1,15 @@
 <template>
   <div class="analyzer-secondary" :style="{ width, height }" ref="analyzer-secondary" :id="id">
-    <div id="mMap" :style="{width, height}"></div>
+    <div id="mMap" :style="{ width, height }"></div>
   </div>
 </template>
 
 <script>
-  import _ from 'lodash'
-  import * as Cesium from "cesium"
-    // Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4ZTJhY2U0NC1kZmRjLTRhMDctYWFhMS05ODFjYWYzNjE0ZWMiLCJpZCI6MTIwMzgwLCJpYXQiOjE2NzI5MDQzMDh9.Co78gtu4FH8w3Qzy7noVwTad5JfwZ-lNjOcoDAiw7c0"; //这里的token是自己申请的token
-    window.CESIUM_BASE_URL = "/";
-  const { XE } = window;
+import _ from 'lodash'
+import * as Cesium from "cesium"
+// Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4ZTJhY2U0NC1kZmRjLTRhMDctYWFhMS05ODFjYWYzNjE0ZWMiLCJpZCI6MTIwMzgwLCJpYXQiOjE2NzI5MDQzMDh9.Co78gtu4FH8w3Qzy7noVwTad5JfwZ-lNjOcoDAiw7c0"; //这里的token是自己申请的token
+window.CESIUM_BASE_URL = "/";
+const { XE } = window;
 export default {
   name: "Main",
   components: {},
@@ -31,26 +31,26 @@ export default {
       pointListApp: [], // 点位配置
       serverImageryUrl: "http://10.34.4.103:8010/ServiceAdapter/MAP/EMAP_DEEPWEB/6f9c5d19634442a3accb406539ef09dc",
       POICollection: [],
-        // {
-        //   text: "武胜社区",
-        //   img: "https://img0.baidu.com/it/u=2223986897,2002289354&fm=253&fmt=auto&app=138&f=JPG?w=500&h=500",
-        //   longitude: 114.28590897394388,
-        //   latitude: 30.569480438478557
-        // },
-        // {
-        //   text: "晴川桥",
-        //   img: "https://img0.baidu.com/it/u=2223986897,2002289354&fm=253&fmt=auto&app=138&f=JPG?w=500&h=500",
-        //   longitude: 114.27893240843595,
-        //   latitude: 30.566033923596226
-        // },
-        // {
-        //   text: "南岸嘴江滩公园",
-        //   img: "https://img0.baidu.com/it/u=2223986897,2002289354&fm=253&fmt=auto&app=138&f=JPG?w=500&h=500",
-        //   longitude: 114.28279014079745,
-        //   latitude: 30.56420130806063
-        // }
-      };
-    },
+      // {
+      //   text: "武胜社区",
+      //   img: "https://img0.baidu.com/it/u=2223986897,2002289354&fm=253&fmt=auto&app=138&f=JPG?w=500&h=500",
+      //   longitude: 114.28590897394388,
+      //   latitude: 30.569480438478557
+      // },
+      // {
+      //   text: "晴川桥",
+      //   img: "https://img0.baidu.com/it/u=2223986897,2002289354&fm=253&fmt=auto&app=138&f=JPG?w=500&h=500",
+      //   longitude: 114.27893240843595,
+      //   latitude: 30.566033923596226
+      // },
+      // {
+      //   text: "南岸嘴江滩公园",
+      //   img: "https://img0.baidu.com/it/u=2223986897,2002289354&fm=253&fmt=auto&app=138&f=JPG?w=500&h=500",
+      //   longitude: 114.28279014079745,
+      //   latitude: 30.56420130806063
+      // }
+    };
+  },
   props: {
     dataSource: Object | Array,
     componentId: String,
@@ -59,7 +59,7 @@ export default {
     updateProcess: Function,
     mainInit: Function
   },
-  created() {},
+  created() { },
   mounted() {
     // this.scriptEle = document.createElement("script")
     // document.head.appendChild(this.scriptEle)
@@ -73,15 +73,14 @@ export default {
     // document.head.appendChild(this.scriptEle3)
     // this.scriptEle3.rel = "stylesheet";
     // this.scriptEle3.href = "http://earthsdk.com/v/last/XbsjCesium/Widgets/widgets.css";
-
-    setTimeout(()=>{
+    setTimeout(() => {
       const { XE } = window;
       console.log("xe", XE);
       this.mainInit(this);
       this.initComData();
       // this.initDataSource();
-      XE.ready().then(this.initComData()); 
-    },300);
+      XE.ready().then(this.initComData());
+    }, 300);
 
   },
   methods: {
@@ -129,7 +128,7 @@ export default {
     // 数据
     initDataSource() {
       let dataCopy = JSON.parse(JSON.stringify(this.dataSource));
-      let keys = dataCopy.splice(0,1)[0],
+      let keys = dataCopy.splice(0, 1)[0],
         values = dataCopy;
       this.POICollection = values.map(x => {
         let obj = {};
@@ -141,7 +140,7 @@ export default {
       // console.log('this.POICollection', this.POICollection);
     },
     //初始化地图
-    initMap(){
+    initMap() {
       // earth = new XE.Earth('earthContainer');
       this.earth = new XE.Earth('mMap', {
         // 这里设置Viewer的配置，和new Viewer(container, options)中的options一致
@@ -230,15 +229,15 @@ export default {
       // this.getClickPointAdd(this.viewer);
     },
     // 加载图层
-    async Cesium3DTilesetLoad(){
+    async Cesium3DTilesetLoad() {
       try {
-        this.providerList.forEach(x =>{
+        this.providerList.forEach(x => {
           let tileset = new Cesium.Cesium3DTileset({
             url: x.serveUrl,
             // url: "http://127.0.0.1:5501/tileset.json",
           });
           this.scene.primitives.add(tileset);
-          tileset.readyPromise.then((tileset)=> {
+          tileset.readyPromise.then((tileset) => {
             if (x.color) {
               tileset.style = new Cesium.Cesium3DTileStyle({
                 color: {
@@ -247,7 +246,7 @@ export default {
               });
             }
             console.log("加载tileset完成", tileset);
-          }).catch((error)=> {
+          }).catch((error) => {
             console.log('失败tileset', error);
           });
         })
@@ -300,7 +299,7 @@ export default {
         let imgUrl = item.imgList.length > 0 ? item.imgList[0].url : "";
         let { LongitudeKey, LatitudeKey } = item;
         // console.log('imgUrl', imgUrl);
-        this.POICollection.forEach((point)=> {
+        this.POICollection.forEach((point) => {
           // console.log("经度", point[LongitudeKey],point);
           // console.log("维度", point[LatitudeKey], point);
           this.viewer.entities.add({
@@ -368,25 +367,25 @@ export default {
      * @return {*}
      */
     getClickPointAdd(_viewer) {
-        // 注册屏幕点击事件
-        // let handler = new Cesium.ScreenSpaceEventHandler(_viewer.scene.canvas);
-        this.handler.setInputAction(function(event) {
-            // 转换为不包含地形的笛卡尔坐标
-            let clickPosition = _viewer.scene.camera.pickEllipsoid(event.position);
-            // 转经纬度（弧度）坐标
-            let radiansPos = Cesium.Cartographic.fromCartesian(clickPosition);
-            // 转角度
-            console.log("经度：" + Cesium.Math.toDegrees(radiansPos.longitude) + ", 纬度：" + Cesium.Math.toDegrees(radiansPos.latitude));
+      // 注册屏幕点击事件
+      // let handler = new Cesium.ScreenSpaceEventHandler(_viewer.scene.canvas);
+      this.handler.setInputAction(function (event) {
+        // 转换为不包含地形的笛卡尔坐标
+        let clickPosition = _viewer.scene.camera.pickEllipsoid(event.position);
+        // 转经纬度（弧度）坐标
+        let radiansPos = Cesium.Cartographic.fromCartesian(clickPosition);
+        // 转角度
+        console.log("经度：" + Cesium.Math.toDegrees(radiansPos.longitude) + ", 纬度：" + Cesium.Math.toDegrees(radiansPos.latitude));
 
-            // 添加点
-            _viewer.entities.add({
-                position: clickPosition,
-                point: {
-                    color: Cesium.Color.YELLOW,
-                    pixelSize: 30
-                }
-            })
-        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        // 添加点
+        _viewer.entities.add({
+          position: clickPosition,
+          point: {
+            color: Cesium.Color.YELLOW,
+            pixelSize: 30
+          }
+        })
+      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
     }
 
   },

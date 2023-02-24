@@ -4,47 +4,24 @@
     <div class="imageryProvider">
       <div class="imageryServe">
         <span>底图服务地址:</span>
-        <el-input
-          v-model="ServerImageryProvider"
-          type="textarea"
-          :rows="3"
-          autocomplete="off"
-          @input="inputChange"
-        ></el-input>
+        <el-input v-model="ServerImageryProvider" type="textarea" :rows="3" autocomplete="off"
+          @blur="inputChange"></el-input>
       </div>
     </div>
     <!-- 3D底图服务设置 -->
     <div class="imageryProvider">
       <div class="imageryTitle">
         <span>3D底图服务设置</span>
-        <el-button
-          type="primary"
-          size="small"
-          @click="handleClick('imageryForm')"
-          >+添加</el-button
-        >
+        <el-button type="primary" size="small" @click="handleClick('imageryForm')">+添加</el-button>
       </div>
       <div class="imageryBox">
-        <div
-          class="imageryList"
-          v-for="(imagery, index) in imageryProviderList"
-          :key="index"
-        >
+        <div class="imageryList" v-for="(imagery, index) in imageryProviderList" :key="index">
           <span class="nameTitle" :title="imagery.name">{{
             imagery.name
           }}</span>
-          <i
-            class="el-icon-edit iconClass"
-            @click="handleEdit(index, 'imageryForm')"
-          ></i>
-          <i
-            class="el-icon-copy-document iconClass"
-            @click="handleCopy(imagery, 'imageryForm')"
-          ></i>
-          <i
-            class="el-icon-delete iconClass"
-            @click="handleDel(index, 'imageryForm')"
-          ></i>
+          <i class="el-icon-edit iconClass" @click="handleEdit(index, 'imageryForm')"></i>
+          <i class="el-icon-copy-document iconClass" @click="handleCopy(imagery, 'imageryForm')"></i>
+          <i class="el-icon-delete iconClass" @click="handleDel(index, 'imageryForm')"></i>
         </div>
       </div>
     </div>
@@ -52,159 +29,107 @@
     <div class="imageryProvider">
       <div class="imageryTitle">
         <span>图层设置</span>
-        <el-button type="primary" size="small" @click="handleClick('pointForm')"
-          >+添加</el-button
-        >
+        <el-button type="primary" size="small" @click="handleClick('pointForm')">+添加</el-button>
       </div>
       <div class="imageryBox">
-        <div
-          class="imageryList"
-          v-for="(point, pointIndex) in pointList"
-          :key="pointIndex"
-        >
+        <div class="imageryList" v-for="(point, pointIndex) in pointList" :key="pointIndex">
           <span class="nameTitle" :title="point.name">{{ point.name }}</span>
-          <i
-            class="el-icon-edit iconClass"
-            @click="handleEdit(pointIndex, 'pointForm')"
-          ></i>
-          <i
-            class="el-icon-copy-document iconClass"
-            @click="handleCopy(point, 'pointForm')"
-          ></i>
-          <i
-            class="el-icon-delete iconClass"
-            @click="handleDel(pointIndex, 'pointForm')"
-          ></i>
+          <i class="el-icon-edit iconClass" @click="handleEdit(pointIndex, 'pointForm')"></i>
+          <i class="el-icon-copy-document iconClass" @click="handleCopy(point, 'pointForm')"></i>
+          <i class="el-icon-delete iconClass" @click="handleDel(pointIndex, 'pointForm')"></i>
         </div>
       </div>
     </div>
+    <!-- 详情提示列 -->
+    <div class="imageryProvider">
+      <div class="imageryServe">
+        <span>详情提示列:</span>
+        <el-input v-model="tooltips" @blur="handleTooltip"></el-input>
+      </div>
+    </div>
+    <!-- 详情样式 -->
+    <div class="imageryProvider">
+      <div class="imageryServe">
+        <span>提示框字体颜色:</span>
+        <el-input v-model="fontColor" @blur="handleStyle('fontColor')"></el-input>
+      </div>
+    </div>
+    <div class="imageryProvider">
+      <div class="imageryServe">
+        <span>提示框字体大小:</span>
+        <el-input v-model="fontSize" @blur="handleStyle('fontSize')"></el-input>
+      </div>
+    </div>
+    <div class="imageryProvider">
+      <div class="imageryServe">
+        <span>提示框字体类型:</span>
+        <el-input v-model="fontFamily" @blur="handleStyle('fontFamily')"></el-input>
+      </div>
+    </div>
+    <div class="imageryProvider">
+      <div class="imageryServe">
+        <span>提示框背景色:</span>
+        <el-input v-model="backgroundColor" @blur="handleStyle('backgroundColor')"></el-input>
+      </div>
+    </div>
     <!-- 底图弹窗 -->
-    <el-dialog
-      title="底图服务设置"
-      :visible.sync="imageryDialogVisible"
-      :append-to-body="true"
-      :rules="rules"
-      width="40%"
-    >
+    <el-dialog title="底图服务设置" :visible.sync="imageryDialogVisible" :append-to-body="true" :rules="rules" width="40%">
       <div class="dialogBody">
         <el-form :model="imageryForm" ref="imageryForm" :rules="rules">
           <el-form-item label="图层名称:" label-width="80" prop="name">
-            <el-input
-              v-model="imageryForm.name"
-              autocomplete="off"
-              clearable
-            ></el-input>
+            <el-input v-model="imageryForm.name" autocomplete="off" clearable></el-input>
           </el-form-item>
           <el-form-item label="服务地址:" label-width="80" prop="serveUrl">
-            <el-input
-              type="textarea"
-              :rows="6"
-              v-model="imageryForm.serveUrl"
-              clearable
-            ></el-input>
+            <el-input type="textarea" :rows="6" v-model="imageryForm.serveUrl" clearable></el-input>
           </el-form-item>
           <el-form-item label="模型颜色:" label-width="80" prop="color">
-            <el-input
-              type="text"
-              v-model="imageryForm.color"
-              placeholder="rgb类型"
-              clearable
-            ></el-input>
+            <el-input type="text" v-model="imageryForm.color" placeholder="rgb类型" clearable></el-input>
           </el-form-item>
         </el-form>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="resetForm('imageryForm')">取 消</el-button>
-        <el-button type="primary" @click="subBtn('imageryForm')"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="subBtn('imageryForm')">确 定</el-button>
       </div>
     </el-dialog>
     <!-- 点位弹窗 -->
-    <el-dialog
-      title="数据图层设置"
-      :visible.sync="pointVisible"
-      :append-to-body="true"
-      :rules="rules"
-      width="40%"
-    >
+    <el-dialog title="数据图层设置" :visible.sync="pointVisible" :append-to-body="true" :rules="rules" width="40%">
       <div class="dialogBody">
         <el-form :model="pointForm" ref="pointForm" :rules="rules">
           <el-form-item label="图层名称:" label-width="80" prop="name">
-            <el-input
-              v-model="pointForm.name"
-              autocomplete="off"
-              clearable
-            ></el-input>
+            <el-input v-model="pointForm.name" autocomplete="off" clearable></el-input>
           </el-form-item>
           <el-form-item label="经度:" label-width="80" prop="LongitudeKey">
-            <el-select
-              style="width: 100%"
-              v-model="pointForm.LongitudeKey"
-              placeholder="请选择经度"
-            >
-              <el-option
-                v-for="(item, ins) in selectKey"
-                :key="ins"
-                :label="item.column"
-                :value="item.column"
-                >{{ item.column }}</el-option
-              >
+            <el-select style="width: 100%" v-model="pointForm.LongitudeKey" placeholder="请选择经度">
+              <el-option v-for="(item, ins) in selectKey" :key="ins" :label="item.column" :value="item.column">{{
+                item.column
+              }}</el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="维度:" label-width="80" prop="LatitudeKey">
-            <el-select
-              style="width: 100%"
-              v-model="pointForm.LatitudeKey"
-              placeholder="请选择维度"
-            >
-              <el-option
-                v-for="(items, inse) in selectKey"
-                :key="inse"
-                :label="items.column"
-                :value="items.column"
-                >{{ items.column }}</el-option
-              >
+            <el-select style="width: 100%" v-model="pointForm.LatitudeKey" placeholder="请选择维度">
+              <el-option v-for="(items, inse) in selectKey" :key="inse" :label="items.column" :value="items.column">{{
+                items.column
+              }}</el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="图形符号:" label-width="80">
-            <el-upload
-              class="upload-demo"
-              action="/sdata/rest/image/upload"
-              :on-success="successHan"
-              :on-remove="removeHan"
-              :multiple="false"
-              :limit="1"
-              :file-list="imgList"
-            >
+            <el-upload class="upload-demo" action="/sdata/rest/image/upload" :on-success="successHan"
+              :on-remove="removeHan" :multiple="false" :limit="1" :file-list="imgList">
               <el-button size="small" type="primary">点击上传</el-button>
               <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
             </el-upload>
           </el-form-item>
 
           <el-form-item label="条件设置:" label-width="80" prop="showCondition">
-            <el-row
-              v-for="(item, index) in pointForm.showCondition"
-              :key="index"
-              :gutter="10"
-              :style="{
-                display: 'inline-block',
-                width: '100%',
-              }"
-            >
+            <el-row v-for="(item, index) in pointForm.showCondition" :key="index" :gutter="10" :style="{
+              display: 'inline-block',
+              width: '100%',
+            }">
               <el-col :span="8">
-                <el-select
-                  style="width: 100%"
-                  v-model="item.column"
-                  placeholder="请选择字段"
-                >
-                  <el-option
-                    v-for="(items, inse) in selectKey"
-                    :key="inse"
-                    :label="items.column"
-                    :value="items.column"
-                    >{{ items.column }}</el-option
-                  >
+                <el-select style="width: 100%" v-model="item.column" placeholder="请选择字段">
+                  <el-option v-for="(items, inse) in selectKey" :key="inse" :label="items.column"
+                    :value="items.column">{{ items.column }}</el-option>
                 </el-select>
               </el-col>
               <el-col :span="4">
@@ -216,101 +141,47 @@
                 <el-input v-model="item.value" placeholder="固定值" clearable />
               </el-col>
               <el-col :span="4">
-                <i
-                  class="el-icon-delete"
-                  :style="{ cursor: 'pointer' }"
-                  @click="
-                    modalTableColumnChange('DELETE', index, 'showCondition')
-                  "
-                ></i>
+                <i class="el-icon-delete" :style="{ cursor: 'pointer' }" @click="
+                  modalTableColumnChange('DELETE', index, 'showCondition')
+                "></i>
               </el-col>
             </el-row>
-            <el-button
-              :style="{ width: '100%' }"
-              @click="modalTableColumnChange('ADD', '', 'showCondition')"
-              >添加</el-button
-            >
+            <el-button :style="{ width: '100%' }"
+              @click="modalTableColumnChange('ADD', '', 'showCondition')">添加</el-button>
           </el-form-item>
           <el-row :gutter="10">
             <el-col :span="12">
               <el-form-item label="宽度:" label-width="80" prop="modalWidth">
-                <el-input
-                  v-model="pointForm.modalWidth"
-                  autocomplete="off"
-                  clearable
-                ></el-input> </el-form-item
-            ></el-col>
+                <el-input v-model="pointForm.modalWidth" autocomplete="off" clearable></el-input>
+              </el-form-item></el-col>
             <el-col :span="12">
               <el-form-item label="高度:" label-width="80" prop="modalHeight">
-                <el-input
-                  v-model="pointForm.modalHeight"
-                  autocomplete="off"
-                  clearable
-                ></el-input> </el-form-item
-            ></el-col>
+                <el-input v-model="pointForm.modalHeight" autocomplete="off" clearable></el-input>
+              </el-form-item></el-col>
           </el-row>
-          <el-form-item
-            label="弹窗列表标题:"
-            label-width="80"
-            prop="modalTitle"
-          >
-            <el-input
-              v-model="pointForm.modalTitle"
-              autocomplete="off"
-              clearable
-            ></el-input>
+          <el-form-item label="弹窗列表标题:" label-width="80" prop="modalTitle">
+            <el-input v-model="pointForm.modalTitle" autocomplete="off" clearable></el-input>
           </el-form-item>
-          <el-form-item
-            label="弹窗列表字段:"
-            label-width="80"
-            prop="modalTableColumn"
-          >
-            <el-row
-              v-for="(item, index) in pointForm.modalTableColumn"
-              :key="index"
-              :gutter="10"
-              :style="{
-                display: 'inline-block',
-                width: '100%',
-              }"
-            >
+          <el-form-item label="弹窗列表字段:" label-width="80" prop="modalTableColumn">
+            <el-row v-for="(item, index) in pointForm.modalTableColumn" :key="index" :gutter="10" :style="{
+              display: 'inline-block',
+              width: '100%',
+            }">
               <el-col :span="10">
-                <el-select
-                  style="width: 100%"
-                  v-model="item.column"
-                  placeholder="请选择字段"
-                >
-                  <el-option
-                    v-for="(items, inse) in selectKey"
-                    :key="inse"
-                    :label="items.column"
-                    :value="items.column"
-                    >{{ items.column }}</el-option
-                  >
+                <el-select style="width: 100%" v-model="item.column" placeholder="请选择字段">
+                  <el-option v-for="(items, inse) in selectKey" :key="inse" :label="items.column"
+                    :value="items.column">{{ items.column }}</el-option>
                 </el-select>
               </el-col>
               <el-col :span="10">
-                <el-input-number
-                  v-model="item.width"
-                  autocomplete="off"
-                  clearable
-                  :style="{ width: '100%' }"
-                  :min="0"
-                ></el-input-number
-              ></el-col>
+                <el-input-number v-model="item.width" autocomplete="off" clearable :style="{ width: '100%' }"
+                  :min="0"></el-input-number></el-col>
               <el-col :span="4">
-                <i
-                  class="el-icon-delete"
-                  :style="{ cursor: 'pointer' }"
-                  @click="modalTableColumnChange('DELETE', index)"
-                ></i>
+                <i class="el-icon-delete" :style="{ cursor: 'pointer' }"
+                  @click="modalTableColumnChange('DELETE', index)"></i>
               </el-col>
             </el-row>
-            <el-button
-              :style="{ width: '100%' }"
-              @click="modalTableColumnChange('ADD')"
-              >添加</el-button
-            >
+            <el-button :style="{ width: '100%' }" @click="modalTableColumnChange('ADD')">添加</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -373,6 +244,11 @@ export default {
         serveUrl: "",
         color: "",
       },
+      tooltips: '',
+      fontColor: '',
+      fontSize: '',
+      fontFamily: '',
+      backgroundColor: '',
       imgList: [],
       backgroundList: [],
       pointForm: {
@@ -413,6 +289,11 @@ export default {
       this.pointList = this.customConfig?.pointList
         ? _.cloneDeep(this.customConfig?.pointList)
         : [];
+      this.tooltips = this.customConfig?.tooltips ? this.customConfig?.tooltips.join() : ''
+      this.fontColor = this.customConfig?.fontColor ? this.customConfig?.fontColor : 'white'
+      this.fontSize = this.customConfig?.fontSize ? this.customConfig?.fontSize : '12px'
+      this.fontFamily = this.customConfig?.fontFamily ? this.customConfig?.fontFamily : '宋体'
+      this.backgroundColor = this.customConfig?.backgroundColor ? this.customConfig?.backgroundColor : 'black'
     } catch (error) {
       this.ServerImageryProvider = this.customConfig?.ServerImageryProvider
         ? this.customConfig?.ServerImageryProvider
@@ -423,6 +304,11 @@ export default {
       this.pointList = this.customConfig?.pointList
         ? _.cloneDeep(this.customConfig?.pointList)
         : [];
+      this.tooltips = this.customConfig?.tooltips ? this.customConfig?.tooltips.join() : ''
+      this.fontColor = this.customConfig?.fontColor ? this.customConfig?.fontColor : 'white'
+      this.fontSize = this.customConfig?.fontSize ? this.customConfig?.fontSize : '12px'
+      this.fontFamily = this.customConfig?.fontFamily ? this.customConfig?.fontFamily : '宋体'
+      this.backgroundColor = this.customConfig?.backgroundColor ? this.customConfig?.backgroundColor : 'black'
     }
     this.initSelectKeys();
   },
@@ -448,6 +334,18 @@ export default {
       );
       this.changeCustomConfig(this.customConfig);
       // console.log(this.customConfig);
+    },
+    //详情指定详情列
+    handleTooltip() {
+      this.customConfig.tooltips = JSON.parse(
+        JSON.stringify(this.tooltips?.split(',') || [])
+      );
+      this.changeCustomConfig(this.customConfig);
+    },
+    //字体颜色修改
+    handleStyle(key) {
+      this.customConfig[key] = this[key]
+      this.changeCustomConfig(this.customConfig);
     },
     // 添加图层
     handleClick(formName) {

@@ -1,0 +1,20 @@
+{
+  "id": "f19729fc-a1bf-41a1-8ac6-747ee69dd9db",
+  "type": "app",
+  "main": "app.c3d3886f.js",
+  "version": "2",
+  "props": {
+    "type": "customize",
+    "img": "APP_0001.png",
+    "name": "应用二开_vue",
+    "loadStyle": 0,
+    "lib": [],
+    "css_script": [],
+    "customconf": [
+      "id"
+    ]
+  },
+  "configuration": true,
+  "requirement-number": "SR-W6-4xAOS5",
+  "requirement-name": "组织详情页头部"
+}

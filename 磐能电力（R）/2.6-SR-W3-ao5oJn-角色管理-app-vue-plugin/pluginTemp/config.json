@@ -1,0 +1,20 @@
+{
+  "id": "e1cb22b8-3298-459f-a4b8-59fe7077557b",
+  "type": "app",
+  "main": "app.6e8401c5.js",
+  "version": "2",
+  "configuration": true,
+  "props": {
+    "type": "customize",
+    "img": "APP_0001.png",
+    "name": "dsadq",
+    "loadStyle": 0,
+    "lib": [],
+    "css_script": [],
+    "customconf": [
+      "id"
+    ]
+  },
+  "requirement-number": "SR-W3-ao5oJn",
+  "requirement-name": "角色管理模块"
+}

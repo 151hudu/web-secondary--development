@@ -1,7 +1,7 @@
 <template>
   <div :id="id" ref="canvas-secondary" class="canvas-secondary">
     <div class="block" @click="goMap">
-      <img src="../../../pluginTemp/images/position.png" alt="" width="36px" />
+      <img src="../../../pluginTemp/images/position.png" alt="" :width="this.configuration?.form?.iconSize || '36px'" />
     </div>
   </div>
 </template>
@@ -57,13 +57,13 @@ export default {
       window.wx.error((res) => {});
     },
     goMap() {
-          window.wx.openLocation({
-            latitude: Number(this.valuePosition?.split(",")[0]),
-            longitude: Number(this.valuePosition?.split(",")[1]),
-            success(res) {},
-            fail(error) {},
-          });
-        },
+      window.wx.openLocation({
+        latitude: Number(this.valuePosition?.split(",")[0]),
+        longitude: Number(this.valuePosition?.split(",")[1]),
+        success(res) {},
+        fail(error) {},
+      });
+    },
     /**
      * 封装的触发事件方法 必需，不可删除
      * @param {String} eventName 事件名

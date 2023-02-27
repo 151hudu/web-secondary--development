@@ -1,7 +1,7 @@
 <template>
   <div :id="id" ref="canvas-secondary" class="canvas-secondary">
     <div class="block" @click="goPhone">
-      <img src="../../../pluginTemp/images/phone.png" alt="" width="36px" />
+      <img src="../../../pluginTemp/images/phone.png" alt=""  :width="this.configuration?.form?.iconSize || '36px'" />
     </div>
   </div>
 </template>

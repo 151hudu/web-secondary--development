@@ -174,12 +174,13 @@ export const themeInfo = {
 export const customConfig = {
   componentId: "123",
   appId: "123",
-  assetId: '233f6b6f-fca6-4a73-9dad-f5577edf46e6',
+  // assetId: '233f6b6f-fca6-4a73-9dad-f5577edf46e6',
+  assetId: '928d9b0f-e1d7-9dce-ed2d-668f09202551',
   speedTime: '3', height: '500px',
   detailsUrl: 'dsdd',
   keyField: 'data_id',
   imgField: 'Urlddd',
-  sidebar: 'bottom',
+  sidebar: '',
   titleField: 'title111',
   buttons: JSON.stringify({
     defaultValue: "战勤部",

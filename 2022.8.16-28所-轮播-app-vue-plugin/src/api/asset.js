@@ -11,5 +11,7 @@ export const queryAssetById = id =>
  * 无鉴权查询资产
  * @param id 资产ID
  */
-export const queryFAssetById = id =>
-  request.post(`/form/getAssetData?asset_id=${id}`, []);
+// export const queryFAssetById = id =>
+//   request.post(`/form/getAssetData?asset_id=${id}`, { filters: [] });
+export const queryFAssetById = (id, tokenType = []) =>
+  request.post(`/form/getAssetData?asset_id=${id}`, tokenType);

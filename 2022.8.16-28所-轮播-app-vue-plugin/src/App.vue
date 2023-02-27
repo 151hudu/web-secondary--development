@@ -66,7 +66,7 @@
 
 <script>
 import eventActionDefine from "./components/msgCompConfig";
-import { queryAssetById } from './api/asset'
+import { queryAssetById, queryFAssetById } from './api/asset'
 
 // import $ from "jquery"
 
@@ -162,6 +162,10 @@ export default {
     heightF() {
       let temp = this.customConfig?.height
       return temp
+    },
+    tokenType() {
+      let temp = this.customConfig?.tokenType ? {} : []
+      return temp
     }
   },
   data() {
@@ -191,7 +195,7 @@ export default {
     }
   },
   created() {
-    queryAssetById(this.assetId).then(res => {
+    queryFAssetById(this.assetId, this.tokenType).then(res => {
       let a = this.Processing(res.data)
       this.jqReports = JSON.parse(JSON.stringify(a))
       this.jqReports.forEach(x => {

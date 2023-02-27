@@ -60,7 +60,7 @@ export default {
   .textBox {
     overflow: hidden;
     .textContent {
-      font-size: 14px;
+      font-size: 16px;
       font-family: PingFangSC-Regular, PingFang SC;
       font-weight: 400;
       color: #333333;

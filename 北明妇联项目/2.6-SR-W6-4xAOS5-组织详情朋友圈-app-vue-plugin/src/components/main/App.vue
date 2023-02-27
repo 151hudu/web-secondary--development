@@ -29,7 +29,7 @@
               </div>
               <div class="handelbar">
                 <img class="handekImg" src="../../../pluginTemp/images/pinglun.png" alt="">
-                <span @click="pinglunHandel(item.data_id, '')">评论&nbsp;&nbsp;({{ item.replynum }})</span>
+                <span @click="pinglunHandel(item.data_id, '','')">评论&nbsp;&nbsp;({{ item.replynum }})</span>
               </div>
             </div>
             <div class="bottomBox">
@@ -37,7 +37,7 @@
                 <img class="likeImg" src="../../../pluginTemp/images/beLike.png" alt="">
                 <span class="likePeoName" v-for="peo,peoind in item.likeList" :key="peo.data_id">{{ peo.like_people_name }}{{ peoind !== item.likeList.length - 1 ? '、' : '' }}</span>
               </div>
-              <div v-show="item.replynum > 0" class="commentBox">
+              <div v-show="item.replyList != null && item.replyList.length > 0" class="commentBox">
                 <div v-for="rep in item.replyList" :key="rep.data_id" class="conmentItem" @click="pinglunHandelFun(rep, item.data_id)">
                   <span class="commPeo">{{ rep.reply_people_name }}</span>
                   <span v-if="rep.reply_body_name">回复</span>
@@ -50,9 +50,9 @@
         </div>
       </van-list>
     </div>
-    <van-popup v-model="isPingLun" position="bottom">
-      <div class="fieldBox">
-        <van-field v-model="pingLunMessage" rows="1" maxlength="200" autosize type="textarea" placeholder="" />
+    <van-popup v-model="isPingLun" position="bottom" safe-area-inset-bottom @close="isPingLunClose">
+      <div ref="textareaPopup" class="fieldBox" v-if="isPingLun" :key="this.isActiveId">
+        <van-field v-model="pingLunMessage" maxlength="200" :autosize='{maxHeight: 120, minHeight: 100 }' :border="true" type="textarea" placeholder="" />
         <van-button class="fabuBtn" round size="mini" type="default" @click="addPingLun">发布</van-button>
       </div>
     </van-popup>
@@ -67,9 +67,11 @@
 <script>
 import Vue from 'vue';
 import moment from 'moment';
-import { List, Popup, Button, Field } from 'vant';
+import { List, Popup, Button, Field, Dialog } from 'vant';
+// import { Input } from 'element-ui';
 import PublishCom from "./publishCon.vue"
-// import oneImg from "../../../pluginTemp/images/adminIcon.png";
+import _ from 'lodash'
+// import Vconsole from 'vconsole';
 
 import { 
   isLogin,
@@ -91,6 +93,7 @@ Vue.use(List);
 Vue.use(Popup);
 Vue.use(Button);
 Vue.use(Field);
+Vue.use(Dialog);
 
 const getQueryString = name => {
   const reg = new RegExp(name + "=([^&]*)(&|$)", "i");
@@ -113,7 +116,8 @@ export default {
     //2022.10新加，之前取不到国际化方法
     intlGetKey: Function,
     history: Object,
-    mainInit: Function
+    mainInit: Function,
+    pageAnonymous: Number
   },
   computed: {},
   data() {
@@ -121,99 +125,25 @@ export default {
       //必需，不可删除
       id: "",
       adminInfo: {},
-      adminInfoId: {},
-      moment, 
+      adminInfoId: "",
+      moment,
       isPingLun: false, // 评论弹窗
       isDelPingLun: false,
       isDelPingLunId: "",
       pingLunMessage: "",  // 评论内容
       isActiveId: "", // 评论ID
-      isPingLunBody: "",
+      isPingLunBodyName: "",
+      isPingLunBodyId: "",
       pageSize: 10,
       pageNum: 1,
       loading: false,
       finished: false,
-      activityList: [
-        // {
-        //   data_id: "001",
-        //   microhome_name: "四季微春家",
-        //   creation_time: new Date(),
-        //   publish_content: "<p>9月22日，千秋镇开展了“强国复兴有我-绿色阅读 放飞梦想”护苗2022绿书签宣传进校园。黄沙港镇洋中村党总支组织志愿者开展了“迎佳节 送温暖”活动，送上党的关怀与温暖。</p><p>新安村开展“庆元宵，送温暖”活动，邀请村民、孩子们一起一起体验节日魅力。</p>",
-        //   publish_image: [{ url: oneImg }],
-        //   currentuser_status: "0",
-        //   likenum: 3,
-        //   likeList: [
-        //     {
-        //       data_id: "001",
-        //       like_people_name: "奥妈",
-        //       creation_time: new Date(),
-        //     },
-        //     {
-        //       data_id: "002",
-        //       like_people_name: "雨后的彩虹",
-        //       creation_time: new Date(),
-        //     },
-        //     {
-        //       data_id: "003",
-        //       like_people_name: "sixianjiang",
-        //       creation_time: new Date(),
-        //     },
-        //     {
-        //       data_id: "004",
-        //       like_people_name: "绿色阅读",
-        //       creation_time: new Date(),
-        //     },
-        //     {
-        //       data_id: "005",
-        //       like_people_name: "千秋镇",
-        //       creation_time: new Date(),
-        //     },
-        //     {
-        //       data_id: "006",
-        //       like_people_name: "黄沙港",
-        //       creation_time: new Date(),
-        //     },
-        //     {
-        //       data_id: "007",
-        //       like_people_name: "迎佳节",
-        //       creation_time: new Date(),
-        //     },
-        //     {
-        //       data_id: "008",
-        //       like_people_name: "送温暖",
-        //       creation_time: new Date(),
-        //     }
-        //   ],
-        //   replynum: 10,
-        //   replyList: [
-        //     {
-        //       data_id: "001",
-        //       reply_people_name: "奥妈",
-        //       reply_body_name: "雨后的彩虹",
-        //       creation_time: new Date(),
-        //       publish_content: "感谢群众的支持，以 后我们会做的更好，更好服务群众。"
-        //     },
-        //     {
-        //       data_id: "002",
-        //       reply_people_name: "雨后的彩虹",
-        //       reply_body_name: "雨后的彩虹",
-        //       creation_time: new Date(),
-        //       publish_content: "感谢群众的支持，以 后我们会做的更好，更好服务群众。"
-        //     },
-        //     {
-        //       data_id: "003",
-        //       reply_people_name: "千秋镇",
-        //       reply_body_name: "",
-        //       creation_time: new Date(),
-        //       publish_content: "感谢群众的支持，以 后我们会做的更好，更好服务群众。"
-        //     }
-        //   ]
-        // }
-      ],
+      activityList: [],
       paramsList: []
     };
   },
   mounted() {
+    // new Vconsole();
     //此方法封装了事件注册，不可删除
     this.mainInit(this);
     this.queryUserInfo();
@@ -237,6 +167,13 @@ export default {
     //必需，不可删除
     Event_Center_getName() {
       return this.id;
+    },
+    // 跳转小程序登录页
+    toLogin() {
+      let appId = '9b7b76e8-3099-aa84-305c-7a7a456f287b';
+      let { pathname, search } = window.location;
+      let  pageUrl = encodeURIComponent(pathname + search) + `${search == "" ? '?' : '&'}appId=${appId}`;
+      wx.miniProgram.redirectTo({ url: `../login/login?redirect_url=${pageUrl}` })
     },
     // 获取用户信息
     queryUserInfo() {
@@ -266,30 +203,6 @@ export default {
       this.paramsList.forEach(x=>{
         params[x] = getQueryString(x);
       })
-      this.loading = true;
-      // 活动总条数
-      // queryActiveLength({ data_id: params['officeid'] }).then(res=>{
-      //   let { dynamic_num } = res.data[0];
-      //   this.loading = true;
-      //   queryActiveInfo(params).then(info => {
-      //     let { data } = info
-      //     if (data) {
-      //       data.forEach(x=>{
-      //         x.publish_image = JSON.parse(x.publish_image);
-      //       })
-      //       // this.activityList = this.activityList.concat(data);
-      //       this.loading = true;
-      //       this.activityList = data;
-      //       // 数据全部加载完成
-      //       if (this.activityList.length > dynamic_num) {
-      //         this.finished = true;
-      //       }
-      //       this.loading = false;
-      //     }
-      //   })
-      // }).catch(err=>{
-      //   console.log(err);
-      // })
       queryActiveInfo(params).then(info => {
         let { data } = info
         if (data) {
@@ -308,48 +221,68 @@ export default {
           }
         }
       }).catch(err=>{
+        this.loading = false;
         console.log(err);
       })
     },
     // 点赞如表
-    likeAddHandel(val,index) {
-      console.log('val', val);
-      let params = {
-        data_id: val.data_id,
-        user_id: this.adminInfoId
-      }
-      if (val.currentuser_status == 0) {
-        queryDianZanData(params).then(res=>{
-          console.log("点赞", res);
-          if (res.status == 200) {
-            this.activityList[index].currentuser_status = 1;
-            this.activityList[index].likenum = this.activityList[index].likenum + 1;
-            let obj = {
-              like_people: this.adminInfoId,
-              like_people_name: this.adminInfo.name
-            }
-            this.activityList[index].likeList.push(obj);
-          }
+    likeAddHandel: _.throttle(function(val,index) {
+      if (this.adminInfoId == "") {
+        Dialog.confirm({
+          title: '请先登录',
+          message: '点击确认跳转登录页',
+        }).then(() => {
+          this.toLogin();
+        }).catch(() => {
         });
-        this.likeAdd(params.data_id);
-      }else {
-        queryDelDianZanData(params).then(res => {
-          console.log("取消点赞", res);
-          if (res.status == 200) {
-            this.activityList[index].currentuser_status = 0;
-            this.activityList[index].likenum = this.activityList[index].likenum - 1;
-            let list = this.activityList[index].likeList;
-            list.forEach((x,inx)=>{
-              if (x['like_people'] == this.adminInfoId) {
-                list.splice(inx,1)
+      } else {
+        console.log('val', val);
+        let params = {
+          data_id: val.data_id,
+          user_id: this.adminInfoId
+        }
+        if (val.currentuser_status == 0) {
+          queryDianZanData(params).then(res=>{
+            console.log("点赞", res);
+            if (res.status == 200) {
+              this.activityList[index].currentuser_status = 1;
+              if (this.activityList[index].likenum) {
+                this.activityList[index].likenum = this.activityList[index].likenum + 1;
+              }else {
+                this.activityList[index].likenum = 1;
               }
-            });
-            this.activityList[index].likeList = list;
-          }
-        });
-        this.likeDel(params.data_id);
+              let obj = {
+                like_people: this.adminInfoId,
+                like_people_name: this.adminInfo.name
+              }
+              this.activityList[index].likeList.push(obj);
+            }
+          });
+          this.likeAdd(params.data_id);
+        }else {
+          queryDelDianZanData(params).then(res => {
+            console.log("取消点赞", res);
+            if (res.status == 200) {
+              this.activityList[index].currentuser_status = 0;
+              if (this.activityList[index].likenum) {
+                if (this.activityList[index].likenum == 0) return;
+                this.activityList[index].likenum = this.activityList[index].likenum - 1;
+              } else {
+                this.activityList[index].likenum = 0;
+              }
+              let list = this.activityList[index].likeList;
+              list.forEach((x,inx)=>{
+                if (x['like_people'] == this.adminInfoId) {
+                  list.splice(inx,1)
+                }
+              });
+              this.activityList[index].likeList = list;
+            }
+          });
+          this.likeDel(params.data_id);
+        }
       }
-    },
+    }, 1000),
     // 点赞+1
     async likeAdd(val) {
       await queryAddDianZan({ data_id: val})
@@ -359,36 +292,63 @@ export default {
       await queryDelDianZan({ data_id: val })
     },
     // 评论
-    pinglunHandel(id,body) {
-      this.isPingLun = true;
-      this.isActiveId = id;
-      this.isPingLunBody = body;
+    pinglunHandel(id,bodyName, bodyId) {
+      if (this.adminInfoId == "") {
+        Dialog.confirm({
+          title: '请先登录',
+          message: '点击确认跳转登录页',
+        }).then(() => {
+          this.toLogin();
+        }).catch(() => {
+        });
+      } else {
+        this.isPingLun = true;
+        this.isActiveId = id;
+        this.isPingLunBodyName = bodyName;
+        this.isPingLunBodyId = bodyId;
+      }
     },
     // 点击评论
     pinglunHandelFun(val,id) {
-      console.log(val);
-      if (val.reply_people == this.adminInfoId) {
-        this.isDelPingLun = true;
-        this.isDelPingLunId = val.data_id;
-        this.isActiveId = id;
-      }else {
-        console.log('1111111111');
-        this.pinglunHandel(id, val.reply_body);
+      // console.log(val);
+      if (this.adminInfoId == "") {
+        Dialog.confirm({
+          title: '请先登录',
+          message: '点击确认跳转登录页',
+        }).then(() => {
+          this.toLogin();
+        }).catch(() => {
+        });
+      } else {
+        if (val.reply_people == this.adminInfoId) {
+          this.isDelPingLun = true;
+          this.isDelPingLunId = val.data_id;
+          this.isActiveId = id;
+        } else {
+          // console.log('val', val);
+          this.pinglunHandel(id, val.reply_people_name, val.reply_people);
+        }
       }
     },
     // 评论入表
     addPingLun(){
       let params = {
-        reply_body: this.isPingLunBody,
+        reply_body_name: this.isPingLunBodyName,
+        reply_body: this.isPingLunBodyId,
         content: this.pingLunMessage,
         data_id: this.isActiveId,
         user_id: this.adminInfoId,
       }
       queryPingData(params).then( res =>{
-        console.log("插入评论",res);
+        // console.log("插入评论",res);
         if (res.status == 200) {
           queryAddPing({ data_id: this.isActiveId });
           this.queryPingLunDataFun();
+          this.activityList.forEach(x=>{
+            if (x.data_id == this.isActiveId) {
+              x.replynum = x.replynum + 1;
+            }
+          })
           this.isPingLun = false;
           this.pingLunMessage = "";
         }
@@ -396,14 +356,17 @@ export default {
         console.log(err);
       })
     },
+    isPingLunClose(){
+      this.$refs.textareaPopup = null;
+      // console.log('this.$refs.textareaPopup', this.$refs)
+    },
     // 单个活动评论数量
     queryPingLunDataFun(){
       queryPingLunData({ data_id: this.isActiveId }).then(res=>{
-        console.log("looklook",res);
-        let {data} = res;
-        this.activityList.forEach(x=>{
-          if (x == this.isActiveId) {
-            this.activityList.replyList = data;
+        let { data } = res;
+        this.activityList.forEach((x,index)=>{
+          if (x.data_id == this.isActiveId) {
+            this.activityList[index].replyList = data;
           }
         })
         this.isActiveId = "";
@@ -412,15 +375,30 @@ export default {
     },
     // 删除
     delPingLun(){
-      queryDelPingData({ data_id: this.isDelPingLunId }).then(res=>{
-        if (res.status == 200) {
-          this.isDelPingLun = false;
-          this.queryPingLunDataFun();
-          queryDelPing({ data_id: this.isDelPingLunId });
-        }
-      }).catch(err=>{
-        console.log(err);
-      })
+      if (this.adminInfoId == "") {
+        Dialog.confirm({
+          title: '请先登录',
+          message: '点击确认跳转登录页',
+        }).then(() => {
+          this.toLogin();
+        }).catch(() => {
+        });
+      } else {
+        queryDelPingData({ data_id: this.isDelPingLunId }).then(res=>{
+          if (res.status == 200) {
+            queryDelPing({ data_id: this.isActiveId });
+            this.queryPingLunDataFun();
+            this.activityList.forEach(x => {
+              if (x.data_id == this.isActiveId) {
+                x.replynum = x.replynum - 1;
+              }
+            })
+            this.isDelPingLun = false;
+          }
+        }).catch(err=>{
+          console.log(err);
+        })
+      }
     }
   },
   beforeDestroy() {
@@ -439,8 +417,9 @@ export default {
   .listBox {
     padding: 10px;
     width: 100%;
-    height: 100%;
-    flex: 1;
+    // height: 100%;
+    height: 100vh;
+    // flex: 1;
     overflow-y: scroll;
     &::-webkit-scrollbar {
       width: 0;
@@ -463,14 +442,14 @@ export default {
         width: calc(100% - 68px);
         .cardTitle-right {
           display: flex;
-          height: 38px;
-          line-height: 38px;
+          height: 40px;
+          line-height: 40px;
           flex-direction: column;
           .card-name {
             height: 20px;
-            font-size: 14px;
+            font-size: 16px;
             font-family: PingFangSC-Medium, PingFang SC;
-            font-weight: 500;
+            font-weight: 600;
             color: #333333;
             line-height: 20px;
           }
@@ -486,9 +465,9 @@ export default {
         .cardContent {
           margin-top: 10px;
           .textContent {
-            font-size: 14px;
+            font-size: 16px;
             font-family: PingFangSC-Regular, PingFang SC;
-            font-weight: 400;
+            font-weight: 500;
             color: #333333;
             line-height: 20px;
             overflow: hidden;
@@ -581,7 +560,7 @@ export default {
             }
           }
           .commentBox {
-            padding: 8px;
+            padding: 0 8px 4px 8px;
             .conmentItem {
               margin-top: 5px;
               font-size: 14px;
@@ -603,7 +582,6 @@ export default {
     }
   }
   /deep/.van-popup {
-    min-height: 40px;
     .fieldBox {
       display: flex;
       align-items: flex-end;
@@ -611,9 +589,9 @@ export default {
         text-align: left !important;
       }
       .fabuBtn {
-        margin-bottom: 10px;
+        margin-bottom: 16px;
         width: 72px;
-        height: 24px;
+        height: 26px;
         background: #BBBBBB;
         color: #FFFFFF;
       }

@@ -16,12 +16,13 @@
 
 <script>
 import { Carousel, CarouselItem, Tree, Input, Button, Table, TableColumn, Pagination, Card } from "element-ui";
+import { Dialog } from 'vant';
 import Vue from "vue";
 import { Main, DesignConfiguration } from "@/components";
 import Options from "./Options.vue";
 import { mockCustomConfig, mockChangeCustomConfig } from "./mockData.js";
 import Utils from "@/utils";
-
+import 'vant/lib/index.css';
 Vue.use(Carousel);
 Vue.use(CarouselItem);
 Vue.use(Tree);
@@ -31,6 +32,7 @@ Vue.use(Table);
 Vue.use(TableColumn);
 Vue.use(Pagination);
 Vue.use(Card);
+Vue.use(Dialog);
 export default {
   name: "Development",
   components: {

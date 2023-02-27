@@ -25,6 +25,7 @@
     "less": "^4.1.3",
     "less-loader": "^5.0.0",
     "querystringify": "^2.2.0",
+    "vant": "latest-v2",
     "vue": "^2.7.8"
   },
   "devDependencies": {

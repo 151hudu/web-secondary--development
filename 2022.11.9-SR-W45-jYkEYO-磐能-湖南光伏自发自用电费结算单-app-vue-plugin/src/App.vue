@@ -1,6 +1,6 @@
 <template>
   <!-- 定义外层容器标识，宽高百分百 不可删除 -->
-  <div :id="identification" style="width: 100%; height: 100%; background-color: #fff" :ref="identification" v-loading="loading" element-loading-text="正在生成PDF">
+  <div :id="identification" style="width: 100%; height: 100%; background-color: #fff" :ref="identification" v-loading="loading" :element-loading-text="loadingText">
     <div class="headerTab" v-show="isSaveTable">
       <div class="tabLeft" :class="{ active: activeShow }" @click="switchActive(true)">账单明细</div>
       <div class="tabRight" :class="{ active: !activeShow }" @click="switchActive(false)">表码明细</div>
@@ -55,13 +55,21 @@
         </div>
       </div>
       <div class="topTable" v-show="activeShow">
-        <el-table :data="tableData.t_monthly_bill_list" border :header-cell-style="headerCellStyle" :cell-style="cellStyle">
+        <el-table
+          :data="tableData.t_monthly_bill_list"
+          border
+          :header-cell-style="headerCellStyle"
+          :cell-style="cellStyle"
+          :key="xxxx"
+          :span-method="arraySpanMethod"
+          :row-class-name="tableRowClassName"
+        >
           <el-table-column prop="data_type" label="名称" width="310" />
           <el-table-column prop="data_value_j" label="“尖”" width="310" :formatter="data_value_jCount" />
           <el-table-column prop="data_value_f" label="“峰”" width="310" :formatter="data_value_fCount" />
           <el-table-column prop="data_value_p" label="“平”" width="310" :formatter="data_value_pCount" />
           <el-table-column prop="data_value_g" label="“谷”" width="310" :formatter="data_value_gCount" />
-          <el-table-column prop="data_value_all" label="合计" :formatter="data_value_allCount" />
+          <el-table-column prop="data_value_all" label="合计" :width="323 + addWidth2" :formatter="data_value_allCount" />
         </el-table>
       </div>
       <div class="topTable" v-show="!activeShow">
@@ -192,14 +200,14 @@
         <span>自发自用电量明细：</span>
       </div>
       <div class="bottomTable" v-show="activeShow">
-        <el-table :data="tableData.t_monthly_electricity_bill_details" border class="bottomTable" :header-cell-style="headerCellStyle" :cell-style="cellStyle">
+        <el-table :data="tableData.t_monthly_electricity_bill_details" border class="bottomTable" :header-cell-style="headerCellStyle" :key="xxxx" :cell-style="cellStyle">
           <el-table-column prop="dnbmc" label="电能表名称" width="310" />
           <el-table-column prop="bjzc_no" label="表计资产号" width="310" />
           <el-table-column prop="data_value_j" :render-header="renderHeader" label="“尖”|(kWh)" width="232.5" :formatter="data_value_jSum"></el-table-column>
           <el-table-column prop="data_value_f" :render-header="renderHeader" label="“峰”|(kWh)" width="232.5" :formatter="data_value_fSum"></el-table-column>
           <el-table-column prop="data_value_p" :render-header="renderHeader" label="“平”|(kWh)" width="232.5" :formatter="data_value_pSum"></el-table-column>
           <el-table-column prop="data_value_g" :render-header="renderHeader" label="“谷”|(kWh)" width="232.5" :formatter="data_value_gSum"></el-table-column>
-          <el-table-column prop="data_value_all" :render-header="renderHeader" label="“总”|(kWh)" :formatter="data_value_allSum"></el-table-column>
+          <el-table-column prop="data_value_all" :render-header="renderHeader" label="“总”|(kWh)" :width="325 + addWidth" :formatter="data_value_allSum"></el-table-column>
         </el-table>
       </div>
       <div class="bottomTable" v-show="!activeShow && xxxx">
@@ -349,6 +357,9 @@ export default {
       loading: false,
       isSaveTable: true,
       uploadPDF: [],
+      loadingText: "正在生成PDF",
+      addWidth: 0,
+      addWidth2: 0,
     };
   },
   mounted() {
@@ -375,7 +386,22 @@ export default {
     }
   },
   methods: {
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex === 3) {
+        return "table_tr";
+      }
+      return "";
+    },
+    arraySpanMethod({ row, column, rowIndex, columnIndex }) {
+      if (rowIndex == 3) {
+        return [1, 7];
+      }
+    },
     saveTableExportPDF() {
+      this.addWidth = 5;
+      this.addWidth2 = 6;
+      this.loadingText = "正在生成PDF";
+      this.uploadPDF = [];
       this.activeShow = true;
       this.isSaveTable = false;
       this.loading = true;
@@ -426,15 +452,28 @@ export default {
               let dataURL2 = canvas.toDataURL("image/png");
               await this.uploadIMG(dataURL2);
               console.log(this.uploadPDF);
-              img2pdf(this.uploadPDF).then((res) => {
-                console.log(res);
-                this.$message({
-                  message: "生成PDF成功",
-                  type: "success",
+              let datainfo = {
+                imgPaths: this.uploadPDF,
+                dataId: this.GetQueryString("data_id"),
+              };
+              img2pdf(datainfo)
+                .then((res) => {
+                  console.log(res);
+                  this.$message({
+                    message: "生成PDF成功",
+                    type: "success",
+                  });
+                })
+                .catch(() => {
+                  this.isSaveTable = true;
+                  this.loading = false;
+                  this.addWidth = 0;
+                  this.addWidth2 = 0;
                 });
-              });
               this.loading = false;
               this.isSaveTable = true;
+              this.addWidth = 0;
+              this.addWidth2 = 0;
             });
           });
         });
@@ -538,6 +577,12 @@ export default {
         this.tableData.t_monthly_bill_list = this.tableData.t_monthly_bill_list.sort((a, b) => {
           return a.show_rank - b.show_rank;
         });
+        let messageInfo = {};
+        for (let key in this.tableData.t_monthly_bill_list[0]) {
+          messageInfo[key] = "优惠明细";
+        }
+        this.tableData.t_monthly_bill_list.splice(3, 0, messageInfo);
+        console.log(this.tableData.t_monthly_bill_list);
         this.tableData.t_monthly_electricity_bill_details = this.tableData.t_monthly_electricity_bill_details.sort((a, b) => {
           return a.show_rank - b.show_rank;
         });
@@ -590,7 +635,7 @@ export default {
             this.activeShow = flag;
           }, 500);
         }, 10);
-        // this.mainEdit = 0;
+        this.mainEdit = 0;
       });
     },
     myFixed(num, digit) {
@@ -668,7 +713,9 @@ export default {
       }
     },
     saveTable(flag) {
-      for (let k = 0; k < this.tableData.t_monthly_bill_details_new.length; k++) {
+      this.loadingText = "正在保存请稍后";
+      this.loading = true;
+      for (let k = 0; k < this.tableData.t_monthly_bill_details_new?.length; k++) {
         console.log(this.tableData["t_monthly_bill_details_new"][k].lastnum_f_edit);
         delete this.tableData["t_monthly_bill_details_new"][k].lastnum_j_edit;
         delete this.tableData["t_monthly_bill_details_new"][k].lastnum_f_edit;
@@ -676,7 +723,7 @@ export default {
         delete this.tableData["t_monthly_bill_details_new"][k].lastnum_g_edit;
         delete this.tableData["t_monthly_bill_details_new"][k].lastnum_all_edit;
       }
-      this.tableData.t_monthly_bill_details_new.forEach((item, index) => {
+      this.tableData.t_monthly_bill_details_new?.forEach((item, index) => {
         // delete item.lastnum_j_edit;
         // delete item.lastnum_f_edit;
         // delete item.lastnum_p_edit;
@@ -691,7 +738,7 @@ export default {
       // this.excelAllData.childData[2].childTableName = "t_monthly_bill_details_new";
       // this.excelAllData.childData[3].t_monthly_bill_details_record = this.tableData.t_monthly_bill_details_record;
       // this.excelAllData.childData[3].childTableName = "t_monthly_bill_details_record";
-      this.excelAllData.childData.forEach((item, index) => {
+      this.excelAllData.childData?.forEach((item, index) => {
         for (let k in item) {
           if (k.indexOf("t_monthly_bill_list") !== -1) {
             item[k] = this.tableData.t_monthly_bill_list;
@@ -711,7 +758,7 @@ export default {
         form_id: this.GetQueryString("form_id"),
         id: this.GetQueryString("data_id"),
       };
-      this.excelAllData.display_flag = 0;
+      this.excelAllData.display_flag = 1;
       saveData(message, this.excelAllData)
         .then((res) => {
           if (res.status == 200) {
@@ -719,7 +766,13 @@ export default {
             if (flag !== "flag") {
               this.exportExcel(flag);
             }
-            this.saveTableExportPDF();
+            this.loading = false;
+            this.addWidth = 5;
+            this.addWidth2 = 6;
+            ++this.xxxx;
+            this.$nextTick(() => {
+              this.saveTableExportPDF();
+            });
             return this.$message({
               message: "更新成功请稍等",
               type: "success",
@@ -727,6 +780,7 @@ export default {
           }
         })
         .catch(() => {
+          this.loading = false;
           return this.$message({
             message: "更新失败",
             type: "error",
@@ -1420,6 +1474,11 @@ export default {
   .topTable {
     margin-bottom: 20px;
   }
+  /deep/.table_tr {
+    div {
+      font-weight: 700 !important;
+    }
+  }
   .topTable,
   .bottomTable {
     /deep/.el-table--border:after,
@@ -1503,6 +1562,16 @@ export default {
 }
 </style>
 <style>
+.insertBeforeDom {
+  height: 30px;
+  width: 1873px;
+  border-bottom: 1px solid #00000040;
+  text-align: center;
+  line-height: 30px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #000;
+}
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;

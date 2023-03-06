@@ -135,7 +135,9 @@ const App = (props) => {
     });
     setKeys(selectedKeys[0]);
   };
-
+  var MenuChange = new CustomEvent("MenuChange", {
+    detail: {},
+  });
   const onOpenChange = (keys) => {
     console.log("keys", keys);
     const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
@@ -181,6 +183,7 @@ const App = (props) => {
           isSubMenu,
         },
       });
+      window.dispatchEvent(MenuChange);
       document.dispatchEvent(customEvent);
     }
   };

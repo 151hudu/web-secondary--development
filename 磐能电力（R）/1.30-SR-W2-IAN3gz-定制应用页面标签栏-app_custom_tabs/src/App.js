@@ -199,7 +199,7 @@ const App = (props) => {
           className={qs.parse(window.location.search).menuId == unCloseTabId ? "unCloseActive" : "unClose"}
           key={unCloseTabId}
           onClick={() => {
-            onChange(unCloseTabId);
+            onChangeTab(unCloseTabId);
           }}
         >
           总览
